@@ -10,9 +10,12 @@ import {
   Resolver,
 } from "type-graphql";
 import { AppDataSource } from "../DBConnection";
+import { User } from "../entities/User";
 
 @InputType()
 class PostInput {
+  @Field()
+  creator_id: string;
   @Field()
   title: string;
   @Field({ nullable: true })
@@ -40,7 +43,12 @@ export default class PostResolver {
   // INSERT INTO Post
   @Mutation(() => Post)
   async createPost(@Arg("options", () => PostInput) options: PostInput) {
-    const post = AppDataSource.manager.create(Post, { ...options }).save();
+    const post = await AppDataSource.manager
+      .create(Post, { ...options })
+      .save();
+    post.creator = AppDataSource.manager.findOne(User, {
+      where: { user_id: post.creator_id },
+    });
     return post;
   }
 

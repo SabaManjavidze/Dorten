@@ -46,6 +46,7 @@ export class User extends BaseEntity {
   @Column()
   age: number;
 
+  @Field(() => [Post])
   @OneToMany(() => Post, (post) => post.creator)
   posts: Post[];
 

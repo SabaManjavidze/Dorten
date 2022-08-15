@@ -29,14 +29,14 @@ export class Post extends BaseEntity {
   @Field({ nullable: true })
   @Column({ nullable: true })
   picture: string;
-  // many to one relationship with user
-  @Field(() => User)
-  @Column({ nullable: true })
-  creator_id: string;
 
   @Field()
+  @Column()
+  creator_id: string;
+
+  @Field(() => User)
   @ManyToOne(() => User, (user) => user.posts)
-  creator: User;
+  creator: Promise<User>;
 
   @Field(() => String)
   @CreateDateColumn()
