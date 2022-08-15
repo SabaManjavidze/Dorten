@@ -1,0 +1,13 @@
+import { DataSource } from "typeorm";
+import dotenv from "dotenv";
+import { User } from "./entities/User";
+import { config } from "./ormconfig";
+dotenv.config();
+export const AppDataSource = new DataSource(config);
+
+try {
+  await AppDataSource.initialize();
+  console.log("Connected to PlanetScale🪐");
+} catch (err) {
+  console.error("Error during Data Source initialization", err);
+}
