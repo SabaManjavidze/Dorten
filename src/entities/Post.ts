@@ -5,8 +5,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryColumn,
+  Relation,
 } from "typeorm";
 import { v4 } from "uuid";
 import { User } from "./User";
@@ -36,7 +38,7 @@ export class Post extends BaseEntity {
 
   @Field(() => User)
   @ManyToOne(() => User, (user) => user.posts)
-  creator: Promise<User>;
+  creator: Relation<User>[];
 
   @Field(() => String)
   @CreateDateColumn()

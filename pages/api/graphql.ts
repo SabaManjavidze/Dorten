@@ -8,12 +8,18 @@ import { buildSchema } from "type-graphql";
 import UserResolver from "../../src/resolvers/UserResolver";
 import dotenv from "dotenv";
 import PostResolver from "../../src/resolvers/PostResolver";
+import { createUserLoader } from "../../src/utils/createUserLoader";
 dotenv.config();
 
 const server = new ApolloServer({
   schema: await buildSchema({
     resolvers: [UserResolver, PostResolver],
     validate: false,
+  }),
+  context: ({ req, res }) => ({
+    req,
+    res,
+    userLoader: createUserLoader(),
   }),
   plugins: [
     process.env.NODE_ENV === "production"

@@ -1,16 +1,21 @@
 import { Post } from "../entities/Post";
 import {
   Arg,
+  Ctx,
   Field,
+  FieldResolver,
   ID,
   InputType,
   Int,
   Mutation,
   Query,
   Resolver,
+  Root,
 } from "type-graphql";
 import { AppDataSource } from "../DBConnection";
 import { User } from "../entities/User";
+import { EntityManager } from "typeorm";
+import type { MyContext } from "../utils/MyContext";
 
 @InputType()
 class PostInput {
@@ -24,32 +29,45 @@ class PostInput {
   picture: string;
 }
 
-@Resolver()
+@Resolver(Post)
 export default class PostResolver {
+  connection: EntityManager = null;
+  constructor() {
+    this.connection = AppDataSource.manager;
+  }
+  @FieldResolver(() => User)
+  creator(@Root() post: Post, @Ctx() { userLoader }: MyContext) {
+    return userLoader.load(post.creator_id);
+  }
   @Query(() => [Post])
   async getPost(
     @Arg("post_id", () => Int, { nullable: true }) post_id: string
   ) {
     if (post_id) {
-      const post = await AppDataSource.manager.find(Post, {
+      const post = await this.connection.find(Post, {
         where: { post_id },
       });
       return post;
     }
-    const post = await Post.find();
-    return post;
+    // const posts = await Post.createQueryBuilder("post")
+    //   .leftJoinAndSelect("post.creator", "user")
+    //   .getMany();
+    const posts = await Post.find();
+    console.log(posts);
+    return posts;
   }
 
   // INSERT INTO Post
-  @Mutation(() => Post)
+  @Mutation(() => Boolean)
   async createPost(@Arg("options", () => PostInput) options: PostInput) {
-    const post = await AppDataSource.manager
-      .create(Post, { ...options })
-      .save();
-    post.creator = AppDataSource.manager.findOne(User, {
-      where: { user_id: post.creator_id },
-    });
-    return post;
+    try {
+      const post = this.connection.create(Post, { ...options });
+      post.save();
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
   }
 
   // UPDATE USER

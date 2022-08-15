@@ -1,8 +1,11 @@
 import { User } from "../entities/User";
 import {
   Arg,
+  Args,
+  Ctx,
   Field,
   ID,
+  Info,
   InputType,
   Int,
   Mutation,
@@ -48,7 +51,8 @@ class UserUpdateInput {
 export default class UserResolver {
   @Query(() => [User])
   async getUser(
-    @Arg("user_id", () => Int, { nullable: true }) user_id: string
+    @Arg("user_id", { nullable: true }) user_id: string,
+    @Info() info: any
   ) {
     if (user_id) {
       const user = await AppDataSource.manager.find(User, {
@@ -56,8 +60,17 @@ export default class UserResolver {
       });
       return user;
     }
-    const user = await User.find();
-    return user;
+    const posts = info.fieldNodes[0].selectionSet.selections.find(
+      (item) => item.name.value == "posts"
+    );
+    if (posts) {
+      const user = await User.createQueryBuilder("user")
+        .leftJoinAndSelect("user.posts", "post")
+        .getMany();
+      return user;
+    }
+    const users = await AppDataSource.manager.find(User);
+    return users;
   }
 
   // INSERT INTO User
