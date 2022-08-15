@@ -8,7 +8,8 @@ import { buildSchema } from "type-graphql";
 import UserResolver from "../../src/resolvers/UserResolver";
 import dotenv from "dotenv";
 import PostResolver from "../../src/resolvers/PostResolver";
-import { createUserLoader } from "../../src/utils/createUserLoader";
+import { createUserLoader } from "../../src/utils/loaders/createUserLoader";
+import { createPostLoader } from "../../src/utils/loaders/createPostLoader";
 dotenv.config();
 
 const server = new ApolloServer({
@@ -20,6 +21,7 @@ const server = new ApolloServer({
     req,
     res,
     userLoader: createUserLoader(),
+    postLoader: createPostLoader(),
   }),
   plugins: [
     process.env.NODE_ENV === "production"

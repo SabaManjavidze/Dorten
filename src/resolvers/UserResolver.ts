@@ -4,6 +4,7 @@ import {
   Args,
   Ctx,
   Field,
+  FieldResolver,
   ID,
   Info,
   InputType,
@@ -11,8 +12,11 @@ import {
   Mutation,
   Query,
   Resolver,
+  Root,
 } from "type-graphql";
 import { AppDataSource } from "../DBConnection";
+import { Post } from "../entities/Post";
+import type { MyContext } from "../utils/MyContext";
 
 @InputType()
 class UserCreateInput {
@@ -47,8 +51,13 @@ class UserUpdateInput {
   email: string;
 }
 
-@Resolver()
+@Resolver(User)
 export default class UserResolver {
+  @FieldResolver({ nullable: true })
+  async posts(@Root() user: User, @Ctx() { postLoader }: MyContext) {
+    const user_posts = await postLoader.load(user.user_id);
+    return user_posts;
+  }
   @Query(() => [User])
   async getUser(
     @Arg("user_id", { nullable: true }) user_id: string,
@@ -60,15 +69,15 @@ export default class UserResolver {
       });
       return user;
     }
-    const posts = info.fieldNodes[0].selectionSet.selections.find(
-      (item) => item.name.value == "posts"
-    );
-    if (posts) {
-      const user = await User.createQueryBuilder("user")
-        .leftJoinAndSelect("user.posts", "post")
-        .getMany();
-      return user;
-    }
+    // const posts = info.fieldNodes[0].selectionSet.selections.find(
+    //   (item) => item.name.value == "posts"
+    // );
+    // if (posts) {
+    //   const user = await User.createQueryBuilder("user")
+    //     .leftJoinAndSelect("user.posts", "post")
+    //     .getMany();
+    //   return user;
+    // }
     const users = await AppDataSource.manager.find(User);
     return users;
   }
