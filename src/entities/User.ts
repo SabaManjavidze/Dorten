@@ -1,11 +1,16 @@
-import { Field, ID, Int, ObjectType, Resolver } from "type-graphql";
+import { Field, ID, Int, ObjectType } from "type-graphql";
+import { v4 } from "uuid";
+import bcrypt from "bcryptjs";
 import {
   BaseEntity,
+  BeforeInsert,
   Column,
+  CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryColumn,
-  PrimaryGeneratedColumn,
 } from "typeorm";
+import { Post } from "./Post";
 export const GENDERS = {
   MALE: "MALE",
   FEMALE: "FEMALE",
@@ -15,7 +20,7 @@ export const GENDERS = {
 @Entity()
 export class User extends BaseEntity {
   @Field()
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   user_id: string;
 
   @Field()
@@ -37,9 +42,12 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   picture: string;
 
-  @Field()
+  @Field(() => Int)
   @Column()
   age: number;
+
+  @OneToMany(() => Post, (post) => post.creator)
+  posts: Post[];
 
   @Field({ nullable: true })
   @Column({
@@ -48,4 +56,16 @@ export class User extends BaseEntity {
     default: GENDERS.NONE,
   })
   gender: string;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @BeforeInsert()
+  addUserId() {
+    this.user_id = v4();
+  }
+  @BeforeInsert()
+  async hashPassword() {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
 }
