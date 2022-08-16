@@ -1,11 +1,11 @@
 import type { AppProps } from "next/app";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { Box } from "@mui/system";
 import {
   CSSInterpolation,
   createTheme,
   ThemeProvider,
-  Box,
-} from "@mui/material";
+} from "@mui/material/styles";
 import { blue, purple } from "@mui/material/colors";
 import { darken } from "@mui/material";
 import "../styles/globals.css";
@@ -69,8 +69,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     const last_theme = localStorage.getItem("theme") as themeType;
 
-    if (last_theme && last_theme !== mode) {
+    if (typeof last_theme === "string" && last_theme !== mode) {
       setMode(last_theme);
+    } else {
+      localStorage.setItem("theme", "dark");
+      setMode("dark");
     }
   }, []);
 
