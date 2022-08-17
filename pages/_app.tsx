@@ -43,8 +43,8 @@ function MyApp({ Component, pageProps }: AppProps) {
         palette: {
           mode: mode,
           primary: {
-            main: darken(purple.A400, 0.2),
-            dark: darken(purple.A700, 0.2),
+            main: darken(purple.A400, 0.15),
+            dark: darken(purple.A700, 0.1),
           },
           background: { paper: darken(blue[900], 0.75) },
         },

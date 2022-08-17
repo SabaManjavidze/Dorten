@@ -15,16 +15,15 @@ import { expressSession, promisifyStore } from "next-session/lib/compat";
 import RedisStoreFactory from "connect-redis";
 import Redis from "ioredis";
 import { MyContext } from "../../src/utils/MyContext";
-import * as argon2 from "argon2";
 
 dotenv.config();
 
 const RedisStore = RedisStoreFactory(expressSession);
-export const getSession = nextSession({
+const getSession = nextSession({
   name: "sabaId",
   store: promisifyStore(
     new RedisStore({
-      client: new Redis(),
+      client: new Redis({ host: "localhost", port: 6379 }),
     })
   ),
   cookie: {
@@ -33,40 +32,14 @@ export const getSession = nextSession({
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
   },
-  encode: (rawSid) => {
-    let encoded = "";
-    argon2
-      .hash(rawSid, {
-        hashLength: 16,
-        secret: Buffer.from(process.env.SESSION_SECRET),
-      })
-      .then((hash) => {
-        encoded = hash.toString();
-      });
-    return encoded;
-  },
-  decode: (encodedSid) => {
-    let rawSid = "";
-    argon2
-      .verify(encodedSid, null, {
-        secret: Buffer.from(process.env.SESSION_SECRET),
-      })
-      .then((hash) => {
-        rawSid = hash.toString();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    return rawSid;
-  },
 });
 const server = new ApolloServer({
   schema: await buildSchema({
     resolvers: [UserResolver, PostResolver],
     validate: false,
   }),
-  context: ({ req, res }): MyContext => ({
-    req: { ...req, session: getSession(req, res) },
+  context: async ({ req, res }: MyContext) => ({
+    req: { ...req, session: await getSession(req, res) },
     res,
     userLoader: createUserLoader(),
     postLoader: createPostLoader(),
@@ -80,6 +53,7 @@ const server = new ApolloServer({
 export const config = {
   api: {
     bodyParser: false,
+    externalResolver: true,
   },
 };
 const startServer = server.start();

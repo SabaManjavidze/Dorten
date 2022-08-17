@@ -63,6 +63,6 @@ export class User extends BaseEntity {
   }
   @BeforeInsert()
   async hashPassword() {
-    this.password = await argon2.hash(this.password);
+    this.password = await argon2.hash(this.password, { hashLength: 16 });
   }
 }

@@ -104,7 +104,56 @@ export default class UserResolver {
       return false;
     }
   }
-  @Mutation(() => User)
+  @Mutation(() => UserResponse)
+  async login(
+    @Arg("email") email: string,
+    @Arg("password") password: string,
+    @Ctx() { req }: MyContext
+  ): Promise<UserResponse> {
+    // const errors = validateRegister(options);
+    // if (errors) {
+    //   return { errors };
+    // }
+
+    let user: User;
+    try {
+      const result: User = await User.findOneBy({
+        email,
+      });
+      if (!result) {
+        return {
+          errors: [
+            {
+              field: "email",
+              message: "email not found",
+            },
+          ],
+        };
+      }
+      const passwordMatch = await argon2.verify(result.password, password);
+      if (!passwordMatch) {
+        return {
+          errors: [
+            {
+              field: "password",
+              message: "password does not match",
+            },
+          ],
+        };
+      }
+      user = result;
+    } catch (err) {
+      console.log(err.message);
+    }
+
+    // store user id session
+    // this will set a cookie on the user
+    // keep them logged in
+    req.session.userId = user.user_id;
+
+    return { user };
+  }
+  @Mutation(() => UserResponse)
   async register(
     @Arg("options") options: UserCreateInput,
     @Ctx() { req }: MyContext
@@ -114,14 +163,13 @@ export default class UserResolver {
     //   return { errors };
     // }
 
-    const hashedPassword = await argon2.hash(options.password);
     let user: User;
     try {
-      user = User.create({
-        username: options.username,
-        email: options.email,
-        password: hashedPassword,
+      const result = User.create({
+        ...options,
       });
+      await result.save();
+      user = result;
     } catch (err) {
       if (err.code === "23505") {
         return {
@@ -133,6 +181,7 @@ export default class UserResolver {
           ],
         };
       }
+      console.log(err.message);
     }
 
     // store user id session

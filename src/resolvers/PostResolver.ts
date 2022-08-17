@@ -53,7 +53,6 @@ export default class PostResolver {
     //   .leftJoinAndSelect("post.creator", "user")
     //   .getMany();
     const posts = await Post.find();
-    console.log(posts);
     return posts;
   }
 
