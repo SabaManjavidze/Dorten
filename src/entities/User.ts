@@ -1,6 +1,6 @@
 import { Field, ID, Int, ObjectType } from "type-graphql";
 import { v4 } from "uuid";
-import bcrypt from "bcryptjs";
+import * as argon2 from "argon2";
 import {
   BaseEntity,
   BeforeInsert,
@@ -63,6 +63,6 @@ export class User extends BaseEntity {
   }
   @BeforeInsert()
   async hashPassword() {
-    this.password = await bcrypt.hash(this.password, 10);
+    this.password = await argon2.hash(this.password);
   }
 }

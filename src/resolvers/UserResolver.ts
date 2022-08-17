@@ -9,19 +9,35 @@ import {
   InputType,
   Int,
   Mutation,
+  ObjectType,
   Query,
   Resolver,
   Root,
 } from "type-graphql";
 import { AppDataSource } from "../DBConnection";
 import type { MyContext } from "../utils/MyContext";
+import * as argon2 from "argon2";
 
+@ObjectType()
+class FieldError {
+  @Field()
+  field: string;
+  @Field()
+  message: string;
+}
+
+@ObjectType()
+class UserResponse {
+  @Field(() => [FieldError], { nullable: true })
+  errors?: FieldError[];
+
+  @Field(() => User, { nullable: true })
+  user?: User;
+}
 @InputType()
 class UserCreateInput {
   @Field()
-  first_name: string;
-  @Field()
-  last_name: string;
+  username: string;
   @Field({ nullable: true })
   picture: string;
   @Field(() => Int)
@@ -36,9 +52,7 @@ class UserCreateInput {
 @InputType()
 class UserUpdateInput {
   @Field({ nullable: true })
-  first_name: string;
-  @Field({ nullable: true })
-  last_name: string;
+  username: string;
   @Field({ nullable: true })
   picture: string;
   @Field(() => Int, { nullable: true })
@@ -90,13 +104,42 @@ export default class UserResolver {
       return false;
     }
   }
+  @Mutation(() => User)
+  async register(
+    @Arg("options") options: UserCreateInput,
+    @Ctx() { req }: MyContext
+  ): Promise<UserResponse> {
+    // const errors = validateRegister(options);
+    // if (errors) {
+    //   return { errors };
+    // }
 
-  //  REMOVE FROM User
-  @Mutation(() => Boolean)
-  async removeUser(@Arg("user_id") user_id: string) {
-    const user = await User.find({ where: { user_id } });
-    if (!user) return false;
-    await user[0].remove();
-    return true;
+    const hashedPassword = await argon2.hash(options.password);
+    let user: User;
+    try {
+      user = User.create({
+        username: options.username,
+        email: options.email,
+        password: hashedPassword,
+      });
+    } catch (err) {
+      if (err.code === "23505") {
+        return {
+          errors: [
+            {
+              field: "username",
+              message: "username already taken",
+            },
+          ],
+        };
+      }
+    }
+
+    // store user id session
+    // this will set a cookie on the user
+    // keep them logged in
+    req.session.userId = user.user_id;
+
+    return { user };
   }
 }
