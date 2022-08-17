@@ -130,14 +130,14 @@ const Register: NextPage = () => {
             </Grid>
             <Grid item>
               <Link
-                href="register"
+                href="login"
                 onClick={(e) => {
                   e.preventDefault();
-                  router.push("register");
+                  router.push("login");
                 }}
                 variant="body1"
               >
-                {"Don't have an account? Sign Up"}
+                Already have an account? Log In
               </Link>
             </Grid>
           </Grid>
