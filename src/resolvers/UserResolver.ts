@@ -6,7 +6,6 @@ import {
   Field,
   FieldResolver,
   ID,
-  Info,
   InputType,
   Int,
   Mutation,
@@ -15,7 +14,6 @@ import {
   Root,
 } from "type-graphql";
 import { AppDataSource } from "../DBConnection";
-import { Post } from "../entities/Post";
 import type { MyContext } from "../utils/MyContext";
 
 @InputType()
@@ -59,25 +57,13 @@ export default class UserResolver {
     return user_posts;
   }
   @Query(() => [User])
-  async getUser(
-    @Arg("user_id", { nullable: true }) user_id: string,
-    @Info() info: any
-  ) {
+  async getUser(@Arg("user_id", { nullable: true }) user_id: string) {
     if (user_id) {
       const user = await AppDataSource.manager.find(User, {
         where: { user_id },
       });
       return user;
     }
-    // const posts = info.fieldNodes[0].selectionSet.selections.find(
-    //   (item) => item.name.value == "posts"
-    // );
-    // if (posts) {
-    //   const user = await User.createQueryBuilder("user")
-    //     .leftJoinAndSelect("user.posts", "post")
-    //     .getMany();
-    //   return user;
-    // }
     const users = await AppDataSource.manager.find(User);
     return users;
   }
