@@ -12,7 +12,7 @@ import {
   Button,
   Avatar,
 } from "@mui/material";
-import RegisterIcon from "@mui/icons-material/Person";
+import RegisterIcon from "@mui/icons-material/PersonAdd";
 import { Copyright } from "../components/Copyright";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
@@ -57,9 +57,37 @@ const Register: NextPage = () => {
           <RegisterIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign in
+          Register
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              label="Username"
+              name="username"
+              autoComplete="username"
+              autoFocus
+              sx={{ mr: 2 }}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              type="number"
+              label="Age"
+              name="age"
+              autoComplete="age"
+              autoFocus
+              sx={{ ml: 2 }}
+            />
+          </Box>
           <TextField
             margin="normal"
             required
@@ -90,8 +118,9 @@ const Register: NextPage = () => {
             color="primary"
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
+            href="/"
           >
-            <Typography sx={{ textTransform: "none" }}>Sign In</Typography>
+            <Typography sx={{ textTransform: "none" }}>Register</Typography>
           </Button>
           <Grid container>
             <Grid item xs>
