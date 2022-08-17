@@ -2,8 +2,6 @@ import "reflect-metadata";
 import {
   ApolloServerPluginLandingPageGraphQLPlayground,
   ApolloServerPluginLandingPageProductionDefault,
-  GraphQLRequestContext,
-  PluginDefinition,
 } from "apollo-server-core";
 import { ApolloServer } from "apollo-server-micro";
 import { buildSchema } from "type-graphql";
@@ -17,7 +15,6 @@ import { expressSession, promisifyStore } from "next-session/lib/compat";
 import RedisStoreFactory from "connect-redis";
 import Redis from "ioredis";
 import { MyContext } from "../../src/utils/MyContext";
-import { BaseContext } from "next/dist/shared/lib/utils";
 
 dotenv.config();
 

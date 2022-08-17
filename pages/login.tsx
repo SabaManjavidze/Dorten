@@ -104,7 +104,7 @@ const Login: NextPage = () => {
                 }}
                 variant="body1"
               >
-                Don't have an account? Register
+                {"Don't have an account? Register"}
               </Link>
             </Grid>
           </Grid>

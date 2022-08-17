@@ -133,7 +133,7 @@ const Register: NextPage = () => {
                 }}
                 variant="body1"
               >
-                Already have an account? Log In
+                {"Already have an account? Log In"}
               </Link>
             </Grid>
           </Grid>

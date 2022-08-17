@@ -37,35 +37,31 @@ function MyApp({ Component, pageProps }: AppProps) {
     fontFamily: "cursive",
     color: mode === "dark" ? "#f4eee6" : "black",
   };
-  const theme = useMemo(
-    () =>
-      createTheme({
-        palette: {
-          mode: mode,
-          primary: {
-            main: darken(purple.A400, 0.15),
-            dark: darken(purple.A700, 0.1),
-          },
-          background: { paper: darken(blue[900], 0.75) },
-        },
+  const theme = createTheme({
+    palette: {
+      mode: mode,
+      primary: {
+        main: darken(purple.A400, 0.15),
+        dark: darken(purple.A700, 0.1),
+      },
+      background: { paper: darken(blue[900], 0.75) },
+    },
 
-        components: {
-          MuiTypography: {
-            styleOverrides: {
-              h1: fontStyleOverride,
-              h2: fontStyleOverride,
-              h3: fontStyleOverride,
-              h4: fontStyleOverride,
-              h5: fontStyleOverride,
-              h6: fontStyleOverride,
-              body1: fontStyleOverride,
-              body2: fontStyleOverride,
-            },
-          },
+    components: {
+      MuiTypography: {
+        styleOverrides: {
+          h1: { ...fontStyleOverride },
+          h2: { ...fontStyleOverride },
+          h3: { ...fontStyleOverride },
+          h4: { ...fontStyleOverride },
+          h5: { ...fontStyleOverride },
+          h6: { ...fontStyleOverride },
+          body1: { ...fontStyleOverride },
+          body2: { ...fontStyleOverride },
         },
-      }),
-    [mode]
-  );
+      },
+    },
+  });
   useEffect(() => {
     const last_theme = localStorage.getItem("theme") as themeType;
 
@@ -75,7 +71,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       localStorage.setItem("theme", "dark");
       setMode("dark");
     }
-  }, []);
+  }, [mode]);
 
   return (
     <ColorModeContext.Provider value={colorMode}>
