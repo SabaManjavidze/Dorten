@@ -13,10 +13,12 @@ import {
   Query,
   Resolver,
   Root,
+  UseMiddleware,
 } from "type-graphql";
 import { AppDataSource } from "../DBConnection";
 import type { MyContext } from "../utils/MyContext";
 import * as argon2 from "argon2";
+import { isAuth } from "../middleware/isAuth";
 
 @ObjectType()
 class FieldError {
@@ -70,29 +72,10 @@ export default class UserResolver {
     const user_posts = await postLoader.load(user.user_id);
     return user_posts;
   }
-  @Query(() => [User])
-  async getUser(@Arg("user_id", { nullable: true }) user_id: string) {
-    if (user_id) {
-      const user = await AppDataSource.manager.find(User, {
-        where: { user_id },
-      });
-      return user;
-    }
-    const users = await AppDataSource.manager.find(User);
-    return users;
-  }
-
-  // INSERT INTO User
-  @Mutation(() => User)
-  async createUser(
-    @Arg("options", () => UserCreateInput) options: UserCreateInput
-  ) {
-    const user = AppDataSource.manager.create(User, { ...options }).save();
-    return user;
-  }
 
   // UPDATE USER
   @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
   async updateUser(
     @Arg("user_id", () => ID) user_id: string,
     @Arg("options", () => UserUpdateInput) options: UserUpdateInput
@@ -145,10 +128,6 @@ export default class UserResolver {
     } catch (err) {
       console.log(err.message);
     }
-
-    // store user id session
-    // this will set a cookie on the user
-    // keep them logged in
     req.session.userId = user.user_id;
 
     return { user };
@@ -158,11 +137,6 @@ export default class UserResolver {
     @Arg("options") options: UserCreateInput,
     @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
-    // const errors = validateRegister(options);
-    // if (errors) {
-    //   return { errors };
-    // }
-
     let user: User;
     try {
       const result = User.create({
@@ -184,11 +158,23 @@ export default class UserResolver {
       console.log(err.message);
     }
 
-    // store user id session
-    // this will set a cookie on the user
-    // keep them logged in
     req.session.userId = user.user_id;
 
     return { user };
+  }
+
+  @Mutation(() => Boolean, { nullable: true })
+  @UseMiddleware(isAuth)
+  async logout(
+    @Ctx() { req, res }: MyContext & { res: any }
+  ): Promise<Boolean> {
+    req.session.destroy();
+    return true;
+  }
+  @Query(() => User, { nullable: true })
+  @UseMiddleware(isAuth)
+  async me(@Ctx() { req }: MyContext): Promise<User> {
+    const user = await User.findOne({ where: { user_id: req.session.userId } });
+    return user;
   }
 }
