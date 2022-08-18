@@ -1,18 +1,4 @@
 import * as React from "react";
-import {
-  Container,
-  Typography,
-  Box,
-  Grid,
-  Link,
-  Checkbox,
-  FormControlLabel,
-  TextField,
-  CssBaseline,
-  Button,
-  Avatar,
-} from "@mui/material";
-import LoginIcon from "@mui/icons-material/Person";
 import { Copyright } from "../components/Copyright";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
@@ -29,89 +15,40 @@ const Login: NextPage = () => {
   };
 
   return (
-    <Container
-      maxWidth="sm"
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        flexDirection: "column",
-        alignItems: "center",
-        height: "100%",
-        position: "absolute",
-        right: 0,
-        left: 0,
-        top: 0,
-        bottom: 0,
-      }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          mb: "5vh",
-        }}
-      >
-        <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
-          <LoginIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Log in
-        </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <TextField
-            margin="normal"
+    <div className="dark:bg-background">
+      <div>
+        <p>Log in</p>
+        <form onSubmit={handleSubmit}>
+          <input required name="email" autoComplete="email" autoFocus />
+          <input
             required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
             name="password"
-            label="Password"
             type="password"
-            id="password"
             autoComplete="current-password"
           />
-          <Button
-            type="submit"
-            fullWidth
-            color="primary"
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            <Typography sx={{ textTransform: "none" }}>Log In</Typography>
-          </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body1">
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link
+          <button type="submit">
+            <p>Log In</p>
+          </button>
+          <div>
+            <div>
+              <a href="#">Forgot password?</a>
+            </div>
+            <div>
+              <a
                 href="register"
                 onClick={(e) => {
                   e.preventDefault();
                   router.push("register");
                 }}
-                variant="body1"
               >
                 {"Don't have an account? Register"}
-              </Link>
-            </Grid>
-          </Grid>
-        </Box>
-      </Box>
-      <Copyright sx={{ position: "absolute", bottom: "20px" }} />
-    </Container>
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+      <Copyright className="absolute bottom-4" />
+    </div>
   );
 };
 export default Login;
