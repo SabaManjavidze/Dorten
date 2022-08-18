@@ -5,7 +5,9 @@ import "../styles/globals.css";
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ColorModeProvider>
-      <Component {...pageProps} />
+      <div className="h-screen dark:bg-background dark:text-primary lowercase">
+        <Component {...pageProps} />
+      </div>
     </ColorModeProvider>
   );
 }

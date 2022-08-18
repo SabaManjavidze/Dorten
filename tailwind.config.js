@@ -5,17 +5,16 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
-    colors: {
-      primary: "#9900E5",
-      background: "#0f172a",
-    },
-    fontFamily: {
-      sans: ["Inter var", "sans-serif"],
-      serif: ["Inter var", "serif"],
-      cursive: ["Inter var", "cursive"],
+    extend: {
+      colors: {
+        primary: "#a315ea",
+        background: "#0f172a",
+      },
+      fontFamily: {
+        sans: ["Proxima Nova", "cursive"],
+      },
     },
   },
-  darkMode: "media",
+  darkMode: "class",
   plugins: [],
 };
