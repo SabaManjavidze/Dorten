@@ -23,7 +23,11 @@ const getSession = nextSession({
   name: process.env.COOKIE_NAME,
   store: promisifyStore(
     new RedisStore({
-      client: new Redis({ host: "localhost", port: 6379 }),
+      client: new Redis({
+        host: process.env.REDIS_HOST,
+        port: parseInt(process.env.REDIS_PORT),
+        password: process.env.REDIS_PASSWORD,
+      }),
     })
   ),
   cookie: {
