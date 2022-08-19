@@ -1,13 +1,14 @@
 import type { AppProps } from "next/app";
-import { ColorModeProvider } from "../Hooks/useColorMode";
+import Layout from "../components/Layout";
+import { ColorModeProvider, useColorMode } from "../Hooks/useColorMode";
 import "../styles/globals.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ColorModeProvider>
-      <div className="h-screen dark:bg-background dark:text-primary lowercase">
+      <Layout>
         <Component {...pageProps} />
-      </div>
+      </Layout>
     </ColorModeProvider>
   );
 }

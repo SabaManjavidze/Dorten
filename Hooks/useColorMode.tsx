@@ -13,18 +13,18 @@ export const ColorModeProvider = ({ children }) => {
   type themeType = "light" | "dark";
   const [colorMode, setColorMode] = useState<themeType>("light");
   const toggleColorMode = () => {
-    setColorMode(colorMode === "light" ? "dark" : "light");
+    const newTheme = colorMode === "light" ? "dark" : "light";
+    setColorMode(newTheme);
+    localStorage.theme = newTheme;
   };
   useEffect(() => {
     const last_theme = localStorage.theme as themeType;
+    console.log(last_theme, localStorage.getItem("theme"));
 
     if (typeof last_theme === "string" && last_theme !== colorMode) {
       setColorMode(last_theme);
-    } else {
-      localStorage.theme = "dark";
-      setColorMode("dark");
     }
-  }, [colorMode]);
+  }, []);
   return (
     <ColorModeContext.Provider value={{ colorMode, toggleColorMode }}>
       {children}

@@ -2,9 +2,11 @@ import * as React from "react";
 import { Copyright } from "../components/Copyright";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
+import { useColorMode } from "../Hooks/useColorMode";
 
 const Login: NextPage = () => {
   const router = useRouter();
+  const { toggleColorMode } = useColorMode();
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -17,16 +19,18 @@ const Login: NextPage = () => {
   return (
     <section className="h-screen">
       <div className="h-full px-6">
-        <div className="g-6 flex h-full flex-wrap items-center justify-center lg:justify-between xl:justify-center">
-          <div className="mb-12 md:mb-0 md:w-8/12 lg:w-5/12 xl:ml-20 xl:w-5/12">
+        <div className="flex h-full flex-col flex-wrap items-center justify-center xl:justify-center">
+          <div className="mb-12 md:mb-0 md:w-8/12 lg:w-5/12 xl:w-5/12">
             <form onSubmit={handleSubmit}>
-              <div className="flex flex-row items-center justify-center lg:justify-start">
-                <p className="mb-0 mr-4 text-3xl">Sign in with</p>
+              <div className="flex flex-row items-center justify-center text-center">
+                <p className="gradient-text p-3 text-4xl">Log in with</p>
                 <button
                   type="button"
                   data-mdb-ripple="true"
                   data-mdb-ripple-color="light"
-                  className="mx-1 inline-block rounded-full bg-black p-3 text-xs font-medium leading-tight shadow-md transition duration-300 ease-in-out hover:bg-gray-800 hover:shadow-lg "
+                  className="mx-1 inline-block rounded-full bg-black p-3 text-xs font-medium 
+                  leading-tight shadow-md transition duration-300 ease-in-out 
+                  hover:bg-opacity-10 hover:shadow-lg "
                 >
                   {/* Github Logo */}
                   <svg
@@ -46,7 +50,9 @@ const Login: NextPage = () => {
                   type="button"
                   data-mdb-ripple="true"
                   data-mdb-ripple-color="light"
-                  className="mx-1 inline-block rounded-full bg-blue-800 p-3 text-xs font-medium leading-tight shadow-md transition duration-300 ease-in-out hover:bg-blue-700 hover:shadow-lg "
+                  className="mx-1 inline-block rounded-full bg-blue-900 p-3 text-xs font-medium 
+                  leading-tight shadow-md transition duration-300 ease-in-out 
+                  hover:bg-blue-700 hover:shadow-lg "
                 >
                   {/* Google Logo */}
                   <img
@@ -62,45 +68,25 @@ const Login: NextPage = () => {
 
               <div className="mb-6">
                 <input
-                  type="text"
-                  className="form-control m-0 block w-full rounded border border-solid border-gray-300 bg-white bg-clip-padding px-4 py-2 text-xl font-normal text-gray-700 transition ease-in-out focus:border-blue-600 focus:bg-white focus:outline-none"
-                  placeholder="Email address"
+                  placeholder="Email Address"
                   name="email"
+                  className="text-input"
                 />
               </div>
 
               <div className="mb-6">
                 <input
-                  type="password"
-                  className="form-control m-0 block w-full rounded border border-solid border-gray-300 bg-white bg-clip-padding px-4 py-2 text-xl font-normal text-gray-700 transition ease-in-out focus:border-blue-600 focus:bg-white focus:outline-none"
                   placeholder="Password"
                   name="password"
+                  className="text-input"
                 />
               </div>
 
-              <div className="mb-6 flex items-center justify-between">
-                <div className="form-group form-check">
-                  <input
-                    type="checkbox"
-                    className="form-check-input float-left mt-1 mr-2 h-4 w-4 cursor-pointer appearance-none rounded-sm border border-gray-300 bg-white bg-contain bg-center bg-no-repeat align-top transition duration-200 checked:border-blue-600 checked:bg-blue-600 focus:outline-none"
-                  />
-                  <label className="form-check-label inline-block ">
-                    Remember me
-                  </label>
-                </div>
-                <a href="#!" className="">
+              <div className="mb-6 flex items-center justify-between ">
+                <a href="#!" className="underline">
                   Forgot password?
                 </a>
-              </div>
-
-              <div className="text-center lg:text-left">
-                <button
-                  type="submit"
-                  className="text-md inline-block rounded bg-blue-600 px-7 py-3 font-medium leading-snug text-white shadow-md transition duration-150 ease-in-out hover:bg-blue-700 hover:shadow-lg "
-                >
-                  Login
-                </button>
-                <p className="mt-2 mb-0 pt-1 text-sm font-semibold">
+                <p className="px-3 text-sm font-semibold">
                   Don't have an account?{" "}
                   <a
                     href="register"
@@ -108,11 +94,24 @@ const Login: NextPage = () => {
                       e.preventDefault();
                       router.push("/register");
                     }}
-                    className="text-red-600 transition duration-200 ease-in-out hover:text-red-700 focus:text-red-700"
+                    className="inline text-purple-400 underline"
                   >
                     Register
                   </a>
                 </p>
+              </div>
+
+              <div className="text-center lg:text-left">
+                <button
+                  type="submit"
+                  className="text-md inline-block rounded
+                   bg-purple-500 px-7 py-3 font-medium 
+                   leading-snug text-white shadow-md transition 
+                   duration-200 ease-in-out hover:bg-purple-600 
+                   hover:shadow-lg "
+                >
+                  Login
+                </button>
               </div>
             </form>
           </div>
