@@ -1,18 +1,20 @@
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useMeQuery } from "../graphql/generated";
+import { useEffect } from "react";
+import { useLogoutMutation, useMeQuery } from "../graphql/generated";
 import { useAuth } from "../Hooks/useAuth";
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const { user, loading, errors } = useAuth();
-  if (errors) {
-    console.log(errors);
-    return <p>{errors.message}</p>;
-  }
+  const [logout] = useLogoutMutation();
+  const { user, loading, errors, setUser } = useAuth();
   if (loading) return <p>Loading...</p>;
+
   return (
     <div>
+      {errors ? <p>{errors.message}</p> : null}
+      {!user ? <p>Not Authorized</p> : null}
+
       <button
         onClick={() => {
           router.push("/login");
@@ -21,23 +23,34 @@ const Home: NextPage = () => {
       >
         Login
       </button>
-      <div className="text-left">
-        <p>Username : {user.username}</p>
-        <p>email : {user.email}</p>
-        <p>gender : {user.gender}</p>
-        <p>age : {user.age}</p>
-        <p>
-          picture :{" "}
-          {user.picture ? (
-            <img src={user.picture} width="80px" />
-          ) : (
-            <img
-              src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"
-              width="80px"
-            />
-          )}
-        </p>
-      </div>
+      <button
+        onClick={() => {
+          logout();
+          setUser(null);
+        }}
+        className="rounded bg-red-600 px-7 py-3 font-medium text-white"
+      >
+        Logout
+      </button>
+      {!errors && user ? (
+        <div className="text-left">
+          <p>Username : {user.username}</p>
+          <p>email : {user.email}</p>
+          <p>gender : {user.gender}</p>
+          <p>age : {user.age}</p>
+          <p>
+            picture :{" "}
+            {user.picture ? (
+              <img src={user.picture} width="80px" />
+            ) : (
+              <img
+                src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"
+                width="80px"
+              />
+            )}
+          </p>
+        </div>
+      ) : null}
     </div>
   );
 };

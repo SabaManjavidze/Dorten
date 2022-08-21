@@ -667,7 +667,7 @@
     "@graphql-tools/utils" "^8.8.0"
     "tslib" "~2.4.0"
 
-"@graphql-codegen/plugin-helpers@^2.6.2":
+"@graphql-codegen/plugin-helpers@^2.3.2", "@graphql-codegen/plugin-helpers@^2.6.2":
   "integrity" "sha512-bt5PNix0MwzWP53UdaYm6URrVMWU8RlQhrTSLFjxQ8ShS5zoTlQtpZJGZc5ONqFgKa83qbUmzXUtP8oRVVn8zw=="
   "resolved" "https://registry.npmjs.org/@graphql-codegen/plugin-helpers/-/plugin-helpers-2.6.2.tgz"
   "version" "2.6.2"
@@ -679,7 +679,7 @@
     "lodash" "~4.17.0"
     "tslib" "~2.4.0"
 
-"@graphql-codegen/schema-ast@^2.5.1":
+"@graphql-codegen/schema-ast@^2.4.1", "@graphql-codegen/schema-ast@^2.5.1":
   "integrity" "sha512-tewa5DEKbglWn7kYyVBkh3J8YQ5ALqAMVmZwiVFIGOao5u66nd+e4HuFqp0u+Jpz4SJGGi0ap/oFrEvlqLjd2A=="
   "resolved" "https://registry.npmjs.org/@graphql-codegen/schema-ast/-/schema-ast-2.5.1.tgz"
   "version" "2.5.1"
@@ -710,17 +710,6 @@
     "change-case-all" "1.0.14"
     "tslib" "~2.4.0"
 
-"@graphql-codegen/typescript-type-graphql@^2.3.3":
-  "integrity" "sha512-c6Y+pPK4+HdFSbY4oPuitvuZyCb2M+Rzl4hLaRGK/eL+VIxK6SZxC/52YY//1GHlyNc75P02mbKRrVtcSkV7SA=="
-  "resolved" "https://registry.npmjs.org/@graphql-codegen/typescript-type-graphql/-/typescript-type-graphql-2.3.3.tgz"
-  "version" "2.3.3"
-  dependencies:
-    "@graphql-codegen/plugin-helpers" "^2.6.2"
-    "@graphql-codegen/typescript" "^2.7.3"
-    "@graphql-codegen/visitor-plugin-common" "2.12.1"
-    "auto-bind" "~4.0.0"
-    "tslib" "~2.4.0"
-
 "@graphql-codegen/typescript@^2.7.3":
   "integrity" "sha512-EzX/acijXtbG/AwPzho2ZZWaNo00+xAbsRDP+vnT2PwQV3AYq3/5bFvjq1XfAGWbTntdmlYlIwC9hf5bI85WVA=="
   "resolved" "https://registry.npmjs.org/@graphql-codegen/typescript/-/typescript-2.7.3.tgz"
@@ -732,7 +721,7 @@
     "auto-bind" "~4.0.0"
     "tslib" "~2.4.0"
 
-"@graphql-codegen/visitor-plugin-common@2.12.1":
+"@graphql-codegen/visitor-plugin-common@^2.5.2", "@graphql-codegen/visitor-plugin-common@2.12.1":
   "integrity" "sha512-dIUrX4+i/uazyPQqXyQ8cqykgNFe1lknjnfDWFo0gnk2W8+ruuL2JpSrj/7efzFHxbYGMQrCABDCUTVLi3DcVA=="
   "resolved" "https://registry.npmjs.org/@graphql-codegen/visitor-plugin-common/-/visitor-plugin-common-2.12.1.tgz"
   "version" "2.12.1"
@@ -983,7 +972,7 @@
     "value-or-promise" "^1.0.11"
     "ws" "^8.3.0"
 
-"@graphql-tools/utils@^8.6.5", "@graphql-tools/utils@^8.8.0", "@graphql-tools/utils@^8.9.0", "@graphql-tools/utils@8.10.0":
+"@graphql-tools/utils@^8.6.1", "@graphql-tools/utils@^8.6.5", "@graphql-tools/utils@^8.8.0", "@graphql-tools/utils@^8.9.0", "@graphql-tools/utils@8.10.0":
   "integrity" "sha512-yI+V373FdXQbYfqdarehn9vRWDZZYuvyQ/xwiv5ez2BbobHrqsexF7qs56plLRaQ8ESYpVAjMQvJWe9s23O0Jg=="
   "resolved" "https://registry.npmjs.org/@graphql-tools/utils/-/utils-8.10.0.tgz"
   "version" "8.10.0"
@@ -1032,6 +1021,11 @@
   "integrity" "sha512-/c6rf4UJlmHlC9b5BaNvzAcFv7HZ2QHaV0D4/HNlBdvFnvQq8RI4kYdhyPCl7Xj+oWvTWQ8ujhqS53LIgAe6KQ=="
   "resolved" "https://registry.npmjs.org/@hapi/hoek/-/hoek-9.3.0.tgz"
   "version" "9.3.0"
+
+"@hookform/resolvers@^2.9.7":
+  "integrity" "sha512-BloehX3MOLwuFEwT4yZnmolPjVmqyn8VsSuodLfazbCIqxBHsQ4qUZsi+bvNNCduRli1AGWFrkDLGD5QoNzsoA=="
+  "resolved" "https://registry.npmjs.org/@hookform/resolvers/-/resolvers-2.9.7.tgz"
+  "version" "2.9.7"
 
 "@humanwhocodes/config-array@^0.10.4":
   "integrity" "sha512-mXAIHxZT3Vcpg83opl1wGlVZ9xydbfZO3r5YfRSH6Gpp2J/PfdBP0wbDa2sO6/qRbcalpoevVyW6A/fI6LfeMw=="
@@ -3394,6 +3388,17 @@
   "resolved" "https://registry.npmjs.org/grapheme-splitter/-/grapheme-splitter-1.0.4.tgz"
   "version" "1.0.4"
 
+"graphql-codegen-typescript-validation-schema@^0.6.0":
+  "integrity" "sha512-m0i/u/L7IedBZZq0dThAN/GBpsi5B16UODQSi8nkEdpdkHxzP9uHFf+JozUcfZRwqPp3l2Dl9qY0W7D4AIoDVQ=="
+  "resolved" "https://registry.npmjs.org/graphql-codegen-typescript-validation-schema/-/graphql-codegen-typescript-validation-schema-0.6.0.tgz"
+  "version" "0.6.0"
+  dependencies:
+    "@graphql-codegen/plugin-helpers" "^2.3.2"
+    "@graphql-codegen/schema-ast" "^2.4.1"
+    "@graphql-codegen/visitor-plugin-common" "^2.5.2"
+    "@graphql-tools/utils" "^8.6.1"
+    "graphql" "^16.2.0"
+
 "graphql-config@^4.3.1":
   "integrity" "sha512-ju2LAbOk6GLp+8JY7mh3CrEe0iEj2AdImNKv58G0DyISBo72kDEJYNJ07hKmkHdIzhDsSHiVzaCVIyBU2LCUug=="
   "resolved" "https://registry.npmjs.org/graphql-config/-/graphql-config-4.3.3.tgz"
@@ -3419,7 +3424,7 @@
   dependencies:
     "lodash.get" "^4.4.2"
 
-"graphql-request@^4.0.0", "graphql-request@^4.3.0":
+"graphql-request@^4.0.0":
   "integrity" "sha512-2v6hQViJvSsifK606AliqiNiijb1uwWp6Re7o0RTyH+uRTv/u7Uqm2g4Fjq/LgZIzARB38RZEvVBFOQOVdlBow=="
   "resolved" "https://registry.npmjs.org/graphql-request/-/graphql-request-4.3.0.tgz"
   "version" "4.3.0"
@@ -3451,6 +3456,11 @@
   "integrity" "sha512-5gghUc24tP9HRznNpV2+FIoq3xKkj5dTQqf4v0CpdPbFVwFkWoxOM+o+2OC9ZSvjEMTjfmG9QT+gcvggTwW1zw=="
   "resolved" "https://registry.npmjs.org/graphql/-/graphql-15.8.0.tgz"
   "version" "15.8.0"
+
+"graphql@^16.2.0":
+  "integrity" "sha512-KPIBPDlW7NxrbT/eh4qPXz5FiFdL5UbaA0XUNz2Rp3Z3hqBSkbj0GVjwFDztsWVauZUWsbKHgMg++sk8UX0bkw=="
+  "resolved" "https://registry.npmjs.org/graphql/-/graphql-16.6.0.tgz"
+  "version" "16.6.0"
 
 "has-bigints@^1.0.1", "has-bigints@^1.0.2":
   "integrity" "sha512-tSvCKtBr9lkF0Ex0aQiP9N+OpV4zi2r/Nee5VkRDbaqv35RLYMzbwQfFSZZH0kR+Rd6302UJZ2p/bJCEoR3VoQ=="
@@ -5051,6 +5061,11 @@
     "loose-envify" "^1.1.0"
     "scheduler" "^0.23.0"
 
+"react-hook-form@^7.0.0", "react-hook-form@^7.34.2":
+  "integrity" "sha512-1lYWbEqr0GW7HHUjMScXMidGvV0BE2RJV3ap2BL7G0EJirkqpccTaawbsvBO8GZaB3JjCeFBEbnEWI1P8ZoLRQ=="
+  "resolved" "https://registry.npmjs.org/react-hook-form/-/react-hook-form-7.34.2.tgz"
+  "version" "7.34.2"
+
 "react-is@^16.13.1", "react-is@^16.7.0":
   "integrity" "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ=="
   "resolved" "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz"
@@ -5065,7 +5080,7 @@
     "broadcast-channel" "^3.4.1"
     "match-sorter" "^6.0.2"
 
-"react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^17.0.2 || ^18.0.0-0", "react@^18.2.0", "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", "react@18.2.0":
+"react@^16.8.0 || ^17 || ^18", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^17.0.2 || ^18.0.0-0", "react@^18.2.0", "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", "react@18.2.0":
   "integrity" "sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ=="
   "resolved" "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
   "version" "18.2.0"
@@ -6204,3 +6219,8 @@
   "integrity" "sha512-PQ2PC7R9rslx84ndNBZB/Dkv8V8fZEpk83RLgXtYd0fwUgEjseMn1Dgajh2x6S8QbZAFa9p2qVCEuYZNgve0dQ=="
   "resolved" "https://registry.npmjs.org/zen-observable/-/zen-observable-0.8.15.tgz"
   "version" "0.8.15"
+
+"zod@^3.18.0":
+  "integrity" "sha512-gwTm8RfUCe8l9rDwN5r2A17DkAa8Ez4Yl4yXqc5VqeGaXaJahzYYXbTwvhroZi0SNBqTwh/bKm2N0mpCzuw4bA=="
+  "resolved" "https://registry.npmjs.org/zod/-/zod-3.18.0.tgz"
+  "version" "3.18.0"

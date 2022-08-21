@@ -12,3 +12,13 @@ generates:
       - "typescript"
       - "typescript-operations"
       - "typescript-react-apollo"
+  # ./graphql/generated/validation.ts:
+  #   config:
+  #     typesPrefix: Z
+  #     withObjectType: true
+  #     importFrom: ./graphql/generated/index.tsx # path for generated ts code
+  #     schema: zod
+  #   plugins:
+  #     - "typescript"
+  #     - "typescript-operations"
+  #     - "typescript-validation-schema"

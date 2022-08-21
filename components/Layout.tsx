@@ -1,6 +1,6 @@
 import { useColorMode } from "../Hooks/useColorMode";
 
-export default function Layout({ children }) {
+export default function Layout({ children }: any) {
   const { colorMode } = useColorMode();
   return (
     <div className={colorMode}>
