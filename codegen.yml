@@ -4,10 +4,11 @@ documents: "./graphql/**/*.graphql"
 
 generates:
   ./graphql/generated/index.tsx:
+    config:
+      reactApolloVersion: 3
+      withHooks: true
+      withMutationOptionsType: true
     plugins:
       - "typescript"
       - "typescript-operations"
       - "typescript-react-apollo"
-    config:
-      withHooks: true
-      fetcher: graphql-request

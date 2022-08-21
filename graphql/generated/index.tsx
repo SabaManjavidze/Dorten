@@ -62,7 +62,6 @@ export type MutationUpdatePostArgs = {
 
 export type MutationUpdateUserArgs = {
   options: UserUpdateInput;
-  user_id: Scalars['ID'];
 };
 
 export type Post = {
@@ -85,7 +84,7 @@ export type PostInput = {
 export type Query = {
   __typename?: 'Query';
   getPost: Array<Post>;
-  me?: Maybe<User>;
+  me?: Maybe<UserResponse>;
 };
 
 
@@ -100,7 +99,6 @@ export type User = {
   gender?: Maybe<Scalars['String']>;
   picture?: Maybe<Scalars['String']>;
   posts?: Maybe<Array<Post>>;
-  user_id: Scalars['String'];
   username: Scalars['String'];
 };
 
@@ -121,7 +119,7 @@ export type UserResponse = {
 
 export type UserUpdateInput = {
   age?: InputMaybe<Scalars['Int']>;
-  email: Scalars['String'];
+  email?: InputMaybe<Scalars['String']>;
   gender?: InputMaybe<Scalars['String']>;
   picture?: InputMaybe<Scalars['String']>;
   username?: InputMaybe<Scalars['String']>;
@@ -132,19 +130,18 @@ export type RegisterMutationVariables = Exact<{
 }>;
 
 
-export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', user?: { __typename?: 'User', user_id: string, username: string, email: string, picture?: string | null, gender?: string | null, age: number } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', user?: { __typename?: 'User', username: string, email: string, picture?: string | null, gender?: string | null, age: number } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', username: string, email: string, age: number, gender?: string | null, picture?: string | null, posts?: Array<{ __typename?: 'Post', title: string }> | null } | null };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'UserResponse', user?: { __typename?: 'User', username: string, email: string, age: number, gender?: string | null, picture?: string | null, posts?: Array<{ __typename?: 'Post', post_id: string, title: string }> | null } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } | null };
 
 
 export const RegisterDocument = gql`
     mutation Register($options: UserCreateInput!) {
   register(options: $options) {
     user {
-      user_id
       username
       email
       picture
@@ -187,13 +184,20 @@ export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutatio
 export const MeDocument = gql`
     query Me {
   me {
-    username
-    email
-    age
-    gender
-    picture
-    posts {
-      title
+    user {
+      username
+      email
+      age
+      gender
+      picture
+      posts {
+        post_id
+        title
+      }
+    }
+    errors {
+      field
+      message
     }
   }
 }

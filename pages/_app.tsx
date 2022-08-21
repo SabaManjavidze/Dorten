@@ -2,6 +2,7 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import type { AppProps } from "next/app";
 import { useEffect } from "react";
 import Layout from "../components/Layout";
+import { AuthProvider } from "../Hooks/useAuth";
 import { ColorModeProvider, useColorMode } from "../Hooks/useColorMode";
 import "../styles/globals.css";
 
@@ -14,9 +15,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ApolloProvider client={client}>
       <ColorModeProvider>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <AuthProvider>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </AuthProvider>
       </ColorModeProvider>
     </ApolloProvider>
   );

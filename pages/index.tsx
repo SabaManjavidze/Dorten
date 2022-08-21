@@ -1,11 +1,16 @@
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useMeQuery } from "../graphql/generated";
+import { useAuth } from "../Hooks/useAuth";
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const { data, loading } = useMeQuery();
-  if (loading) return <div>loading...</div>;
+  const { user, loading, errors } = useAuth();
+  if (errors) {
+    console.log(errors);
+    return <p>{errors.message}</p>;
+  }
+  if (loading) return <p>Loading...</p>;
   return (
     <div>
       <button
@@ -17,14 +22,14 @@ const Home: NextPage = () => {
         Login
       </button>
       <div className="text-left">
-        <p>Username : {data?.me?.username}</p>
-        <p>email : {data?.me?.email}</p>
-        <p>gender : {data?.me?.gender}</p>
-        <p>age : {data?.me?.age}</p>
+        <p>Username : {user.username}</p>
+        <p>email : {user.email}</p>
+        <p>gender : {user.gender}</p>
+        <p>age : {user.age}</p>
         <p>
           picture :{" "}
-          {data?.me?.picture ? (
-            <img src={data.me.picture} width="80px" />
+          {user.picture ? (
+            <img src={user.picture} width="80px" />
           ) : (
             <img
               src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"

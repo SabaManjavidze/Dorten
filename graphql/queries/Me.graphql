@@ -1,12 +1,19 @@
 query Me {
   me {
-    username
-    email
-    age
-    gender
-    picture
-    posts {
-      title
+    user {
+      username
+      email
+      age
+      gender
+      picture
+      posts {
+        post_id
+        title
+      }
+    }
+    errors {
+      field
+      message
     }
   }
 }

@@ -61,7 +61,7 @@ class UserUpdateInput {
   age?: number;
   @Field({ nullable: true })
   gender?: string;
-  @Field()
+  @Field({ nullable: true })
   email?: string;
 }
 
@@ -82,7 +82,11 @@ export default class UserResolver {
   ) {
     try {
       const user_id = req.session.userId;
-      await User.update({ user_id }, { ...options });
+      const curr_user = await User.findOne({ where: { user_id } });
+      if (!curr_user)
+        return { errors: [{ field: "general", message: "user not found" }] };
+      const updates = Object.assign(curr_user, options);
+      await User.update({ user_id }, { ...updates });
       return true;
     } catch (error) {
       return false;
@@ -94,14 +98,9 @@ export default class UserResolver {
     @Arg("password") password: string,
     @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
-    // const errors = validateRegister(options);
-    // if (errors) {
-    //   return { errors };
-    // }
-
-    let user: User;
+    let user: User | null = null;
     try {
-      const result: User = await User.findOneBy({
+      const result: User | null = await User.findOneBy({
         email,
       });
       if (!result) {
@@ -126,9 +125,11 @@ export default class UserResolver {
         };
       }
       user = result;
-    } catch (err) {
+    } catch (err: any) {
       console.log(err.message);
     }
+    if (!user)
+      return { errors: [{ field: "email", message: "email not found" }] };
     req.session.userId = user.user_id;
 
     return { user };
@@ -138,14 +139,24 @@ export default class UserResolver {
     @Arg("options") options: UserCreateInput,
     @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
-    let user: User;
+    let user: User | null = null;
     try {
+      if (!options.email.includes("@")) {
+        return {
+          errors: [
+            {
+              field: "email",
+              message: "email is not valid",
+            },
+          ],
+        };
+      }
       const result = User.create({
         ...options,
       });
       await result.save();
       user = result;
-    } catch (err) {
+    } catch (err: any) {
       if (err.code === "23505") {
         return {
           errors: [
@@ -158,7 +169,10 @@ export default class UserResolver {
       }
       console.log(err.message);
     }
-
+    if (!user)
+      return {
+        errors: [{ field: "general", message: "something went wrong" }],
+      };
     req.session.userId = user.user_id;
 
     return { user };
@@ -172,10 +186,20 @@ export default class UserResolver {
     req.session.destroy();
     return true;
   }
-  @Query(() => User, { nullable: true })
+  @Query(() => UserResponse, { nullable: true })
   @UseMiddleware(isAuth)
-  async me(@Ctx() { req }: MyContext): Promise<User> {
+  async me(@Ctx() { req }: MyContext): Promise<UserResponse> {
     const user = await User.findOne({ where: { user_id: req.session.userId } });
-    return user;
+    if (!user) {
+      return {
+        errors: [
+          {
+            field: "user",
+            message: "user not found",
+          },
+        ],
+      };
+    }
+    return { user };
   }
 }

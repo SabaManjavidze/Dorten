@@ -1,11 +1,22 @@
-import * as React from "react";
+import React, { useState } from "react";
 import { Copyright } from "../components/Copyright";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { UserCreateInput, useRegisterMutation } from "../graphql/generated";
+import {
+  FieldError,
+  RegisterDocument,
+  UserCreateInput,
+  useRegisterMutation,
+} from "../graphql/generated";
+import { RegisterMutationOptions } from "../graphql/generated";
+import { useAuth } from "../Hooks/useAuth";
+import { ApolloError } from "@apollo/client";
+import { GraphQLError } from "graphql";
 
 const Register: NextPage = () => {
   const router = useRouter();
+  const { setUser } = useAuth();
+  const [errors, setErrors] = useState<FieldError>(null);
   const [register] = useRegisterMutation();
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -13,13 +24,17 @@ const Register: NextPage = () => {
     const variables: UserCreateInput = {
       email: data.get("email").toString(),
       password: data.get("password").toString(),
-      age: parseInt(data.get("age").toString()) || 0,
+      age: parseInt(data.get("age").toString()) || 13,
       gender: data.get("gender").toString().toUpperCase(),
       username: data.get("username").toString(),
     };
     const user = await register({
       variables: { options: variables },
     });
+    if (user.data.register?.errors?.length > 0) {
+      setErrors(user.data.register?.errors[0]);
+    }
+    setUser(user.data.register.user);
   };
 
   return (
@@ -69,6 +84,12 @@ const Register: NextPage = () => {
                 </button>
               </div>
 
+              {errors ? (
+                <div className="flex items-center py-4 text-red-400">
+                  <div className="h-[5px] w-[5px] rounded bg-red-400"></div>
+                  <p className="ml-5">{errors.message}</p>
+                </div>
+              ) : null}
               <div
                 className="my-4 flex items-center before:mt-0.5 before:flex-1 before:border-t 
               before:border-gray-300 after:mt-0.5 after:flex-1 after:border-t 

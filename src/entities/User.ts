@@ -19,12 +19,12 @@ export const GENDERS = {
 @ObjectType()
 @Entity()
 export class User extends BaseEntity {
-  @Field()
+  // @Field()
   @PrimaryColumn()
   user_id: string;
 
   @Field()
-  @Column()
+  @Column({ unique: true })
   username: string;
 
   @Field()

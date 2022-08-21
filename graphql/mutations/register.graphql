@@ -1,7 +1,6 @@
 mutation Register($options: UserCreateInput!) {
   register(options: $options) {
     user {
-      user_id
       username
       email
       picture
