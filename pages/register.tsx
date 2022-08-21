@@ -2,15 +2,23 @@ import * as React from "react";
 import { Copyright } from "../components/Copyright";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
+import { UserCreateInput, useRegisterMutation } from "../graphql/generated";
 
 const Register: NextPage = () => {
   const router = useRouter();
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [register] = useRegisterMutation();
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
+    const variables: UserCreateInput = {
+      email: data.get("email").toString(),
+      password: data.get("password").toString(),
+      age: parseInt(data.get("age").toString()) || 0,
+      gender: data.get("gender").toString().toUpperCase(),
+      username: data.get("username").toString(),
+    };
+    const user = await register({
+      variables: { options: variables },
     });
   };
 
@@ -61,7 +69,11 @@ const Register: NextPage = () => {
                 </button>
               </div>
 
-              <div className="my-4 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-gray-300 after:mt-0.5 after:flex-1 after:border-t after:border-gray-300">
+              <div
+                className="my-4 flex items-center before:mt-0.5 before:flex-1 before:border-t 
+              before:border-gray-300 after:mt-0.5 after:flex-1 after:border-t 
+              after:border-gray-300"
+              >
                 <p className="mx-4 mb-0 text-center font-semibold">Or</p>
               </div>
 
@@ -84,7 +96,10 @@ const Register: NextPage = () => {
                   Gender
                 </label>
                 <div className="relative">
-                  <select className="text-input appearance-none rounded-t-xl focus:rounded-b-none">
+                  <select
+                    name="gender"
+                    className="text-input appearance-none rounded-t-xl focus:rounded-b-none"
+                  >
                     <option>Male</option>
                     <option>Female</option>
                     <option>None</option>

@@ -54,15 +54,15 @@ class UserCreateInput {
 @InputType()
 class UserUpdateInput {
   @Field({ nullable: true })
-  username: string;
+  username?: string;
   @Field({ nullable: true })
-  picture: string;
+  picture?: string;
   @Field(() => Int, { nullable: true })
-  age: number;
+  age?: number;
   @Field({ nullable: true })
-  gender: string;
+  gender?: string;
   @Field()
-  email: string;
+  email?: string;
 }
 
 @Resolver(User)
@@ -77,10 +77,11 @@ export default class UserResolver {
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async updateUser(
-    @Arg("user_id", () => ID) user_id: string,
+    @Ctx() { req }: MyContext,
     @Arg("options", () => UserUpdateInput) options: UserUpdateInput
   ) {
     try {
+      const user_id = req.session.userId;
       await User.update({ user_id }, { ...options });
       return true;
     } catch (error) {
