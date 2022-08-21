@@ -11,6 +11,7 @@ import {
   registerSchema,
   registerSchemaType,
 } from "../lib/zod/registerValidation";
+import Image from "next/image";
 
 const Register: NextPage = () => {
   const router = useRouter();
@@ -82,9 +83,10 @@ const Register: NextPage = () => {
                 className="mx-1 inline-block rounded-full bg-blue-800 p-3 text-xs font-medium leading-tight shadow-md transition duration-300 ease-in-out hover:bg-blue-700 hover:shadow-lg "
               >
                 {/* Google Logo */}
-                <img
+                <Image
                   src="https://cdn.cdnlogo.com/logos/g/35/google-icon.svg"
                   className="h-4 w-4 object-contain"
+                  alt="google logo"
                 />
               </button>
             </div>

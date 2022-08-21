@@ -9,6 +9,7 @@ import { useAuth } from "../Hooks/useAuth";
 import { loginSchemaType, loginSchema } from "../lib/zod/loginValidation";
 import { FieldError, useLoginMutation } from "../graphql/generated";
 import InvalidText from "../components/InvalidText";
+import Image from "next/image";
 
 const Login: NextPage = () => {
   const router = useRouter();
@@ -79,9 +80,10 @@ const Login: NextPage = () => {
                   hover:bg-blue-700 hover:shadow-lg "
               >
                 {/* Google Logo */}
-                <img
+                <Image
                   src="https://cdn.cdnlogo.com/logos/g/35/google-icon.svg"
                   className="h-4 w-4 object-contain"
+                  alt="google logo"
                 />
               </button>
             </div>
@@ -134,7 +136,7 @@ const Login: NextPage = () => {
                 Forgot password?
               </a>
               <p className="px-3 text-sm font-semibold">
-                Don't have an account?{" "}
+                {"Don't have an account?"}
                 <a
                   href="register"
                   onClick={(e) => {
