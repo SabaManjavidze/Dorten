@@ -5,11 +5,11 @@ import { useRouter } from "next/router";
 import { useColorMode } from "../Hooks/useColorMode";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useAuth } from "../Hooks/useAuth";
 import { loginSchemaType, loginSchema } from "../lib/zod/loginValidation";
 import { FieldError, useLoginMutation } from "../graphql/generated";
 import InvalidText from "../components/InvalidText";
 import Image from "next/image";
+import { useAuth } from "../Hooks/useAuth";
 
 const Login: NextPage = () => {
   const router = useRouter();
@@ -26,7 +26,6 @@ const Login: NextPage = () => {
   });
   const onSubmit = async (data: loginSchemaType) => {
     if (!data) return;
-    // console.log(data);
     const user = await login({
       variables: { ...data },
     });

@@ -3,8 +3,7 @@ import { Copyright } from "../components/Copyright";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { FieldError, useRegisterMutation } from "../graphql/generated";
-import { useAuth } from "../Hooks/useAuth";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InvalidText from "../components/InvalidText";
 import {
@@ -12,6 +11,7 @@ import {
   registerSchemaType,
 } from "../lib/zod/registerValidation";
 import Image from "next/image";
+import { useAuth } from "../Hooks/useAuth";
 
 const Register: NextPage = () => {
   const router = useRouter();
@@ -28,7 +28,6 @@ const Register: NextPage = () => {
   });
   const onSubmit = async (data: registerSchemaType) => {
     if (!data) return;
-    // console.log(data);
     const user = await register({
       variables: { options: { ...data, gender: data.gender.toUpperCase() } },
     });
@@ -99,7 +98,7 @@ const Register: NextPage = () => {
             >
               <p className="mx-4 text-center font-semibold">Or</p>
             </div>
-            <form onSubmit={handleSubmit((data) => onSubmit(data))}>
+            <form onSubmit={handleSubmit(onSubmit)}>
               {errors ? (
                 <div className="flex items-center py-4 text-red-400">
                   <div className="h-[5px] w-[5px] rounded bg-red-400"></div>

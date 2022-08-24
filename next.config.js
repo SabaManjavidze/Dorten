@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ["cdn.cdnlogo.com"],
+    domains: ["cdn.cdnlogo.com", "cdn.pixabay.com"],
   },
   webpack: (config) => {
     if (!config.experiments) {
