@@ -85,7 +85,8 @@ const Register: NextPage = () => {
                 {/* Google Logo */}
                 <Image
                   src="https://cdn.cdnlogo.com/logos/g/35/google-icon.svg"
-                  className="h-4 w-4 object-contain"
+                  width={16}
+                  height={16}
                   alt="google logo"
                 />
               </button>
@@ -126,13 +127,13 @@ const Register: NextPage = () => {
                 </div>
               </div>
               {/* -------- Gender ------------- */}
-              <div className="w-full pb-5 md:w-1/3">
-                <label className="mb-2 block text-xs font-bold uppercase tracking-wide ">
+              <div className="w-full py-3">
+                <label className="mb-2 block w-full text-xs font-bold uppercase tracking-wide ">
                   Gender
                 </label>
-                <div className="relative">
+                <div className="relative w-full">
                   <select
-                    className="text-input appearance-none rounded-t-xl focus:rounded-b-none"
+                    className="text-input w-full appearance-none rounded-t-xl focus:rounded-b-none"
                     {...registerForm("gender")}
                   >
                     <option>None</option>

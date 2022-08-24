@@ -13,12 +13,11 @@ import {
   Root,
   UseMiddleware,
 } from "type-graphql";
-import { AppDataSource } from "../DBConnection";
 import { User } from "../entities/User";
-import { EntityManager } from "typeorm";
 import type { MyContext } from "../utils/MyContext";
 import { isAuth } from "../middleware/isAuth";
 import { HttpQueryError } from "apollo-server-core";
+import { dataSource } from "../DBConnection";
 
 @InputType()
 class PostInput {
@@ -32,10 +31,7 @@ class PostInput {
 
 @Resolver(Post)
 export default class PostResolver {
-  connection: EntityManager = null;
-  constructor() {
-    this.connection = AppDataSource.manager;
-  }
+  postRepository = dataSource.getRepository(Post);
   @FieldResolver(() => User)
   creator(@Root() post: Post, @Ctx() { userLoader }: MyContext) {
     return userLoader.load(post.creator_id);
@@ -46,12 +42,12 @@ export default class PostResolver {
     @Arg("post_id", () => Int, { nullable: true }) post_id: string
   ) {
     if (post_id) {
-      const post = await this.connection.find(Post, {
+      const post = await this.postRepository.find({
         where: { post_id },
       });
       return post;
     }
-    const posts = await Post.find();
+    const posts = await this.postRepository.find();
     return posts;
   }
 
@@ -63,7 +59,7 @@ export default class PostResolver {
     @Arg("options", () => PostInput) options: PostInput
   ) {
     try {
-      const post = this.connection.create(Post, {
+      const post = this.postRepository.create({
         creator_id: req.session.userId,
         ...options,
       });
@@ -84,11 +80,11 @@ export default class PostResolver {
     @Ctx() { req }: MyContext
   ) {
     try {
-      const post = await Post.findOne({ where: { post_id } });
-      if (post.creator_id != req.session.userId) {
+      const post = await this.postRepository.findOne({ where: { post_id } });
+      if (post?.creator_id != req.session.userId) {
         throw new HttpQueryError(403, "Forbidden");
       }
-      await Post.update({ post_id }, { ...options });
+      await this.postRepository.update({ post_id }, { ...options });
       return true;
     } catch (error) {
       return false;
@@ -99,7 +95,7 @@ export default class PostResolver {
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async removePost(@Arg("post_id") post_id: string) {
-    const post = await Post.findOne({ where: { post_id } });
+    const post = await this.postRepository.findOne({ where: { post_id } });
     if (!post) return false;
     await post.remove();
     return true;

@@ -1,8 +1,7 @@
 import type { NextPage } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
-import { useLogoutMutation, useMeQuery } from "../graphql/generated";
+import { useLogoutMutation } from "../graphql/generated";
 import { useAuth } from "../Hooks/useAuth";
 
 const Home: NextPage = () => {
@@ -44,13 +43,17 @@ const Home: NextPage = () => {
             {user.picture ? (
               <Image
                 src={user.picture}
-                width="80px"
+                width={80}
+                height={80}
                 alt="User's profile picture"
               />
             ) : (
               <Image
-                src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"
-                width="80px"
+                src={
+                  "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"
+                }
+                width={80}
+                height={80}
                 alt="emtpy profile"
               />
             )}

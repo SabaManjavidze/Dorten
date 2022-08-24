@@ -18,7 +18,7 @@ const Login: NextPage = () => {
   const [login, { loading }] = useLoginMutation();
 
   const {
-    register: registerForm,
+    register: loginForm,
     handleSubmit,
     formState,
   } = useForm<loginSchemaType>({
@@ -82,7 +82,8 @@ const Login: NextPage = () => {
                 {/* Google Logo */}
                 <Image
                   src="https://cdn.cdnlogo.com/logos/g/35/google-icon.svg"
-                  className="h-4 w-4 object-contain"
+                  width={16}
+                  height={16}
                   alt="google logo"
                 />
               </button>
@@ -104,7 +105,7 @@ const Login: NextPage = () => {
                   className="text-input"
                   placeholder="Email address"
                   // type="email"
-                  {...registerForm("email")}
+                  {...loginForm("email")}
                 />
               </div>
 
@@ -114,7 +115,7 @@ const Login: NextPage = () => {
                   className="text-input"
                   placeholder="Password"
                   type="password"
-                  {...registerForm("password")}
+                  {...loginForm("password")}
                 />
               </div>
 
@@ -136,7 +137,7 @@ const Login: NextPage = () => {
                 Forgot password?
               </a>
               <p className="px-3 text-sm font-semibold">
-                {"Don't have an account?"}
+                {"Don't have an account? "}
                 <a
                   href="register"
                   onClick={(e) => {

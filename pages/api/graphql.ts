@@ -48,6 +48,7 @@ const server = new ApolloServer({
     userLoader: createUserLoader(),
     postLoader: createPostLoader(),
   }),
+  cache: process.env.NODE_ENV === "production" ? "bounded" : undefined,
   plugins: [
     process.env.NODE_ENV === "production"
       ? ApolloServerPluginLandingPageProductionDefault()

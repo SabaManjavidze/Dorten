@@ -9,7 +9,7 @@ const ColorModeContext = createContext<ColorContextType>({
   toggleColorMode: () => {},
 });
 export const useColorMode = () => useContext(ColorModeContext);
-export const ColorModeProvider = ({ children }) => {
+export const ColorModeProvider = ({ children }: any) => {
   type themeType = "light" | "dark";
   const [colorMode, setColorMode] = useState<themeType>("light");
   const toggleColorMode = () => {

@@ -15,10 +15,10 @@ import {
   Root,
   UseMiddleware,
 } from "type-graphql";
-import { AppDataSource } from "../DBConnection";
 import type { MyContext } from "../utils/MyContext";
 import * as argon2 from "argon2";
 import { isAuth } from "../middleware/isAuth";
+import { dataSource } from "../DBConnection";
 
 @ObjectType()
 class FieldError {
@@ -67,6 +67,7 @@ class UserUpdateInput {
 
 @Resolver(User)
 export default class UserResolver {
+  userRepository = dataSource.getRepository(User);
   @FieldResolver({ nullable: true })
   async posts(@Root() user: User, @Ctx() { postLoader }: MyContext) {
     const user_posts = await postLoader.load(user.user_id);
@@ -82,11 +83,13 @@ export default class UserResolver {
   ) {
     try {
       const user_id = req.session.userId;
-      const curr_user = await User.findOne({ where: { user_id } });
+      const curr_user = await this.userRepository.findOne({
+        where: { user_id },
+      });
       if (!curr_user)
         return { errors: [{ field: "general", message: "user not found" }] };
       const updates = Object.assign(curr_user, options);
-      await User.update({ user_id }, { ...updates });
+      await this.userRepository.update({ user_id }, { ...updates });
       return true;
     } catch (error) {
       return false;
@@ -100,7 +103,7 @@ export default class UserResolver {
   ): Promise<UserResponse> {
     let user: User | null = null;
     try {
-      const result: User | null = await User.findOneBy({
+      const result: User | null = await this.userRepository.findOneBy({
         email,
       });
       if (!result) {
@@ -134,6 +137,7 @@ export default class UserResolver {
 
     return { user };
   }
+
   @Mutation(() => UserResponse)
   async register(
     @Arg("options") options: UserCreateInput,
@@ -151,7 +155,7 @@ export default class UserResolver {
           ],
         };
       }
-      const result = User.create({
+      const result = this.userRepository.create({
         ...options,
       });
       await result.save();
@@ -189,7 +193,9 @@ export default class UserResolver {
   @Query(() => UserResponse, { nullable: true })
   @UseMiddleware(isAuth)
   async me(@Ctx() { req }: MyContext): Promise<UserResponse> {
-    const user = await User.findOne({ where: { user_id: req.session.userId } });
+    const user = await this.userRepository.findOne({
+      where: { user_id: req.session.userId },
+    });
     if (!user) {
       return {
         errors: [
