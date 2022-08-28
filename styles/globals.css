@@ -6,7 +6,15 @@
   margin: 0;
 } */
 .gradient-text {
-  @apply inline bg-gradient-to-r from-purple-500 via-pink-400 to-purple-500 bg-clip-text tracking-tight text-transparent;
+  @apply inline bg-gradient-to-r from-purple-500 via-pink-400 
+  to-purple-500 bg-clip-text tracking-tight text-transparent;
+}
+.post-btn-pink {
+  @apply rounded border-2 border-pink-500 py-1 duration-200 ease-in-out hover:bg-pink-400/20;
+}
+.post-btn-blue {
+  @apply rounded border-2 border-blue-500 px-3 py-1
+      text-blue-200 duration-200 ease-in-out hover:bg-blue-400/30;
 }
 .text-input {
   @apply block w-full rounded border border-transparent
@@ -14,4 +22,8 @@
                   px-4 py-2 text-xl font-normal text-gray-700 transition 
                   ease-in-out focus:border-pink-500 focus:outline-none 
                   dark:bg-secondary dark:text-slate-100;
+}
+@font-face {
+  font-family: "Virgil";
+  src: url("../public/Virgil.woff2");
 }

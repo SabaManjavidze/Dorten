@@ -42,7 +42,7 @@ export class Post extends BaseEntity {
 
   @Field(() => String)
   @CreateDateColumn()
-  created_at: Date;
+  created_at: string;
 
   @BeforeInsert()
   async addPostId() {

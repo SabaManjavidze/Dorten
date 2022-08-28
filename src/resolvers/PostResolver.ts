@@ -38,9 +38,7 @@ export default class PostResolver {
   }
   @Query(() => [Post])
   @UseMiddleware(isAuth)
-  async getPost(
-    @Arg("post_id", () => Int, { nullable: true }) post_id: string
-  ) {
+  async getPost(@Arg("post_id", { nullable: true }) post_id: string) {
     if (post_id) {
       const post = await this.postRepository.find({
         where: { post_id },
@@ -52,22 +50,22 @@ export default class PostResolver {
   }
 
   // INSERT INTO Post
-  @Mutation(() => Boolean)
+  @Mutation(() => Post)
   @UseMiddleware(isAuth)
   async createPost(
     @Ctx() { req }: MyContext,
     @Arg("options", () => PostInput) options: PostInput
   ) {
+    if (!options.title) throw new HttpQueryError(400, "title not provided");
     try {
       const post = this.postRepository.create({
         creator_id: req.session.userId,
         ...options,
       });
-      post.save();
-      return true;
+      await post.save();
+      return post;
     } catch (error) {
-      console.log(error);
-      return false;
+      throw new HttpQueryError(400, "Bad Request");
     }
   }
 

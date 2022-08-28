@@ -8,7 +8,10 @@ import "../styles/globals.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const client = new ApolloClient({
-    uri: "http://localhost:3000/api/graphql",
+    uri:
+      process.env.NODE_ENV == "production"
+        ? "https://dorten.vercel.app/api/graphql"
+        : "http://localhost:3000/api/graphql",
     cache: new InMemoryCache(),
   });
 

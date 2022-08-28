@@ -12,7 +12,7 @@ module.exports = {
         background: "#0f172a",
       },
       fontFamily: {
-        sans: ["Proxima Nova", "cursive"],
+        sans: ["Virgil"],
       },
     },
   },

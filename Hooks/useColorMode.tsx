@@ -19,10 +19,11 @@ export const ColorModeProvider = ({ children }: any) => {
   };
   useEffect(() => {
     const last_theme = localStorage.theme as themeType;
-    console.log(last_theme, localStorage.getItem("theme"));
-
     if (typeof last_theme === "string" && last_theme !== colorMode) {
       setColorMode(last_theme);
+    } else if (!last_theme) {
+      localStorage.theme = "dark";
+      setColorMode("dark");
     }
   }, []);
   return (
