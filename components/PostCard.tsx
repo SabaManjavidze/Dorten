@@ -6,12 +6,12 @@ import { NOT_FOUND_IMG } from "../lib/variables";
 export default function PostCard({ post }: { post: Post }) {
   return (
     <div
-      className="mx-4 flex rounded-lg bg-white
-    shadow-lg dark:bg-secondary md:mx-auto "
+      className="flex w-full rounded-lg
+    bg-white shadow-lg dark:bg-secondary md:mx-auto"
     >
-      <div className="flex items-start px-4 py-6">
-        <div className="">
-          <div className="flex items-center justify-between">
+      <div className="flex w-full items-start px-4 py-6">
+        <div className="justiy-center flex w-full flex-col items-center">
+          <div className="flex w-full items-center justify-between">
             <div className="flex items-center">
               <Image
                 className="rounded-full object-cover shadow"
@@ -29,17 +29,19 @@ export default function PostCard({ post }: { post: Post }) {
               {new Date(parseInt(post.created_at)).getMinutes()}
             </small>
           </div>
-          <p className="text-gray-700 dark:text-gray-200">{post.title}</p>
-          <p className="mt-3 text-sm text-gray-700 dark:text-gray-200">
+          <p className="mt-4 w-full text-left text-gray-700 dark:text-gray-200">
+            {post.title}
+          </p>
+          <p className="mt-3 pb-5 text-sm text-gray-700 dark:text-gray-200">
             {post.description}
           </p>
-          <div className="w-full">
+          <div className="relative flex h-64 w-full justify-center py-12">
             <Image
-              //   className="mr-4 rounded-full object-cover shadow"
+              className="w-full rounded object-contain shadow"
               src={post.picture || NOT_FOUND_IMG}
               alt="avatar"
-              width="100%"
-              height="100px"
+              objectFit="cover"
+              layout="fill"
             />
           </div>
           <div className="mt-4 flex items-center">

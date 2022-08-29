@@ -12,6 +12,7 @@ import PostCard from "../components/PostCard";
 import { BsFillImageFill as ImgIcon } from "react-icons/bs";
 import { AiOutlineLink as LinkIcon } from "react-icons/ai";
 import {
+  FieldError,
   Post,
   PostInput,
   useCreatePostMutation,
@@ -30,6 +31,7 @@ const Home: NextPage = () => {
   const { user, setUser } = useAuth();
   const [postPicture, setPostPicture] = useState<any>();
   const [posts, setPosts] = useState<Post[]>();
+  const [errors, setErros] = useState<FieldError[] | null>(null);
   const [meQuery, { loading, data, error }] = useMeLazyQuery();
   const [
     createPost,
@@ -67,43 +69,48 @@ const Home: NextPage = () => {
     fetchMe();
   }, [fetchMe]);
 
-  if (loading) return <p>Loading...</p>;
-
+  const handleCreatePostSubmit = async (e: any) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const title = formData.get("title")?.toString();
+    if (!title) {
+      setErros([{ field: "title", message: "title cannot be emtpy" }]);
+      return;
+    }
+    const data: PostInput = {
+      title,
+      description: formData.get("description")?.toString(),
+      picture: postPicture?.file || null,
+    };
+    if (errors) {
+      setErros(null);
+    }
+    if (posts && user) {
+      setPosts([
+        {
+          ...(data as Post),
+          created_at: new Date().getTime().toString(),
+          creator: {
+            username: user.username,
+            picture: user.picture,
+          } as User,
+        },
+        ...posts,
+      ]);
+    }
+    await createPost({ variables: { options: data } });
+  };
   return (
     <div className="w-full p-5">
       <section className="mb-10 mt-5 flex flex-col items-center justify-center px-4">
         <h2 className="w-full text-left text-lg text-gray-200">
           Create a post
         </h2>
-        <form
-          className="w-4/5"
-          onSubmit={async (e: any) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const title = formData.get("title")?.toString();
-            if (!title) return;
-            const data: PostInput = {
-              title,
-              description: formData.get("description")?.toString(),
-              picture: postPicture?.file || null,
-            };
-            if (posts && user) {
-              setPosts([
-                {
-                  ...(data as Post),
-                  created_at: new Date().getTime().toString(),
-                  creator: {
-                    username: user.username,
-                    picture: user.picture,
-                  } as User,
-                },
-                ...posts,
-              ]);
-            }
-            await createPost({ variables: { options: data } });
-          }}
-        >
+        <form className="w-4/5" onSubmit={handleCreatePostSubmit}>
           <div className="h-15 my-5">
+            {errors && errors.length > 0 && errors[0].field == "title" ? (
+              <h3 className="text-red-500 ">{errors[0].message}</h3>
+            ) : null}
             <input
               type="text"
               placeholder="title"
@@ -126,6 +133,7 @@ const Home: NextPage = () => {
             <div className="flex h-full items-center justify-start">
               <button
                 className="post-btn-blue group mx-2 h-full"
+                type="button"
                 onClick={() => {
                   if (!inputRef?.current) return;
                   inputRef?.current.click();
@@ -147,7 +155,10 @@ const Home: NextPage = () => {
                   setPostPicture({ file: converted + "", name: file.name });
                 }}
               />
-              <button className="post-btn-blue h-full hover:text-white">
+              <button
+                type="button"
+                className="post-btn-blue h-full hover:text-white"
+              >
                 attach a link
               </button>
             </div>
@@ -170,7 +181,7 @@ const Home: NextPage = () => {
           className="absolute right-1/2 h-[2px] w-3/4 
         translate-x-1/2 rounded bg-pink-500"
         ></div>
-        <ul>
+        <ul className="flex flex-col items-center">
           {!postsLoading ? (
             postsError ? (
               <span>Something went wrong</span>
@@ -178,7 +189,7 @@ const Home: NextPage = () => {
               posts?.map((post) => (
                 <li
                   key={post.post_id}
-                  className="py-5 px-20 first-of-type:border-t-0"
+                  className="w-4/5 py-5 first-of-type:border-t-0"
                 >
                   <PostCard post={post as Post} />
                 </li>
