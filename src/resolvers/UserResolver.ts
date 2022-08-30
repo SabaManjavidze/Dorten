@@ -73,7 +73,12 @@ export default class UserResolver {
     const user_posts = await postLoader.load(user.user_id);
     return user_posts;
   }
-
+  @Query(() => User!, { nullable: true })
+  async getUserByUsername(@Arg("username") username: string) {
+    const user = await this.userRepository.find({ where: { username } });
+    if (user.length > 0) return user[0];
+    else return null;
+  }
   // UPDATE USER
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
