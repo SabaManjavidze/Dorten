@@ -1,4 +1,5 @@
 import { ApolloError } from "@apollo/client";
+import { useRouter } from "next/router";
 import {
   createContext,
   useState,
@@ -20,10 +21,12 @@ export const AuthProvider = ({ children }: any) => {
   const [user, setUser] = useState<User | null>(null);
   const [userLoading, setUserLoading] = useState(true);
   const { loading, error, data } = useMeQuery();
+  const router = useRouter();
 
   useEffect(() => {
     if (!loading) {
       if (error || data?.me?.errors) {
+        router.replace(`/login?next=${router.pathname}`);
         setUserLoading(false);
         return;
       }

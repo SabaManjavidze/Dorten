@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React, { useState } from "react";
-import { useAuth } from "../Hooks/useAuth";
-import { NOT_FOUND_IMG } from "../lib/variables";
+import { useAuth } from "../../Hooks/useAuth";
+import { NOT_FOUND_IMG } from "../../lib/variables";
 
 export default function ProfileCorner() {
   const { userLoading, user } = useAuth();
@@ -28,15 +28,15 @@ export default function ProfileCorner() {
           </button>
           <div
             className={`absolute right-1/3 top-16 translate-x-1/2 rounded
-            border-[1px] border-pink-500 duration-200 ease-in-out ${
+            border-[1.8px] border-pink-500 shadow-lg shadow-black/30 duration-200 ease-in-out ${
               showMenu ? "opacity-0" : "opacity-100"
             }`}
           >
             <ul>
               {profileOptions.map((item) => (
                 <li
-                  className="border-b-2 border-pink-900 bg-secondary px-10 
-                py-4 duration-150 ease-in-out hover:bg-secondary/50"
+                  className="bg-secondary px-10 
+                py-4 text-sm duration-150 ease-in-out hover:bg-background"
                 >
                   <h3 className="text-gray-200">{item}</h3>
                 </li>

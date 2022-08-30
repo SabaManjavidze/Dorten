@@ -1,6 +1,6 @@
 import { useColorMode } from "../Hooks/useColorMode";
 import { Copyright } from "./Copyright";
-import NavBar from "./NavBar";
+import NavBar from "./NavBar/NavBar";
 
 export default function Layout({ children }: any) {
   const { colorMode } = useColorMode();
