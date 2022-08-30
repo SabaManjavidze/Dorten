@@ -46,7 +46,9 @@ const Home: NextPage = () => {
               ))
             )
           ) : (
-            <h3>Loading ...</h3>
+            <div className="mt-20">
+              <h3>Loading...</h3>
+            </div>
           )}
         </ul>
       </section>

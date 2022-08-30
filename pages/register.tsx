@@ -108,7 +108,9 @@ const Register: NextPage = () => {
               {/* --------Username and Age------------- */}
               <div className="relative flex justify-between pt-9 pb-4">
                 <div className="mr-4 flex flex-col items-center justify-center">
-                  <InvalidText formState={formState} field="username" />
+                  <InvalidText
+                    message={formState?.errors["username"]?.message}
+                  />
                   <input
                     placeholder="Username"
                     {...registerForm("username", { required: true })}
@@ -116,7 +118,7 @@ const Register: NextPage = () => {
                   />
                 </div>
                 <div className="ml-4 flex flex-col items-center justify-center">
-                  <InvalidText formState={formState} field="age" />
+                  <InvalidText message={formState?.errors["age"]?.message} />
                   <input
                     placeholder="Age"
                     type="number"
@@ -152,7 +154,7 @@ const Register: NextPage = () => {
               </div>
               {/* -------- Email and Password ------------- */}
               <div className="relative pt-7 pb-4">
-                <InvalidText formState={formState} field="email" />
+                <InvalidText message={formState?.errors["email"]?.message} />
                 <input
                   className="text-input"
                   placeholder="Email address"
@@ -162,7 +164,7 @@ const Register: NextPage = () => {
               </div>
 
               <div className="relative pt-7 pb-4">
-                <InvalidText formState={formState} field="password" />
+                <InvalidText message={formState?.errors["password"]?.message} />
                 <input
                   className="text-input"
                   placeholder="Password"

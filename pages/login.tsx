@@ -2,7 +2,6 @@ import * as React from "react";
 import { Copyright } from "../components/Copyright";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useColorMode } from "../Hooks/useColorMode";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { loginSchemaType, loginSchema } from "../lib/zod/loginValidation";
@@ -99,7 +98,7 @@ const Login: NextPage = () => {
                 </div>
               ) : null}
               <div className="relative pt-7 pb-4">
-                <InvalidText formState={formState} field="email" />
+                <InvalidText message={formState?.errors["email"]?.message} />
                 <input
                   className="text-input"
                   placeholder="Email address"
@@ -109,7 +108,7 @@ const Login: NextPage = () => {
               </div>
 
               <div className="relative pt-7 pb-4">
-                <InvalidText formState={formState} field="password" />
+                <InvalidText message={formState?.errors["password"]?.message} />
                 <input
                   className="text-input"
                   placeholder="Password"
