@@ -1,21 +1,43 @@
+import { ApolloError } from "@apollo/client";
 import {
   createContext,
   useState,
   useContext,
   Dispatch,
   SetStateAction,
+  useEffect,
 } from "react";
-import { User } from "../graphql/generated";
+import { useMeQuery, User } from "../graphql/generated";
 
 const AuthContext = createContext<{
   user: User | null;
+  userLoading: boolean;
   setUser: Dispatch<SetStateAction<User | null>>;
+  setUserLoading: Dispatch<boolean>;
 }>({} as any);
 export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }: any) => {
   const [user, setUser] = useState<User | null>(null);
+  const [userLoading, setUserLoading] = useState(true);
+  const { loading, error, data } = useMeQuery();
+
+  useEffect(() => {
+    if (!loading) {
+      if (error || data?.me?.errors) {
+        setUserLoading(false);
+        return;
+      }
+      if (data?.me) {
+        setUser(data.me.user as User);
+      }
+      setUserLoading(false);
+    }
+  }, [loading, data, error]);
+
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider
+      value={{ user, setUser, userLoading, setUserLoading }}
+    >
       {children}
     </AuthContext.Provider>
   );

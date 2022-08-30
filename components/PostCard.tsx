@@ -1,9 +1,14 @@
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { Post } from "../graphql/generated";
+import { useAuth } from "../Hooks/useAuth";
 import { NOT_FOUND_IMG } from "../lib/variables";
+import { FaEdit as EditIcon } from "react-icons/fa";
+import { AiFillCloseCircle as ExitIcon } from "react-icons/ai";
 
 export default function PostCard({ post }: { post: Post }) {
+  const { user } = useAuth();
+  const [editMode, setEditMode] = useState(false);
   return (
     <div
       className="flex w-full rounded-lg
@@ -20,27 +25,52 @@ export default function PostCard({ post }: { post: Post }) {
                 width="40px"
                 height="40px"
               />
-              <h2 className="ml-4 text-lg font-semibold text-gray-900 dark:text-gray-200">
-                {post.creator.username}
-              </h2>
+              <div className="ml-4 text-gray-900 dark:text-gray-200">
+                {editMode ? (
+                  <input
+                    type="text"
+                    className="rounded-md border-2 border-background/50 bg-gray-700/40 py-2 pl-3"
+                    defaultValue={post.creator.username}
+                  />
+                ) : (
+                  <h2 className="text-lg font-semibold ">
+                    {post.creator.username}
+                  </h2>
+                )}
+              </div>
+              <small className="ml-4 text-sm text-gray-700 dark:text-gray-500">
+                {new Date(parseInt(post.created_at)).getHours()}:
+                {new Date(parseInt(post.created_at)).getMinutes()}
+              </small>
             </div>
-            <small className="text-sm text-gray-700 dark:text-gray-500">
-              {new Date(parseInt(post.created_at)).getHours()}:
-              {new Date(parseInt(post.created_at)).getMinutes()}
-            </small>
+            {user && user.user_id == post.creator_id ? (
+              <div>
+                <button
+                  onClick={() => {
+                    setEditMode(!editMode);
+                  }}
+                >
+                  {editMode ? (
+                    <ExitIcon size={"30px"} />
+                  ) : (
+                    <EditIcon size="30px" />
+                  )}
+                </button>
+              </div>
+            ) : null}
           </div>
           <p className="mt-4 w-full text-left text-gray-700 dark:text-gray-200">
             {post.title}
           </p>
           <p className="mt-3 pb-5 text-sm text-gray-700 dark:text-gray-200">
-            {post.description}
+            {post.description || "no description"}
           </p>
-          <div className="relative flex h-64 w-full justify-center py-12">
+          <div className="relative flex h-96 w-[85%] justify-center bg-background/50 pb-12">
             <Image
               className="w-full rounded object-contain shadow"
               src={post.picture || NOT_FOUND_IMG}
               alt="avatar"
-              objectFit="cover"
+              objectFit="contain"
               layout="fill"
             />
           </div>

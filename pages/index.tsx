@@ -18,7 +18,6 @@ import {
   useCreatePostMutation,
   useGetPostsQuery,
   useLogoutMutation,
-  useMeLazyQuery,
   User,
 } from "../graphql/generated";
 import { useAuth } from "../Hooks/useAuth";
@@ -27,12 +26,10 @@ import { toBase64 } from "../lib/convBase64";
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const [logout] = useLogoutMutation();
-  const { user, setUser } = useAuth();
+  const { user, userLoading, setUser } = useAuth();
   const [postPicture, setPostPicture] = useState<any>();
   const [posts, setPosts] = useState<Post[]>();
   const [errors, setErros] = useState<FieldError[] | null>(null);
-  const [meQuery, { loading, data, error }] = useMeLazyQuery();
   const [
     createPost,
     { loading: createLoading, data: createPostData, error: createPostError },
@@ -45,29 +42,29 @@ const Home: NextPage = () => {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const fetchMe = useCallback(async () => {
-    if (user) return;
-    const result = await meQuery();
-    if (!loading) {
-      if (result?.error) {
-        router.push("/login");
-        return;
-      }
-      if (result.data?.me?.user) {
-        setUser(result.data.me.user as User);
-      }
-    }
-  }, []);
+  // const fetchMe = useCallback(async () => {
+  //   if (user) return;
+  //   const result = await meQuery();
+  //   if (!loading) {
+  //     if (result?.error) {
+  //       router.push("/login");
+  //       return;
+  //     }
+  //     if (result.data?.me?.user) {
+  //       setUser(result.data.me.user as User);
+  //     }
+  //   }
+  // }, []);
 
   useEffect(() => {
-    if (!postsLoading && !postsError) {
-      setPosts(postsData?.getPost as Post[]);
+    if (!postsLoading && !postsError && postsData?.getPost) {
+      setPosts(postsData.getPost as Post[]);
     }
   }, [postsLoading]);
 
-  useEffect(() => {
-    fetchMe();
-  }, [fetchMe]);
+  // useEffect(() => {
+  //   fetchMe();
+  // }, [fetchMe]);
 
   const handleCreatePostSubmit = async (e: any) => {
     e.preventDefault();
@@ -87,6 +84,7 @@ const Home: NextPage = () => {
     }
     if (posts && user) {
       setPosts([
+        ...posts,
         {
           ...(data as Post),
           created_at: new Date().getTime().toString(),
@@ -95,14 +93,13 @@ const Home: NextPage = () => {
             picture: user.picture,
           } as User,
         },
-        ...posts,
       ]);
     }
     await createPost({ variables: { options: data } });
   };
   return (
-    <div className="w-full p-5">
-      <section className="mb-10 mt-5 flex flex-col items-center justify-center px-4">
+    <div className="w-full p-5 xl:px-96">
+      <section className="mb-10 mt-5 flex w-full flex-col items-center justify-center px-4">
         <h2 className="w-full text-left text-lg text-gray-200">
           Create a post
         </h2>
@@ -159,7 +156,7 @@ const Home: NextPage = () => {
                 type="button"
                 className="post-btn-blue h-full hover:text-white"
               >
-                attach a link
+                <LinkIcon size="20px" />
               </button>
             </div>
             <div className="h-full">
@@ -181,7 +178,7 @@ const Home: NextPage = () => {
           className="absolute right-1/2 h-[2px] w-3/4 
         translate-x-1/2 rounded bg-pink-500"
         ></div>
-        <ul className="flex flex-col items-center">
+        <ul className="flex flex-col-reverse items-center">
           {!postsLoading ? (
             postsError ? (
               <span>Something went wrong</span>
@@ -189,7 +186,7 @@ const Home: NextPage = () => {
               posts?.map((post) => (
                 <li
                   key={post.post_id}
-                  className="w-4/5 py-5 first-of-type:border-t-0"
+                  className="w-4/5 py-5 first-of-type:border-t-0 "
                 >
                   <PostCard post={post as Post} />
                 </li>

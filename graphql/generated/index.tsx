@@ -99,6 +99,7 @@ export type User = {
   gender?: Maybe<Scalars['String']>;
   picture?: Maybe<Scalars['String']>;
   posts?: Maybe<Array<Post>>;
+  user_id: Scalars['String'];
   username: Scalars['String'];
 };
 
@@ -155,7 +156,7 @@ export type RegisterMutation = { __typename?: 'Mutation', register: { __typename
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'UserResponse', user?: { __typename?: 'User', username: string, email: string, age: number, gender?: string | null, picture?: string | null, posts?: Array<{ __typename?: 'Post', post_id: string, title: string }> | null } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } | null };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'UserResponse', user?: { __typename?: 'User', user_id: string, username: string, email: string, age: number, gender?: string | null, picture?: string | null, posts?: Array<{ __typename?: 'Post', post_id: string, title: string }> | null } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } | null };
 
 export type GetPostsQueryVariables = Exact<{
   post_id: Scalars['String'];
@@ -328,6 +329,7 @@ export const MeDocument = gql`
     query Me {
   me {
     user {
+      user_id
       username
       email
       age
