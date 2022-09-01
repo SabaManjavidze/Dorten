@@ -68,14 +68,25 @@ export default class PostResolver {
     @Arg("value", () => Int) value: number,
     @Arg("postId") postId: string
   ) {
+    // make sure that the value is either -1 or 1
+    // check if user has already liked/disliked the post
+    const like = await this.likeRepository.findOne({
+      where: { postId, userId: req.session.userId },
+    });
+    let realValue = value > 0 ? 1 : -1;
+    // if the user has already liked and is changing the value the double up that value
+    if (like) {
+      if (like.value == realValue) return false;
+      realValue *= 2;
+    }
+
+    // chekc if the postId is valid
     const post = await this.postRepository.findOne({
       where: { post_id: postId },
     });
     if (!post) return false;
     // a user can't like his/her own post
     if (post.creator_id == req.session.userId) return false;
-    // make sure that the value is either -1 or 1
-    const realValue = value > 0 ? 1 : -1;
     // add this to likes
     await this.likeRepository
       .create({ postId, userId: req.session.userId, value: realValue })
