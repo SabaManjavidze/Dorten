@@ -29,7 +29,7 @@ export default function ProfileCorner() {
           <div
             className={`absolute right-1/3 top-16 translate-x-1/2 rounded
             border-[1.8px] border-pink-500 shadow-lg shadow-black/30 duration-200 ease-in-out ${
-              showMenu ? "opacity-0" : "opacity-100"
+              showMenu ? "opacity-100" : "opacity-0"
             }`}
           >
             <ul>

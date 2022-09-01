@@ -15,6 +15,7 @@ import { expressSession, promisifyStore } from "next-session/lib/compat";
 import RedisStoreFactory from "connect-redis";
 import Redis from "ioredis";
 import { MyContext } from "../../src/utils/MyContext";
+import { createLikeLoader } from "../../src/utils/loaders/createLikeLoader";
 
 dotenv.config();
 
@@ -25,7 +26,7 @@ const getSession = nextSession({
     new RedisStore({
       client: new Redis({
         host: process.env.REDIS_HOST,
-        port: parseInt(process.env.REDIS_PORT || "6379"),
+        port: parseInt(process.env.REDIS_PORT || ""),
         password: process.env.REDIS_PASSWORD,
       }),
     })
@@ -37,7 +38,10 @@ const getSession = nextSession({
     sameSite: "lax",
   },
 });
-const server = new ApolloServer({
+console.log("Redis created");
+let server: ApolloServer = {} as ApolloServer;
+// try {
+server = new ApolloServer({
   schema: await buildSchema({
     resolvers: [UserResolver, PostResolver],
     validate: false,
@@ -47,6 +51,7 @@ const server = new ApolloServer({
     res,
     userLoader: createUserLoader(),
     postLoader: createPostLoader(),
+    likeLoader: createLikeLoader(),
   }),
   cache: process.env.NODE_ENV === "production" ? "bounded" : undefined,
   plugins: [
@@ -55,6 +60,12 @@ const server = new ApolloServer({
       : ApolloServerPluginLandingPageGraphQLPlayground(),
   ],
 });
+// } catch (error: any) {
+//   console.log("APOLLO SERVER ERROR : ");
+//   console.log(JSON.stringify(error, null, 2));
+//   throw new Error("something went wrong");
+// }
+console.log("Apollo server created");
 export const config = {
   api: {
     bodyParser: false,

@@ -84,12 +84,18 @@ export type PostInput = {
 export type Query = {
   __typename?: 'Query';
   getPost: Array<Post>;
+  getUserByUsername?: Maybe<User>;
   me?: Maybe<UserResponse>;
 };
 
 
 export type QueryGetPostArgs = {
   post_id?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryGetUserByUsernameArgs = {
+  username: Scalars['String'];
 };
 
 export type User = {
@@ -164,6 +170,13 @@ export type GetPostsQueryVariables = Exact<{
 
 
 export type GetPostsQuery = { __typename?: 'Query', getPost: Array<{ __typename?: 'Post', post_id: string, title: string, description?: string | null, picture?: string | null, created_at: string, creator_id: string, creator: { __typename?: 'User', username: string, picture?: string | null } }> };
+
+export type GetUserByUsernameQueryVariables = Exact<{
+  username: Scalars['String'];
+}>;
+
+
+export type GetUserByUsernameQuery = { __typename?: 'Query', getUserByUsername?: { __typename?: 'User', user_id: string, email: string, age: number, picture?: string | null, gender?: string | null, posts?: Array<{ __typename?: 'Post', post_id: string, title: string, description?: string | null, picture?: string | null }> | null } | null };
 
 
 export const CreatePostDocument = gql`
@@ -420,3 +433,48 @@ export function useGetPostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetPostsQueryHookResult = ReturnType<typeof useGetPostsQuery>;
 export type GetPostsLazyQueryHookResult = ReturnType<typeof useGetPostsLazyQuery>;
 export type GetPostsQueryResult = Apollo.QueryResult<GetPostsQuery, GetPostsQueryVariables>;
+export const GetUserByUsernameDocument = gql`
+    query GetUserByUsername($username: String!) {
+  getUserByUsername(username: $username) {
+    user_id
+    email
+    age
+    picture
+    gender
+    posts {
+      post_id
+      title
+      description
+      picture
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetUserByUsernameQuery__
+ *
+ * To run a query within a React component, call `useGetUserByUsernameQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserByUsernameQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserByUsernameQuery({
+ *   variables: {
+ *      username: // value for 'username'
+ *   },
+ * });
+ */
+export function useGetUserByUsernameQuery(baseOptions: Apollo.QueryHookOptions<GetUserByUsernameQuery, GetUserByUsernameQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserByUsernameQuery, GetUserByUsernameQueryVariables>(GetUserByUsernameDocument, options);
+      }
+export function useGetUserByUsernameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserByUsernameQuery, GetUserByUsernameQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserByUsernameQuery, GetUserByUsernameQueryVariables>(GetUserByUsernameDocument, options);
+        }
+export type GetUserByUsernameQueryHookResult = ReturnType<typeof useGetUserByUsernameQuery>;
+export type GetUserByUsernameLazyQueryHookResult = ReturnType<typeof useGetUserByUsernameLazyQuery>;
+export type GetUserByUsernameQueryResult = Apollo.QueryResult<GetUserByUsernameQuery, GetUserByUsernameQueryVariables>;

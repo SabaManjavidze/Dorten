@@ -18,7 +18,7 @@ import {
 import type { MyContext } from "../utils/MyContext";
 import * as argon2 from "argon2";
 import { isAuth } from "../middleware/isAuth";
-import { dataSource } from "../DBConnection";
+import dataSource from "../DBConnection";
 
 @ObjectType()
 class FieldError {

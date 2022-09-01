@@ -2,6 +2,7 @@ import { DataSourceOptions } from "typeorm";
 import { Post } from "./src/entities/Post";
 import { User } from "./src/entities/User";
 import dotenv from "dotenv";
+import { Like } from "./src/entities/Like";
 
 dotenv.config();
 export const config: DataSourceOptions = {
@@ -9,7 +10,7 @@ export const config: DataSourceOptions = {
   url: process.env.DB_URL,
   logging: false,
   synchronize: true,
-  entities: [User, Post],
+  entities: [User, Post, Like],
   migrations: ["src/migrations"],
   extra: {
     ssl: {

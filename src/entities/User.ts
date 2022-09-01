@@ -11,11 +11,13 @@ import {
   PrimaryColumn,
 } from "typeorm";
 import { Post } from "./Post";
+import { Like } from "./Like";
 export const GENDERS = {
   MALE: "MALE",
   FEMALE: "FEMALE",
   NONE: "NONE",
 };
+import type { Relation } from "typeorm";
 @ObjectType()
 @Entity()
 export class User extends BaseEntity {
@@ -44,7 +46,10 @@ export class User extends BaseEntity {
 
   @Field(() => [Post], { nullable: true })
   @OneToMany(() => Post, (post) => post.creator)
-  posts: Post[];
+  posts: Relation<Post[]>;
+
+  @OneToMany(() => Like, (like) => like.user)
+  likes: Like;
 
   @Field({ nullable: true })
   @Column({

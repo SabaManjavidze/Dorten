@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "type-graphql";
+import { Field, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   BeforeInsert,
@@ -7,10 +7,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryColumn,
-  Relation,
 } from "typeorm";
+import type { Relation } from "typeorm";
 import { v4 } from "uuid";
+import { Like } from "./Like";
 import { User } from "./User";
 
 @Entity()
@@ -36,9 +38,19 @@ export class Post extends BaseEntity {
   @Column()
   creator_id: string;
 
+  @Field()
+  @Column({ type: "int", default: 0 })
+  points: number;
+
+  @Field(() => Int, { nullable: true })
+  likeStatus: number | null;
+
+  @OneToMany(() => Like, (like) => like.post)
+  likes: Like[];
+
   @Field(() => User)
   @ManyToOne(() => User, (user) => user.posts)
-  creator: Relation<User>[];
+  creator: Relation<User>;
 
   @Field(() => String)
   @CreateDateColumn()
