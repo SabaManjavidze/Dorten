@@ -1,34 +1,43 @@
 import Image from "next/image";
 import { BsFillImageFill as ImgIcon } from "react-icons/bs";
 import { AiOutlineLink as LinkIcon } from "react-icons/ai";
-import {
-  ChangeEvent,
-  ChangeEventHandler,
-  Dispatch,
-  SetStateAction,
-  useRef,
-  useState,
-} from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import {
   FieldError,
+  GetPostsDocument,
+  GetPostsQuery,
   Post,
   PostInput,
   useCreatePostMutation,
-  User,
 } from "../../graphql/generated/index";
-import { useAuth } from "../../Hooks/useAuth";
 import { toBase64 } from "../../lib/convBase64";
 
 type PostFormPropsType = {
   posts: Post[];
-  setPosts: Dispatch<SetStateAction<Post[]>>;
 };
-export default function PostForm({ posts, setPosts }: PostFormPropsType) {
+export default function PostForm() {
   const [errors, setErros] = useState<FieldError[] | null>(null);
   const [postPicture, setPostPicture] = useState<any>();
-  const { user } = useAuth();
   const inputRef = useRef<HTMLInputElement>(null);
-  const [createPost] = useCreatePostMutation();
+  const [createPost] = useCreatePostMutation({
+    update(cache, { data }) {
+      const posts = cache.readQuery<GetPostsQuery>({
+        query: GetPostsDocument,
+        variables: { post_id: "" },
+      });
+      if (!posts) {
+        console.log(`posts : ${posts}`);
+        return;
+      }
+      cache.writeQuery({
+        query: GetPostsDocument,
+        variables: { post_id: "" },
+        data: {
+          getPost: [data?.createPost, ...posts.getPost],
+        },
+      });
+    },
+  });
 
   const handleCreatePostSubmit = async (e: any) => {
     e.preventDefault();
@@ -46,10 +55,7 @@ export default function PostForm({ posts, setPosts }: PostFormPropsType) {
     if (!errors) {
       setErros(null);
     }
-    const post = await createPost({ variables: { options: data } });
-    if (posts && user && post.data?.createPost) {
-      setPosts([...posts, post.data.createPost as Post]);
-    }
+    await createPost({ variables: { options: data } });
   };
   const handleImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     if (!event?.target?.files || !event.target.files[0]) {

@@ -37,6 +37,7 @@ export default function ProfileCorner() {
                 <li
                   className="bg-secondary px-10 
                 py-4 text-sm duration-150 ease-in-out hover:bg-background"
+                  key={item}
                 >
                   <h3 className="text-gray-200">{item}</h3>
                 </li>

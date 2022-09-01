@@ -146,7 +146,7 @@ export type CreatePostMutationVariables = Exact<{
 }>;
 
 
-export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'Post', post_id: string, title: string, description?: string | null, picture?: string | null, created_at: string, creator_id: string, creator: { __typename?: 'User', username: string, picture?: string | null } } };
+export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'Post', post_id: string, title: string, description?: string | null, picture?: string | null, created_at: string, creator_id: string, creator: { __typename?: 'User', user_id: string, username: string, picture?: string | null } } };
 
 export type LikePostMutationVariables = Exact<{
   postId: Scalars['String'];
@@ -186,7 +186,7 @@ export type GetPostsQueryVariables = Exact<{
 }>;
 
 
-export type GetPostsQuery = { __typename?: 'Query', getPost: Array<{ __typename?: 'Post', post_id: string, title: string, description?: string | null, picture?: string | null, created_at: string, creator_id: string, creator: { __typename?: 'User', username: string, picture?: string | null } }> };
+export type GetPostsQuery = { __typename?: 'Query', getPost: Array<{ __typename?: 'Post', post_id: string, title: string, description?: string | null, picture?: string | null, created_at: string, creator_id: string, creator: { __typename?: 'User', user_id: string, username: string, picture?: string | null } }> };
 
 export type GetUserByUsernameQueryVariables = Exact<{
   username: Scalars['String'];
@@ -206,6 +206,7 @@ export const CreatePostDocument = gql`
     created_at
     creator_id
     creator {
+      user_id
       username
       picture
     }
@@ -448,6 +449,7 @@ export const GetPostsDocument = gql`
     created_at
     creator_id
     creator {
+      user_id
       username
       picture
     }

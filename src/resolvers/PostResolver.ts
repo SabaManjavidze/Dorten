@@ -58,7 +58,12 @@ export default class PostResolver {
       return post;
     }
     const posts = await this.postRepository.find();
-    return posts;
+    return posts
+      .sort(
+        (a, b) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      )
+      .slice(0, 5);
   }
 
   @Mutation(() => Boolean)

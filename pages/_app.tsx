@@ -8,11 +8,24 @@ import "../styles/globals.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const client = new ApolloClient({
+    connectToDevTools: true,
     uri:
       process.env.NODE_ENV == "production"
         ? "https://dorten.vercel.app/api/graphql"
         : "http://localhost:3000/api/graphql",
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+      typePolicies: {
+        Post: {
+          keyFields: ["post_id"],
+        },
+        User: {
+          keyFields: ["user_id"],
+        },
+        Like: {
+          keyFields: ["postId", "userId"],
+        },
+      },
+    }),
   });
 
   return (
