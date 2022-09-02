@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ProfileCorner from "./ProfileCorner";
+import ProfileCorner from "../NavBar/ProfileCorner";
 
 export default function NavBar() {
   const [menuShown, setMenuShown] = useState(false);

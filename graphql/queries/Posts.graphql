@@ -6,6 +6,8 @@ query GetPosts($post_id: String!) {
     picture
     created_at
     creator_id
+    points
+    likeStatus
     creator {
       user_id
       username

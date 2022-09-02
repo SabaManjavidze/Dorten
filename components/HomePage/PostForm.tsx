@@ -38,7 +38,6 @@ export default function PostForm() {
       });
     },
   });
-
   const handleCreatePostSubmit = async (e: any) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -77,10 +76,10 @@ export default function PostForm() {
             type="text"
             placeholder="title"
             name="title"
-            className="text-input my-5"
+            className="text-input my-5 text-lg"
           />
           <textarea
-            className="max-h-15 text-input"
+            className="max-h-15 text-input text-sm"
             placeholder="Write something..."
             name="description"
           />
@@ -98,7 +97,7 @@ export default function PostForm() {
               type="button"
               onClick={() => {
                 if (!inputRef?.current) return;
-                inputRef?.current.click();
+                inputRef.current.click();
               }}
             >
               <ImgIcon className="duration-200 ease-in-out group-hover:fill-white" />

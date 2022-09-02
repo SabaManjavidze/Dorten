@@ -4,7 +4,7 @@ import { MyContext } from "../utils/MyContext";
 
 export const isAuth: MiddlewareFn<MyContext> = ({ context }, next) => {
   if (!context?.req?.session?.userId) {
-    throw new HttpQueryError(401, "Not authorized");
+    throw new Error("Not authorized");
   }
   return next();
 };

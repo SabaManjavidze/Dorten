@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }: any) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading) {
+    if (!loading && userLoading) {
       if (error || data?.me?.errors) {
         router.replace(`/login?next=${router.pathname}`);
         setUserLoading(false);
@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }: any) => {
       }
       setUserLoading(false);
     }
-  }, [loading, data, error]);
+  }, [loading, data, error, userLoading]);
 
   return (
     <AuthContext.Provider

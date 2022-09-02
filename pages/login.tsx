@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState } from "react";
 import { Copyright } from "../components/Copyright";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
@@ -13,7 +13,7 @@ import { useAuth } from "../Hooks/useAuth";
 const Login: NextPage = () => {
   const router = useRouter();
   const { setUser } = useAuth();
-  const [errors, setErrors] = React.useState<FieldError>();
+  const [errors, setErrors] = useState<FieldError>();
   const [login, { loading }] = useLoginMutation();
 
   const {
@@ -44,7 +44,7 @@ const Login: NextPage = () => {
     <section className="h-screen">
       <div className="h-full px-6">
         <div className="flex h-full flex-col flex-wrap items-center justify-center xl:justify-center">
-          <div className="mb-12 md:mb-0 md:w-8/12 lg:w-5/12 xl:w-5/12">
+          <div className="mb-12 md:mb-0 md:w-8/12 lg:w-5/12 xl:w-4/12">
             <div className="flex flex-row items-center justify-center text-center">
               <p className="gradient-text p-3 text-4xl">Log in with</p>
               <button
@@ -100,7 +100,7 @@ const Login: NextPage = () => {
               <div className="relative pt-7 pb-4">
                 <InvalidText message={formState?.errors["email"]?.message} />
                 <input
-                  className="text-input"
+                  className="text-input text-lg"
                   placeholder="Email address"
                   // type="email"
                   {...loginForm("email")}
@@ -110,7 +110,7 @@ const Login: NextPage = () => {
               <div className="relative pt-7 pb-4">
                 <InvalidText message={formState?.errors["password"]?.message} />
                 <input
-                  className="text-input"
+                  className="text-input text-lg"
                   placeholder="Password"
                   type="password"
                   {...loginForm("password")}
