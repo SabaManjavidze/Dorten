@@ -11,11 +11,9 @@ import {
   registerSchemaType,
 } from "../lib/zod/registerValidation";
 import Image from "next/image";
-import { useAuth } from "../Hooks/useAuth";
 
 const Register: NextPage = () => {
   const router = useRouter();
-  const { setUser } = useAuth();
   const [errors, setErrors] = useState<FieldError>();
   const [register, { loading }] = useRegisterMutation();
 
@@ -26,7 +24,10 @@ const Register: NextPage = () => {
   } = useForm<registerSchemaType>({
     resolver: zodResolver(registerSchema),
   });
+
   const onSubmit = async (data: registerSchemaType) => {
+    alert("submited");
+    console.log("something");
     if (!data) return;
     const user = await register({
       variables: { options: { ...data, gender: data.gender.toUpperCase() } },
@@ -38,7 +39,7 @@ const Register: NextPage = () => {
       setErrors(user.data.register?.errors[0]);
     }
     if (user?.data?.register?.user) {
-      setUser(user.data.register.user);
+      // setUser(user.data.register.user);
       router.push("/");
     }
   };
@@ -50,7 +51,7 @@ const Register: NextPage = () => {
           className="g-6 flex h-full flex-wrap items-center justify-center 
         xl:justify-center"
         >
-          <div className="xs:w-1/2 sm:w-3/4 md:mb-0 md:w-8/12 lg:w-5/12 xl:w-5/12">
+          <div className="xs:w-1/2 text-lg sm:w-3/4 md:mb-0 md:w-8/12 lg:w-5/12 xl:w-5/12">
             <div className="flex flex-row items-center justify-center">
               <p className="gradient-text p-3 text-4xl">Register With</p>
               <button
@@ -107,14 +108,14 @@ const Register: NextPage = () => {
               ) : null}
               {/* --------Username and Age------------- */}
               <div className="relative flex justify-between pt-9 pb-4">
-                <div className="mr-4 flex flex-col items-center justify-center">
+                <div className="mr-4 flex flex-col items-start justify-center">
                   <InvalidText
                     message={formState?.errors["username"]?.message}
                   />
                   <input
                     placeholder="Username"
                     {...registerForm("username", { required: true })}
-                    className="text-input "
+                    className="text-input"
                   />
                 </div>
                 <div className="ml-4 flex flex-col items-center justify-center">
@@ -123,7 +124,7 @@ const Register: NextPage = () => {
                     placeholder="Age"
                     type="number"
                     {...registerForm("age", { valueAsNumber: true })}
-                    className="text-input "
+                    className="text-input"
                   />
                 </div>
               </div>
@@ -158,7 +159,7 @@ const Register: NextPage = () => {
                 <input
                   className="text-input"
                   placeholder="Email address"
-                  // type="email"
+                  type="email"
                   {...registerForm("email")}
                 />
               </div>

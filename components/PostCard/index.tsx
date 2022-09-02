@@ -1,14 +1,13 @@
 import Image from "next/image";
 import React, { useState } from "react";
-import { Post } from "../../graphql/generated";
-import { useAuth } from "../../Hooks/useAuth";
+import { Post, useMeQuery } from "../../graphql/generated";
 import { NOT_FOUND_IMG } from "../../lib/variables";
 import { FaEdit as EditIcon } from "react-icons/fa";
 import { AiFillCloseCircle as ExitIcon } from "react-icons/ai";
 import LCS from "./LCS";
 
 export default function PostCard({ post }: { post: Post }) {
-  const { user } = useAuth();
+  const { loading, data, error } = useMeQuery();
   const [editMode, setEditMode] = useState(false);
   return (
     <div
@@ -47,7 +46,7 @@ export default function PostCard({ post }: { post: Post }) {
                 {/* {new Date(parseInt(post.created_at)).getMinutes()} */}
               </small>
             </div>
-            {user && user.user_id == post.creator_id ? (
+            {data?.me?.user && data?.me?.user.user_id == post.creator_id ? (
               <div>
                 <button
                   onClick={() => {

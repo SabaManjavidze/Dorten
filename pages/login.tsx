@@ -8,11 +8,9 @@ import { loginSchemaType, loginSchema } from "../lib/zod/loginValidation";
 import { FieldError, useLoginMutation } from "../graphql/generated";
 import InvalidText from "../components/InvalidText";
 import Image from "next/image";
-import { useAuth } from "../Hooks/useAuth";
 
 const Login: NextPage = () => {
   const router = useRouter();
-  const { setUser } = useAuth();
   const [errors, setErrors] = useState<FieldError>();
   const [login, { loading }] = useLoginMutation();
 
@@ -35,7 +33,7 @@ const Login: NextPage = () => {
       setErrors(user.data.login.errors[0]);
     }
     if (user?.data?.login?.user) {
-      setUser(user.data.login.user);
+      // setUser(user.data.login.user);
       router.push("/");
     }
   };

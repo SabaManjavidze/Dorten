@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import {
   useGetUserByUsernameLazyQuery,
   useGetUserByUsernameQuery,
+  useMeQuery,
 } from "../graphql/generated";
-import { useAuth } from "../Hooks/useAuth";
 
 const ProfilePage: NextPage = () => {
   const router = useRouter();
-  const { user, userLoading } = useAuth();
+  const { data: userData, loading: userLoading } = useMeQuery();
   const [isPublic, setIsPublic] = useState(true);
   const [getUser, { loading, error, data }] = useGetUserByUsernameLazyQuery();
   useEffect(() => {
@@ -21,8 +21,15 @@ const ProfilePage: NextPage = () => {
   }, [router]);
 
   useEffect(() => {
-    if (!loading && data?.getUserByUsername && !userLoading)
-      setIsPublic(user?.user_id !== data.getUserByUsername.user_id);
+    if (
+      !loading &&
+      data?.getUserByUsername &&
+      !userLoading &&
+      userData?.me?.user
+    )
+      setIsPublic(
+        userData?.me?.user.user_id !== data.getUserByUsername.user_id
+      );
     // show email and editable fields
     // else it is someone else's profile so show public info
   }, [loading, data, userLoading]);
