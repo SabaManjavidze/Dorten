@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import {
   useGetUserByUsernameLazyQuery,
-  useGetUserByUsernameQuery,
   useMeQuery,
 } from "../graphql/generated";
 

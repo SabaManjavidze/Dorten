@@ -1,19 +1,21 @@
+import { useApolloClient } from "@apollo/client";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { useMeQuery } from "../../graphql/generated";
+import { useState, useEffect, useRef } from "react";
+import { useLogoutMutation, useMeQuery } from "../../graphql/generated";
 import { NOT_FOUND_IMG } from "../../lib/variables";
 
 export default function ProfileCorner() {
   const { loading, data, error } = useMeQuery();
   const [showMenu, setShowMenu] = useState(false);
+  const [logOut] = useLogoutMutation();
+  const apolloClient = useApolloClient();
   const profileOptions = [
     { title: "Profile", path: data?.me?.user?.username },
     { title: "Settings", path: "settings" },
-    { title: "LogOut", path: "logout" },
   ];
-  const [divRef] = useAutoAnimate<HTMLDivElement>();
+  const divRef = useRef<HTMLDivElement>(null);
   const SHOW_MENU_TIME = 100;
   useEffect(() => {
     if (divRef?.current) {
@@ -24,7 +26,6 @@ export default function ProfileCorner() {
         }, SHOW_MENU_TIME);
       } else {
         divRef.current.style.opacity = "0";
-
         setTimeout(() => {
           if (!divRef?.current) return;
           divRef.current.style.display = "none";
@@ -33,7 +34,12 @@ export default function ProfileCorner() {
     }
   }, [showMenu, divRef]);
 
-  if (loading) return <h3>loading...</h3>;
+  if (loading)
+    return (
+      <div className="relative flex items-center pl-16">
+        <h3>loading...</h3>
+      </div>
+    );
   return (
     <div className="relative flex items-center pl-16">
       {data?.me?.user ? (
@@ -50,6 +56,7 @@ export default function ProfileCorner() {
               src={data?.me?.user.picture || NOT_FOUND_IMG}
               width="50px"
               height="50px"
+              alt="profile picture"
             />
           </button>
           <div
@@ -72,11 +79,25 @@ export default function ProfileCorner() {
                   </Link>
                 </li>
               ))}
+              <li key={"logout"}>
+                <button
+                  onClick={async () => {
+                    await logOut();
+                    await apolloClient.resetStore();
+                  }}
+                  className="w-full cursor-pointer bg-secondary px-10
+                py-4 text-sm duration-150 ease-in-out hover:bg-background"
+                >
+                  <h3 className="text-gray-200">logout</h3>
+                </button>
+              </li>
             </ul>
           </div>
         </div>
       ) : (
-        <a>log in</a>
+        <Link href="/login">
+          <a>log in</a>
+        </Link>
       )}
     </div>
   );

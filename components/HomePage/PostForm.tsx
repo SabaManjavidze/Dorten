@@ -12,14 +12,11 @@ import {
 } from "../../graphql/generated/index";
 import { toBase64 } from "../../lib/convBase64";
 
-type PostFormPropsType = {
-  posts: Post[];
-};
 export default function PostForm() {
   const [errors, setErros] = useState<FieldError[] | null>(null);
   const [postPicture, setPostPicture] = useState<any>();
   const inputRef = useRef<HTMLInputElement>(null);
-  const [createPost] = useCreatePostMutation({
+  const [createPost, { loading }] = useCreatePostMutation({
     update(cache, { data }) {
       const posts = cache.readQuery<GetPostsQuery>({
         query: GetPostsDocument,
@@ -38,6 +35,7 @@ export default function PostForm() {
       });
     },
   });
+
   const handleCreatePostSubmit = async (e: any) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -56,6 +54,7 @@ export default function PostForm() {
     }
     await createPost({ variables: { options: data } });
   };
+
   const handleImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     if (!event?.target?.files || !event.target.files[0]) {
       return;
@@ -87,7 +86,12 @@ export default function PostForm() {
         {postPicture ? (
           <div className="flex w-full flex-col justify-center pb-5">
             <h3 className="tracking-wider">{postPicture.name}</h3>
-            <Image src={postPicture.file} width="100%" height="330px" />
+            <Image
+              src={postPicture.file}
+              width="100%"
+              height="330px"
+              alt="profile picture"
+            />
           </div>
         ) : null}
         <div className="flex h-10 w-full items-center justify-between">
@@ -121,7 +125,7 @@ export default function PostForm() {
               className="post-btn-pink h-full px-12 hover:text-white"
               type="submit"
             >
-              Submit
+              {loading ? "..." : "Submit"}
             </button>
           </div>
         </div>

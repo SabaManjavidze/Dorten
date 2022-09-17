@@ -3,7 +3,13 @@ import ProfileCorner from "./ProfileCorner";
 
 export default function NavBar() {
   const [menuShown, setMenuShown] = useState(false);
-  const navLinks = ["Home", "About", "Services", "Pricing", "Contact"];
+  const navLinks = [
+    { title: "Home", path: "/" },
+    { title: "About", path: "about" },
+    { title: "Services", path: "services" },
+    { title: "Pricing", path: "pricing" },
+    { title: "Contact", path: "contact" },
+  ];
   return (
     <nav
       className="rounded-b-md border-gray-200 bg-white px-2 py-2.5 
@@ -61,15 +67,15 @@ export default function NavBar() {
         >
           <ul className="mt-4 flex sm:flex-col md:mt-0 md:flex-row md:space-x-8 md:text-sm md:font-medium">
             {navLinks.map((item) => (
-              <li key={item}>
+              <li key={item.path}>
                 <a
-                  href="#"
+                  href={item.path}
                   className="block rounded py-2 
                 pr-4 pl-3 text-base text-gray-400 duration-300 
                 ease-in-out hover:text-gray-200 md:bg-transparent md:p-0"
                   aria-current="page"
                 >
-                  {item}
+                  {item.title}
                 </a>
               </li>
             ))}

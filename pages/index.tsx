@@ -1,7 +1,5 @@
 import type { NextPage } from "next";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import PostCard from "../components/PostCard";
+import { useState } from "react";
 import PostForm from "../components/HomePage/PostForm";
 import PostList from "../components/HomePage/PostList";
 

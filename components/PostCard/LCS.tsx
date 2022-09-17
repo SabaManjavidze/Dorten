@@ -22,7 +22,7 @@ export default function LCS({ post }: { post: Post }) {
       <div className="flex items-center justify-between">
         <IconButton
           onClick={() => likePostHandler(1)}
-          color="green"
+          hoverColor="green"
           fill={
             post.likeStatus
               ? post.likeStatus > 0
@@ -33,10 +33,10 @@ export default function LCS({ post }: { post: Post }) {
           Icon={LikeIcon}
           size="30px"
         />
-        <h3 className="text-pink-200">{post.points || 0}</h3>
+        <h3 className="m-0 p-0 text-left text-pink-200">{post.points || 0}</h3>
         <IconButton
           onClick={() => likePostHandler(-1)}
-          color="red"
+          hoverColor="pink"
           fill={
             post.likeStatus
               ? post.likeStatus > 0

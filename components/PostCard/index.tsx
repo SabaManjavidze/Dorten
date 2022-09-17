@@ -20,7 +20,7 @@ export default function PostCard({ post }: { post: Post }) {
             <div className="flex items-center">
               <Image
                 className="rounded-full object-cover shadow"
-                src={post.creator.picture || NOT_FOUND_IMG}
+                src={post?.creator?.picture || NOT_FOUND_IMG}
                 alt="avatar"
                 width="40px"
                 height="40px"
@@ -30,23 +30,23 @@ export default function PostCard({ post }: { post: Post }) {
                   <input
                     type="text"
                     className="rounded-md border-2 border-background/50 bg-gray-700/40 py-2 pl-3"
-                    defaultValue={post.creator.username}
+                    defaultValue={post?.creator?.username}
                   />
                 ) : (
                   <h2 className="text-lg font-semibold ">
-                    {post.creator.username}
+                    {post?.creator?.username}
                   </h2>
                 )}
               </div>
               <small className="ml-4 text-sm text-gray-700 dark:text-gray-500">
-                {new Date(parseInt(post.created_at)).toLocaleTimeString(
+                {new Date(parseInt(post?.created_at)).toLocaleTimeString(
                   "en-GB",
                   { hour: "2-digit", minute: "2-digit" }
                 )}
                 {/* {new Date(parseInt(post.created_at)).getMinutes()} */}
               </small>
             </div>
-            {data?.me?.user && data?.me?.user.user_id == post.creator_id ? (
+            {data?.me?.user && data?.me?.user.user_id == post?.creator_id ? (
               <div>
                 <button
                   onClick={() => {
