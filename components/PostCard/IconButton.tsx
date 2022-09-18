@@ -8,6 +8,7 @@ export type IconButtonPropType = {
   hoverColor?: "red" | "pink" | "green" | "blue";
   onClick?: MouseEventHandler<HTMLButtonElement>;
   fill?: string;
+  disabled?: boolean;
 };
 export default function IconButton({
   Icon,
@@ -16,26 +17,23 @@ export default function IconButton({
   onClick = () => null,
   hoverColor = "pink",
   fill = "gray",
+  disabled = false,
 }: IconButtonPropType) {
   const ICON_SIZE = size;
   if (!hoverColor) return null;
   return (
     <button
       onClick={onClick}
-      className={`flex items-center text-sm
-    text-${fill}-200 duration-300 ease-in-out hover:-rotate-12 hover:text-${hoverColor}-500`}
+      className={`flex cursor-pointer items-center text-sm
+    ${
+      disabled ? "text-gray-400" : `text-${fill}-200`
+    } duration-300 ease-in-out ${
+        !disabled && `hover:-rotate-12 hover:text-${hoverColor}-500`
+      }`}
+      disabled={disabled}
     >
       <Icon size={ICON_SIZE} className="mr-2" />
       <span>{text}</span>
     </button>
   );
 }
-
-// <button
-//   onClick={onClick}
-//   className={`flex items-center text-sm
-//     text-gray-200 duration-300 ease-in-out hover:-rotate-12 hover:text-${hoverColor}-500`}
-// >
-//   <Icon fill={fill ?? "white"} size={ICON_SIZE} className="mr-2" />
-//   <span>{text}</span>
-// </button>

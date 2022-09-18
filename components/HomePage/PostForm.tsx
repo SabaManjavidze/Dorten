@@ -11,6 +11,7 @@ import {
   useCreatePostMutation,
 } from "../../graphql/generated/index";
 import { toBase64 } from "../../lib/convBase64";
+import { ScaleLoader } from "react-spinners";
 
 export default function PostForm() {
   const [errors, setErros] = useState<FieldError[] | null>(null);
@@ -125,7 +126,13 @@ export default function PostForm() {
               className="post-btn-pink h-full px-12 hover:text-white"
               type="submit"
             >
-              {loading ? "..." : "Submit"}
+              <div className="flex w-1 justify-center">
+                {loading ? (
+                  <ScaleLoader color="pink" height="25px" />
+                ) : (
+                  <p>Submit</p>
+                )}
+              </div>
             </button>
           </div>
         </div>

@@ -4,10 +4,11 @@ import {
 } from "react-icons/gi";
 import { FaSlideshare as ShareIcon } from "react-icons/fa";
 import { AiOutlineComment as CommentIcon } from "react-icons/ai";
-import { Post, useLikePostMutation } from "../../graphql/generated";
+import { Post, useLikePostMutation, useMeQuery } from "../../graphql/generated";
 import IconButton from "./IconButton";
 
 export default function LCS({ post }: { post: Post }) {
+  const { data: userData, loading: userLoading } = useMeQuery();
   const [likePost] = useLikePostMutation();
   const likePostHandler = async (value: -1 | 1) => {
     likePost({
@@ -17,12 +18,15 @@ export default function LCS({ post }: { post: Post }) {
       },
     });
   };
+  if (userLoading) return <p>loading...</p>;
+  const isMyPost = post.creator.user_id == userData?.me?.user?.user_id;
   return (
     <div className="mt-4 flex w-4/5 items-center justify-between">
       <div className="flex items-center justify-between">
         <IconButton
           onClick={() => likePostHandler(1)}
           hoverColor="green"
+          disabled={isMyPost}
           fill={
             post.likeStatus
               ? post.likeStatus > 0
@@ -37,6 +41,7 @@ export default function LCS({ post }: { post: Post }) {
         <IconButton
           onClick={() => likePostHandler(-1)}
           hoverColor="pink"
+          disabled={isMyPost}
           fill={
             post.likeStatus
               ? post.likeStatus > 0
