@@ -14,6 +14,8 @@ module.exports = {
     extend: {
       colors: {
         primary: withOpacity("--color-palette-primary"),
+        "light-primary": withOpacity("--color-palette-light-primary"),
+        "light-secondary": withOpacity("--color-palette-light-secondary"),
         secondary: withOpacity("--color-palette-secondary"),
         danger: withOpacity("--color-palette-danger"),
         disable: withOpacity("--color-palette-disable"),
@@ -25,6 +27,7 @@ module.exports = {
           dislike: withOpacity("--color-palette-danger"),
           "button-accent": withOpacity("--color-palette-primary"),
           "submit-btn": withOpacity("--color-palette-light-primary"),
+          "attach-btn": withOpacity("--color-palette-light-secondary"),
         },
       },
       backgroundColor: {

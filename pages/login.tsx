@@ -8,6 +8,7 @@ import { loginSchemaType, loginSchema } from "../lib/zod/loginValidation";
 import { FieldError, useLoginMutation } from "../graphql/generated";
 import InvalidText from "../components/InvalidText";
 import Image from "next/image";
+import { ScaleLoader } from "react-spinners";
 
 const Login: NextPage = () => {
   const router = useRouter();
@@ -124,7 +125,11 @@ const Login: NextPage = () => {
                    duration-200 ease-in-out hover:bg-purple-600 
                    hover:shadow-lg "
                 >
-                  Login
+                  {loading ? (
+                    <ScaleLoader color="pink" height="25px" />
+                  ) : (
+                    "Login"
+                  )}
                 </button>
               </div>
             </form>

@@ -11,6 +11,7 @@ import {
   registerSchemaType,
 } from "../lib/zod/registerValidation";
 import Image from "next/image";
+import { ScaleLoader } from "react-spinners";
 
 const Register: NextPage = () => {
   const router = useRouter();
@@ -183,7 +184,11 @@ const Register: NextPage = () => {
                    duration-200 ease-in-out hover:bg-purple-600 
                    hover:shadow-lg "
                 >
-                  Register
+                  {loading ? (
+                    <ScaleLoader color="pink" height="25px" />
+                  ) : (
+                    "Register"
+                  )}
                 </button>
               </div>
             </form>

@@ -49,6 +49,7 @@ export default function PostCard({ post }: { post: Post }) {
             {data?.me?.user && data?.me?.user.user_id == post?.creator_id ? (
               <div>
                 <button
+                  className={"text-light-primary"}
                   onClick={() => {
                     setEditMode(!editMode);
                   }}
@@ -62,19 +63,25 @@ export default function PostCard({ post }: { post: Post }) {
               </div>
             ) : null}
           </div>
-          <p className="mt-4 w-full text-left text-gray-200">{post.title}</p>
-          <p className="mt-3 pb-5 text-sm text-gray-200">
-            {post.description || "no description"}
+          <p className="mt-4 w-full py-3 text-left text-lg text-gray-200">
+            {post.title}
           </p>
-          <div className="relative flex h-96 w-[85%] justify-center bg-skin-main/50 pb-12">
-            <Image
-              className="w-full rounded object-contain shadow"
-              src={post.picture || NOT_FOUND_IMG}
-              alt="avatar"
-              objectFit="contain"
-              layout="fill"
-            />
-          </div>
+          {post.description ? (
+            <p className="mt-3 pb-5 text-sm text-gray-200">
+              {post.description}
+            </p>
+          ) : null}
+          {post.picture ? (
+            <div className="relative flex h-96 w-[85%] justify-center bg-skin-main/50 pb-12">
+              <Image
+                className="w-full rounded object-contain shadow"
+                src={post.picture || NOT_FOUND_IMG}
+                alt="avatar"
+                objectFit="contain"
+                layout="fill"
+              />
+            </div>
+          ) : null}
           <LCS post={post} />
         </div>
       </div>

@@ -96,7 +96,7 @@ export default function ProfileCorner() {
         </div>
       ) : (
         <Link href="/login">
-          <a>log in</a>
+          <a className="text-light-primary">log in</a>
         </Link>
       )}
     </div>

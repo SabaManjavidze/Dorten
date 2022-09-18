@@ -9,8 +9,9 @@
 @layer base {
   :root {
     --color-palette-primary: 238, 40, 138;
-    --color-palette-secondary: 59, 130, 246;
     --color-palette-light-primary: 242, 90, 163;
+    --color-palette-secondary: 59, 130, 246;
+    --color-palette-light-secondary: 191 219 254;
     --color-palette-danger: 224, 71, 46;
     --color-palette-disable: 124, 124, 124;
     --color-text-base: 201, 209, 217;
@@ -23,22 +24,22 @@
   @apply inline bg-gradient-to-r from-purple-500 via-pink-400 
   to-purple-500 bg-clip-text tracking-tight text-transparent;
 }
+.outlined-btn {
+  @apply rounded border-2 py-1 duration-200 ease-in-out;
+}
 .post-btn-pink {
-  @apply rounded border-2 border-skin-submit-btn py-1 text-skin-submit-btn duration-200 ease-in-out hover:bg-skin-submit-btn/20;
+  @apply outlined-btn border-skin-submit-btn text-skin-submit-btn hover:bg-skin-submit-btn/10;
 }
 .post-btn-blue {
-  @apply rounded border-2 border-skin-attach-btn py-1 text-secondary duration-200 ease-in-out hover:bg-skin-attach-btn/20;
+  @apply outlined-btn border-skin-attach-btn text-skin-attach-btn hover:bg-skin-attach-btn/20;
 }
-/* .post-btn-[color] {
-  @apply border-[color]-500 text-[color]-200 hover:bg-[color]-400/30 rounded border-2
-      px-3 py-1 duration-200 ease-in-out;
-} */
 .text-input {
   @apply block w-full rounded border border-transparent
-                  bg-skin-input-field 
-                  bg-clip-padding px-4 py-2 font-normal 
-                  text-slate-100 transition ease-in-out 
-                  focus:border-skin-input-field focus:outline-none;
+  bg-skin-input-field 
+  bg-clip-padding px-4 py-2 font-normal 
+  text-slate-100 transition ease-in-out 
+  focus:border-skin-input-field focus:outline-none
+  active:bg-skin-secondary;
 }
 @font-face {
   font-family: "Virgil";
