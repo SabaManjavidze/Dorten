@@ -12,8 +12,8 @@ export default function NavBar() {
   ];
   return (
     <nav
-      className="rounded-b-md border-gray-200 bg-white px-2 py-2.5 
-    dark:bg-[#232d42] sm:px-4"
+      className="rounded-b-md border-gray-200 bg-skin-navbar px-2 
+    py-2.5 sm:px-4"
     >
       <div className="container mx-auto flex items-center justify-between">
         <a href="#" className="flex">
@@ -23,10 +23,8 @@ export default function NavBar() {
           data-collapse-toggle="mobile-menu"
           type="button"
           className="ml-3 inline-flex items-center rounded-lg 
-          p-2 text-sm text-gray-500 hover:bg-gray-100 
-          focus:outline-none focus:ring-2 focus:ring-gray-200 
-          dark:text-gray-400 dark:hover:bg-gray-700 
-          dark:focus:ring-gray-600 md:hidden"
+          p-2 text-sm text-gray-400 
+          hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-600 md:hidden"
           onClick={() => {
             setMenuShown(!menuShown);
           }}

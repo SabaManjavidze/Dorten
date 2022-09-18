@@ -5,7 +5,7 @@ import {
 import { FaSlideshare as ShareIcon } from "react-icons/fa";
 import { AiOutlineComment as CommentIcon } from "react-icons/ai";
 import { Post, useLikePostMutation, useMeQuery } from "../../graphql/generated";
-import IconButton from "./IconButton";
+import IconButton from "./IconBtn";
 
 export default function LCS({ post }: { post: Post }) {
   const { data: userData, loading: userLoading } = useMeQuery();
@@ -30,14 +30,16 @@ export default function LCS({ post }: { post: Post }) {
           fill={
             post.likeStatus
               ? post.likeStatus > 0
-                ? "green"
+                ? "text-skin-like"
                 : undefined
               : undefined
           }
           Icon={LikeIcon}
           size="30px"
         />
-        <h3 className="m-0 p-0 text-left text-pink-200">{post.points || 0}</h3>
+        <h3 className="m-0 p-0 px-2 text-left text-pink-200">
+          {post.points || 0}
+        </h3>
         <IconButton
           onClick={() => likePostHandler(-1)}
           hoverColor="pink"
@@ -46,7 +48,7 @@ export default function LCS({ post }: { post: Post }) {
             post.likeStatus
               ? post.likeStatus > 0
                 ? undefined
-                : "red"
+                : "text-skin-dislike"
               : undefined
           }
           Icon={DislikeIcon}

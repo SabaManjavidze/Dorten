@@ -98,7 +98,7 @@ export default function PostForm() {
         <div className="flex h-10 w-full items-center justify-between">
           <div className="flex h-full items-center justify-start">
             <button
-              className="post-btn-blue group mx-2 h-full"
+              className="post-btn-blue group mx-2 h-full px-2"
               type="button"
               onClick={() => {
                 if (!inputRef?.current) return;
@@ -114,18 +114,12 @@ export default function PostForm() {
               accept="image/png,image/gif,image/jpeg,image/webp,video/mp4,video/quicktime"
               onChange={handleImageUpload}
             />
-            <button
-              type="button"
-              className="post-btn-blue h-full hover:text-white"
-            >
+            <button type="button" className="post-btn-blue h-full px-2">
               <LinkIcon size="20px" />
             </button>
           </div>
           <div className="h-full">
-            <button
-              className="post-btn-pink h-full px-12 hover:text-white"
-              type="submit"
-            >
+            <button className="post-btn-pink h-full px-12" type="submit">
               <div className="flex w-1 justify-center">
                 {loading ? (
                   <ScaleLoader color="pink" height="25px" />

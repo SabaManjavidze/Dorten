@@ -27,7 +27,6 @@ function MyApp({ Component, pageProps }: AppProps) {
         UserResponse: {
           keyFields: function ({}, { readField }) {
             const user = readField<User>("user");
-            console.log(user);
             return user?.user_id;
           },
         },
@@ -38,11 +37,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ApolloProvider client={client}>
       <ColorModeProvider>
-        {/* <AuthProvider> */}
         <Layout>
           <Component {...pageProps} />
         </Layout>
-        {/* </AuthProvider> */}
       </ColorModeProvider>
     </ApolloProvider>
   );

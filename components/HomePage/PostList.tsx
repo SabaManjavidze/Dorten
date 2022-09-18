@@ -16,7 +16,7 @@ export default function PostList() {
         {postsData?.getPost?.map((post) => (
           <li
             key={post.post_id}
-            className="w-4/5 py-5 first-of-type:border-t-0"
+            className="w-full py-5 first-of-type:border-t-0 xl:w-2/3"
           >
             <PostCard post={post as Post} />
           </li>

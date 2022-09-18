@@ -12,7 +12,7 @@ export default function PostCard({ post }: { post: Post }) {
   return (
     <div
       className="flex w-full rounded-lg
-    bg-white shadow-lg dark:bg-secondary md:mx-auto"
+    bg-skin-post-card shadow-lg"
     >
       <div className="flex w-full items-start px-4 py-6">
         <div className="justiy-center flex w-full flex-col items-center">
@@ -25,11 +25,11 @@ export default function PostCard({ post }: { post: Post }) {
                 width="40px"
                 height="40px"
               />
-              <div className="ml-4 text-gray-900 dark:text-gray-200">
+              <div className="ml-4 text-gray-200">
                 {editMode ? (
                   <input
                     type="text"
-                    className="rounded-md border-2 border-background/50 bg-gray-700/40 py-2 pl-3"
+                    className="border-background/50 rounded-md border-2 bg-gray-700/40 py-2 pl-3"
                     defaultValue={post?.creator?.username}
                   />
                 ) : (
@@ -38,12 +38,12 @@ export default function PostCard({ post }: { post: Post }) {
                   </h2>
                 )}
               </div>
-              <small className="ml-4 text-sm text-gray-700 dark:text-gray-500">
+              <small className="ml-4 text-sm text-gray-500">
                 {new Date(parseInt(post?.created_at)).toLocaleTimeString(
                   "en-GB",
                   { hour: "2-digit", minute: "2-digit" }
                 )}
-                {/* {new Date(parseInt(post.created_at)).getMinutes()} */}
+                {/* {new Dadte(parseInt(post.created_at)).getMinutes()} */}
               </small>
             </div>
             {data?.me?.user && data?.me?.user.user_id == post?.creator_id ? (
@@ -62,13 +62,11 @@ export default function PostCard({ post }: { post: Post }) {
               </div>
             ) : null}
           </div>
-          <p className="mt-4 w-full text-left text-gray-700 dark:text-gray-200">
-            {post.title}
-          </p>
-          <p className="mt-3 pb-5 text-sm text-gray-700 dark:text-gray-200">
+          <p className="mt-4 w-full text-left text-gray-200">{post.title}</p>
+          <p className="mt-3 pb-5 text-sm text-gray-200">
             {post.description || "no description"}
           </p>
-          <div className="relative flex h-96 w-[85%] justify-center bg-background/50 pb-12">
+          <div className="relative flex h-96 w-[85%] justify-center bg-skin-main/50 pb-12">
             <Image
               className="w-full rounded object-contain shadow"
               src={post.picture || NOT_FOUND_IMG}

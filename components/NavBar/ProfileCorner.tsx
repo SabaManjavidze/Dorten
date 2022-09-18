@@ -61,7 +61,7 @@ export default function ProfileCorner() {
           </button>
           <div
             className={`none absolute right-1/3 top-16 translate-x-1/2
-            rounded border-[1.8px] border-pink-500 opacity-0 shadow-lg shadow-black/30 
+            rounded-sm border-[1.8px] border-primary opacity-0 shadow-lg shadow-black/30 
             duration-200 ease-in-out
             `}
             ref={divRef}
@@ -71,8 +71,8 @@ export default function ProfileCorner() {
                 <li key={item.path}>
                   <Link href={`/${item.path}`}>
                     <div
-                      className="cursor-pointer bg-secondary  px-10
-                py-4 text-sm duration-150 ease-in-out hover:bg-background"
+                      className="cursor-pointer bg-skin-secondary  px-10
+                py-4 text-sm duration-150 ease-in-out hover:bg-skin-main"
                     >
                       <h3 className="text-gray-200">{item.title}</h3>
                     </div>
@@ -85,8 +85,8 @@ export default function ProfileCorner() {
                     await logOut();
                     await apolloClient.resetStore();
                   }}
-                  className="w-full cursor-pointer bg-secondary px-10
-                py-4 text-sm duration-150 ease-in-out hover:bg-background"
+                  className="w-full cursor-pointer bg-skin-secondary px-10
+                py-4 text-sm duration-150 ease-in-out hover:bg-skin-main"
                 >
                   <h3 className="text-gray-200">logout</h3>
                 </button>

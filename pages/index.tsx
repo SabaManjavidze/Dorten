@@ -5,7 +5,7 @@ import PostList from "../components/HomePage/PostList";
 
 const Home: NextPage = () => {
   return (
-    <div className="w-full p-5 xl:px-96">
+    <div className="w-full p-5 md:px-28 lg:px-52 xl:px-80">
       <PostForm />
       <section>
         <div className="p-2 pb-10">
@@ -13,7 +13,7 @@ const Home: NextPage = () => {
         </div>
         <div
           className="absolute right-1/2 h-[2px] w-3/4 
-        translate-x-1/2 rounded bg-pink-500"
+        translate-x-1/2 rounded bg-primary"
         ></div>
         <PostList />
       </section>
