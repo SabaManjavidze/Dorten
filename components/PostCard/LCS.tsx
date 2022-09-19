@@ -4,12 +4,49 @@ import {
 } from "react-icons/gi";
 import { FaSlideshare as ShareIcon } from "react-icons/fa";
 import { AiOutlineComment as CommentIcon } from "react-icons/ai";
-import { Post, useLikePostMutation, useMeQuery } from "../../graphql/generated";
+import {
+  GetPostsDocument,
+  GetPostsQuery,
+  Post,
+  useLikePostMutation,
+  useMeQuery,
+} from "../../graphql/generated";
 import IconButton from "./IconBtn";
 
 export default function LCS({ post }: { post: Post }) {
   const { data: userData, loading: userLoading } = useMeQuery();
-  const [likePost] = useLikePostMutation();
+  const [likePost] = useLikePostMutation({
+    // update(cache, { data }) {
+    //   const posts = cache.readQuery<GetPostsQuery>({
+    //     query: GetPostsDocument,
+    //     variables: { post_id: "" },
+    //   });
+    //   if (!posts) {
+    //     // console.log(`posts : ${posts}`);
+    //     return;
+    //   }
+    //   cache.writeQuery({
+    //     query: GetPostsDocument,
+    //     variables: { post_id: "" },
+    //     data: {
+    //       getPost: posts.getPost.map((postItem) => {
+    //         if (postItem.post_id === post.post_id) {
+    //           if (postItem.likeStatus == 0) {
+    //             Object.assing(postItem,{points:parseInt(data?.likePost.valueOf() + "")});
+    //           }
+    //           if (postItem.likeStatus == 1) {
+    //             postItem.points += parseInt(data?.likePost.valueOf() + "") - 1;
+    //           }
+    //           if (postItem.likeStatus == -1) {
+    //             postItem.points += parseInt(data?.likePost.valueOf() + "") + 1;
+    //           }
+    //         }
+    //         return postItem;
+    //       }),
+    //     },
+    //   });
+    // },
+  });
   const likePostHandler = async (value: -1 | 1) => {
     likePost({
       variables: {

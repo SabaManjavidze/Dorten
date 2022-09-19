@@ -82,8 +82,8 @@ export default function ProfileCorner() {
               <li key={"logout"}>
                 <button
                   onClick={async () => {
-                    await logOut();
                     await apolloClient.resetStore();
+                    await logOut();
                   }}
                   className="w-full cursor-pointer bg-skin-secondary px-10
                 py-4 text-sm duration-150 ease-in-out hover:bg-skin-main"

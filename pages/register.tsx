@@ -27,8 +27,6 @@ const Register: NextPage = () => {
   });
 
   const onSubmit = async (data: registerSchemaType) => {
-    alert("submited");
-    console.log("something");
     if (!data) return;
     const user = await register({
       variables: { options: { ...data, gender: data.gender.toUpperCase() } },

@@ -60,11 +60,6 @@ server = new ApolloServer({
       : ApolloServerPluginLandingPageGraphQLPlayground(),
   ],
 });
-// } catch (error: any) {
-//   console.log("APOLLO SERVER ERROR : ");
-//   console.log(JSON.stringify(error, null, 2));
-//   throw new Error("something went wrong");
-// }
 console.log("Apollo server created");
 export const config = {
   api: {

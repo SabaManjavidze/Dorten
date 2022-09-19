@@ -23,10 +23,8 @@ export default function PostForm() {
         query: GetPostsDocument,
         variables: { post_id: "" },
       });
-      if (!posts) {
-        console.log(`posts : ${posts}`);
-        return;
-      }
+      if (!posts) return;
+
       cache.writeQuery({
         query: GetPostsDocument,
         variables: { post_id: "" },

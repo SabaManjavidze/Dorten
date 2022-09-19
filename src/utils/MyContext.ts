@@ -7,7 +7,7 @@ import { createUserLoader } from "./loaders/createUserLoader";
 
 export type MyContext = {
   req: IncomingMessage & {
-    session: Session<SessionRecord>;
+    session: Session<SessionRecord> & { userId: string };
   };
   res: ServerResponse;
   userLoader: ReturnType<typeof createUserLoader>;
