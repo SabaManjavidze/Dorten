@@ -15,40 +15,47 @@ import IconButton from "./IconBtn";
 
 export default function LCS({ post }: { post: Post }) {
   const { data: userData, loading: userLoading } = useMeQuery();
-  const [likePost] = useLikePostMutation({
-    // update(cache, { data }) {
-    //   const posts = cache.readQuery<GetPostsQuery>({
-    //     query: GetPostsDocument,
-    //     variables: { post_id: "" },
-    //   });
-    //   if (!posts) {
-    //     // console.log(`posts : ${posts}`);
-    //     return;
-    //   }
-    //   cache.writeQuery({
-    //     query: GetPostsDocument,
-    //     variables: { post_id: "" },
-    //     data: {
-    //       getPost: posts.getPost.map((postItem) => {
-    //         if (postItem.post_id === post.post_id) {
-    //           if (postItem.likeStatus == 0) {
-    //             Object.assing(postItem,{points:parseInt(data?.likePost.valueOf() + "")});
-    //           }
-    //           if (postItem.likeStatus == 1) {
-    //             postItem.points += parseInt(data?.likePost.valueOf() + "") - 1;
-    //           }
-    //           if (postItem.likeStatus == -1) {
-    //             postItem.points += parseInt(data?.likePost.valueOf() + "") + 1;
-    //           }
-    //         }
-    //         return postItem;
-    //       }),
-    //     },
-    //   });
-    // },
+  let likeValue = 0;
+  const [likePost, { loading }] = useLikePostMutation({
+    update(cache) {
+      const posts = cache.readQuery<GetPostsQuery>({
+        query: GetPostsDocument,
+        variables: { post_id: "" },
+      });
+      if (!posts) {
+        // console.log(`posts : ${posts}`);
+        return;
+      }
+      cache.writeQuery({
+        query: GetPostsDocument,
+        variables: { post_id: "" },
+        data: {
+          getPost: posts.getPost.map((postItem) => {
+            if (postItem.post_id === post.post_id) {
+              if (postItem?.likeStatus == 0) {
+                return {
+                  ...postItem,
+                  points: postItem.points + likeValue,
+                  likeStatus: likeValue,
+                };
+              } else {
+                return {
+                  ...postItem,
+                  points: postItem.points + likeValue * 2,
+                  likeStatus: likeValue,
+                };
+              }
+            }
+            return postItem;
+          }),
+        },
+      });
+    },
   });
   const likePostHandler = async (value: -1 | 1) => {
-    likePost({
+    likeValue = value;
+    if (value == post.likeStatus) return;
+    await likePost({
       variables: {
         postId: post.post_id,
         value,
@@ -63,7 +70,7 @@ export default function LCS({ post }: { post: Post }) {
         <IconButton
           onClick={() => likePostHandler(1)}
           hoverColor="green"
-          disabled={isMyPost}
+          disabled={isMyPost || loading}
           fill={
             post.likeStatus
               ? post.likeStatus > 0
@@ -80,7 +87,7 @@ export default function LCS({ post }: { post: Post }) {
         <IconButton
           onClick={() => likePostHandler(-1)}
           hoverColor="pink"
-          disabled={isMyPost}
+          disabled={isMyPost || loading}
           fill={
             post.likeStatus
               ? post.likeStatus > 0
