@@ -23,7 +23,6 @@ export default function LCS({ post }: { post: Post }) {
         variables: { post_id: "" },
       });
       if (!posts) {
-        // console.log(`posts : ${posts}`);
         return;
       }
       cache.writeQuery({
@@ -32,7 +31,7 @@ export default function LCS({ post }: { post: Post }) {
         data: {
           getPost: posts.getPost.map((postItem) => {
             if (postItem.post_id === post.post_id) {
-              if (postItem?.likeStatus == 0) {
+              if (!postItem?.likeStatus) {
                 return {
                   ...postItem,
                   points: postItem.points + likeValue,

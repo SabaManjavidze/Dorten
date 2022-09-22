@@ -141,6 +141,12 @@ export type UserUpdateInput = {
   username?: InputMaybe<Scalars['String']>;
 };
 
+export type ErrorFragmentFragment = { __typename?: 'FieldError', field: string, message: string };
+
+export type UserFragmentFragment = { __typename?: 'User', user_id: string, username: string, picture?: string | null };
+
+export type UserResponseFragmentFragment = { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, user?: { __typename?: 'User', user_id: string, username: string, picture?: string | null } | null };
+
 export type CreatePostMutationVariables = Exact<{
   options: PostInput;
 }>;
@@ -162,7 +168,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', user?: { __typename?: 'User', user_id: string, username: string, email: string, picture?: string | null, age: number, gender?: string | null } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, user?: { __typename?: 'User', user_id: string, username: string, picture?: string | null } | null } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -174,12 +180,12 @@ export type RegisterMutationVariables = Exact<{
 }>;
 
 
-export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', user?: { __typename?: 'User', user_id: string, username: string, email: string, picture?: string | null, gender?: string | null, age: number } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, user?: { __typename?: 'User', user_id: string, username: string, picture?: string | null } | null } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'UserResponse', user?: { __typename?: 'User', user_id: string, username: string, email: string, age: number, gender?: string | null, picture?: string | null, posts?: Array<{ __typename?: 'Post', post_id: string, title: string }> | null } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } | null };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, user?: { __typename?: 'User', user_id: string, username: string, picture?: string | null } | null } | null };
 
 export type GetPostsQueryVariables = Exact<{
   post_id: Scalars['String'];
@@ -195,7 +201,30 @@ export type GetUserByUsernameQueryVariables = Exact<{
 
 export type GetUserByUsernameQuery = { __typename?: 'Query', getUserByUsername?: { __typename?: 'User', user_id: string, email: string, age: number, picture?: string | null, gender?: string | null, posts?: Array<{ __typename?: 'Post', post_id: string, title: string, description?: string | null, picture?: string | null }> | null } | null };
 
-
+export const ErrorFragmentFragmentDoc = gql`
+    fragment ErrorFragment on FieldError {
+  field
+  message
+}
+    `;
+export const UserFragmentFragmentDoc = gql`
+    fragment UserFragment on User {
+  user_id
+  username
+  picture
+}
+    `;
+export const UserResponseFragmentFragmentDoc = gql`
+    fragment UserResponseFragment on UserResponse {
+  errors {
+    ...ErrorFragment
+  }
+  user {
+    ...UserFragment
+  }
+}
+    ${ErrorFragmentFragmentDoc}
+${UserFragmentFragmentDoc}`;
 export const CreatePostDocument = gql`
     mutation createPost($options: PostInput!) {
   createPost(options: $options) {
@@ -274,21 +303,10 @@ export type LikePostMutationOptions = Apollo.BaseMutationOptions<LikePostMutatio
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
-    user {
-      user_id
-      username
-      email
-      picture
-      age
-      gender
-    }
-    errors {
-      field
-      message
-    }
+    ...UserResponseFragment
   }
 }
-    `;
+    ${UserResponseFragmentFragmentDoc}`;
 export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
 
 /**
@@ -349,21 +367,10 @@ export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, L
 export const RegisterDocument = gql`
     mutation Register($options: UserCreateInput!) {
   register(options: $options) {
-    user {
-      user_id
-      username
-      email
-      picture
-      gender
-      age
-    }
-    errors {
-      field
-      message
-    }
+    ...UserResponseFragment
   }
 }
-    `;
+    ${UserResponseFragmentFragmentDoc}`;
 export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, RegisterMutationVariables>;
 
 /**
@@ -393,25 +400,10 @@ export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutatio
 export const MeDocument = gql`
     query Me {
   me {
-    user {
-      user_id
-      username
-      email
-      age
-      gender
-      picture
-      posts {
-        post_id
-        title
-      }
-    }
-    errors {
-      field
-      message
-    }
+    ...UserResponseFragment
   }
 }
-    `;
+    ${UserResponseFragmentFragmentDoc}`;
 
 /**
  * __useMeQuery__

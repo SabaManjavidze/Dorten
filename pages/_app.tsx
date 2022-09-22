@@ -14,6 +14,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         ? "https://dorten.vercel.app/api/graphql"
         : "http://localhost:3000/api/graphql",
     cache: new InMemoryCache({
+      resultCaching: true,
       typePolicies: {
         Post: {
           keyFields: ["post_id"],

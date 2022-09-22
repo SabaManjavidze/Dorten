@@ -1,20 +1,5 @@
 query Me {
   me {
-    user {
-      user_id
-      username
-      email
-      age
-      gender
-      picture
-      posts {
-        post_id
-        title
-      }
-    }
-    errors {
-      field
-      message
-    }
+    ...UserResponseFragment
   }
 }

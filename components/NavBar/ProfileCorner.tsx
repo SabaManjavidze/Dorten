@@ -2,13 +2,19 @@ import { useApolloClient } from "@apollo/client";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState, useEffect, useRef } from "react";
-import { useLogoutMutation, useMeQuery } from "../../graphql/generated";
+import {
+  MeDocument,
+  useLogoutMutation,
+  useMeQuery,
+} from "../../graphql/generated";
 import { NOT_FOUND_IMG } from "../../lib/variables";
 
 export default function ProfileCorner() {
   const { loading, data, error } = useMeQuery();
   const [showMenu, setShowMenu] = useState(false);
+  const router = useRouter();
   const [logOut] = useLogoutMutation();
   const apolloClient = useApolloClient();
   const profileOptions = [
@@ -40,6 +46,13 @@ export default function ProfileCorner() {
         <h3>loading...</h3>
       </div>
     );
+  if (error) {
+    return (
+      <Link href="/login">
+        <a className="mx-6 text-light-primary">log in</a>
+      </Link>
+    );
+  }
   return (
     <div className="relative flex items-center pl-16">
       {data?.me?.user ? (
@@ -82,8 +95,9 @@ export default function ProfileCorner() {
               <li key={"logout"}>
                 <button
                   onClick={async () => {
-                    await apolloClient.resetStore();
+                    router.push("/login");
                     await logOut();
+                    await apolloClient.resetStore();
                   }}
                   className="w-full cursor-pointer bg-skin-secondary px-10
                 py-4 text-sm duration-150 ease-in-out hover:bg-skin-main"
