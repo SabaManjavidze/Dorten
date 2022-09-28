@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React, { useState } from "react";
-import { MeDocument, Post, useMeQuery } from "../../graphql/generated";
+import { MeDocument, Post } from "../../graphql/generated";
 import { NOT_FOUND_IMG } from "../../lib/variables";
 import { FaEdit as EditIcon } from "react-icons/fa";
 import { AiFillCloseCircle as ExitIcon } from "react-icons/ai";

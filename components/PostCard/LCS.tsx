@@ -7,14 +7,18 @@ import { AiOutlineComment as CommentIcon } from "react-icons/ai";
 import {
   GetPostsDocument,
   GetPostsQuery,
+  MeDocument,
   Post,
   useLikePostMutation,
-  useMeQuery,
 } from "../../graphql/generated";
 import IconButton from "./IconBtn";
+import { useApolloClient } from "@apollo/client";
 
 export default function LCS({ post }: { post: Post }) {
-  const { data: userData, loading: userLoading } = useMeQuery();
+  const client = useApolloClient();
+  const { data: userData, loading: userLoading } = client.readQuery({
+    query: MeDocument,
+  });
   let likeValue = 0;
   const [likePost, { loading }] = useLikePostMutation({
     update(cache) {
