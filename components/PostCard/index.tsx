@@ -1,13 +1,17 @@
 import Image from "next/image";
 import React, { useState } from "react";
-import { Post, useMeQuery } from "../../graphql/generated";
+import { MeDocument, Post, useMeQuery } from "../../graphql/generated";
 import { NOT_FOUND_IMG } from "../../lib/variables";
 import { FaEdit as EditIcon } from "react-icons/fa";
 import { AiFillCloseCircle as ExitIcon } from "react-icons/ai";
 import LCS from "./LCS";
+import { useApolloClient } from "@apollo/client";
 
 export default function PostCard({ post }: { post: Post }) {
-  const { loading, data, error } = useMeQuery();
+  const client = useApolloClient();
+  const { data } = client.readQuery({
+    query: MeDocument,
+  });
   const [editMode, setEditMode] = useState(false);
   return (
     <div
