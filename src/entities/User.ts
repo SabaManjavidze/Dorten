@@ -18,6 +18,7 @@ export const GENDERS = {
   NONE: "NONE",
 };
 import type { Relation } from "typeorm";
+import { Account } from "./Account";
 @ObjectType()
 @Entity()
 export class User extends BaseEntity {
@@ -47,6 +48,10 @@ export class User extends BaseEntity {
   @Field(() => [Post], { nullable: true })
   @OneToMany(() => Post, (post) => post.creator)
   posts: Relation<Post[]>;
+
+  @Field(() => [Account], { nullable: true })
+  @OneToMany(() => Account, (account) => account.user)
+  accounts: Relation<Account[]>;
 
   @OneToMany(() => Like, (like) => like.user)
   likes: Like;

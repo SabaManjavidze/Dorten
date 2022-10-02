@@ -40,7 +40,6 @@ const getSession = nextSession({
 });
 console.log("Redis created");
 let server: ApolloServer = {} as ApolloServer;
-// try {
 server = new ApolloServer({
   schema: await buildSchema({
     resolvers: [UserResolver, PostResolver],

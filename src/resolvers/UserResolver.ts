@@ -19,6 +19,8 @@ import type { MyContext } from "../utils/MyContext";
 import * as argon2 from "argon2";
 import { isAuth } from "../middleware/isAuth";
 import dataSource from "../DBConnection";
+import axios from "axios";
+import { GITHUB_OAUTH_TOKEN_URL, GITHUB_USER_URL } from "../../lib/variables";
 
 @ObjectType()
 class FieldError {
@@ -100,6 +102,39 @@ export default class UserResolver {
       return false;
     }
   }
+
+  @Mutation(() => Boolean)
+  async githubLogin(
+    @Arg("code") code: string,
+    @Ctx() { req }: MyContext
+  ): Promise<boolean> {
+    try {
+      if (!code) return false;
+      const tokenUrl = `${GITHUB_OAUTH_TOKEN_URL}?code=${code}`;
+      console.log({ tokenUrl });
+      const { data } = await axios.post(tokenUrl, {
+        client_id: process.env.NEXT_PUBLIC_GITHUB_ID,
+        client_secret: process.env.NEXT_PUBLIC_GITHUB_SECRET,
+      });
+      if (!data) return false;
+      console.log({ data });
+      const params = new URLSearchParams(data);
+      const token_type = params.get("token_type");
+      const access_token = params.get("access_token");
+      const authHeader = `${token_type} ${access_token}`;
+      console.log({ authHeader });
+      const user = await axios.get(GITHUB_USER_URL, {
+        headers: {
+          Authorization: authHeader,
+        },
+      });
+      console.log({ user });
+      return true;
+    } catch (error) {
+      throw new Error(error + "");
+    }
+  }
+
   @Mutation(() => UserResponse)
   async login(
     @Arg("email") email: string,

@@ -15,6 +15,12 @@ export type Scalars = {
   Float: number;
 };
 
+export type Account = {
+  __typename?: 'Account';
+  account_id: Scalars['String'];
+  provider: Scalars['String'];
+};
+
 export type FieldError = {
   __typename?: 'FieldError';
   field: Scalars['String'];
@@ -24,6 +30,7 @@ export type FieldError = {
 export type Mutation = {
   __typename?: 'Mutation';
   createPost: Post;
+  githubLogin: Scalars['Boolean'];
   likePost: Scalars['Boolean'];
   login: UserResponse;
   logout?: Maybe<Scalars['Boolean']>;
@@ -36,6 +43,11 @@ export type Mutation = {
 
 export type MutationCreatePostArgs = {
   options: PostInput;
+};
+
+
+export type MutationGithubLoginArgs = {
+  code: Scalars['String'];
 };
 
 
@@ -109,6 +121,7 @@ export type QueryGetUserByUsernameArgs = {
 
 export type User = {
   __typename?: 'User';
+  accounts?: Maybe<Array<Account>>;
   age: Scalars['Int'];
   email: Scalars['String'];
   gender?: Maybe<Scalars['String']>;
@@ -153,6 +166,13 @@ export type CreatePostMutationVariables = Exact<{
 
 
 export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'Post', post_id: string, title: string, description?: string | null, picture?: string | null, created_at: string, creator_id: string, creator: { __typename?: 'User', user_id: string, username: string, picture?: string | null } } };
+
+export type GithubLoginMutationVariables = Exact<{
+  code: Scalars['String'];
+}>;
+
+
+export type GithubLoginMutation = { __typename?: 'Mutation', githubLogin: boolean };
 
 export type LikePostMutationVariables = Exact<{
   postId: Scalars['String'];
@@ -268,6 +288,37 @@ export function useCreatePostMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreatePostMutationHookResult = ReturnType<typeof useCreatePostMutation>;
 export type CreatePostMutationResult = Apollo.MutationResult<CreatePostMutation>;
 export type CreatePostMutationOptions = Apollo.BaseMutationOptions<CreatePostMutation, CreatePostMutationVariables>;
+export const GithubLoginDocument = gql`
+    mutation GithubLogin($code: String!) {
+  githubLogin(code: $code)
+}
+    `;
+export type GithubLoginMutationFn = Apollo.MutationFunction<GithubLoginMutation, GithubLoginMutationVariables>;
+
+/**
+ * __useGithubLoginMutation__
+ *
+ * To run a mutation, you first call `useGithubLoginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGithubLoginMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [githubLoginMutation, { data, loading, error }] = useGithubLoginMutation({
+ *   variables: {
+ *      code: // value for 'code'
+ *   },
+ * });
+ */
+export function useGithubLoginMutation(baseOptions?: Apollo.MutationHookOptions<GithubLoginMutation, GithubLoginMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GithubLoginMutation, GithubLoginMutationVariables>(GithubLoginDocument, options);
+      }
+export type GithubLoginMutationHookResult = ReturnType<typeof useGithubLoginMutation>;
+export type GithubLoginMutationResult = Apollo.MutationResult<GithubLoginMutation>;
+export type GithubLoginMutationOptions = Apollo.BaseMutationOptions<GithubLoginMutation, GithubLoginMutationVariables>;
 export const LikePostDocument = gql`
     mutation LikePost($postId: String!, $value: Int!) {
   likePost(postId: $postId, value: $value)
