@@ -7,7 +7,11 @@ import {
   ManyToOne,
   PrimaryColumn,
 } from "typeorm";
-export const PROVIDERS = ["GOOGLE", "GITHUB"];
+export enum PROVIDERS {
+  GOOGLE = "GOOGLE",
+  GITHUB = "GITHUB",
+}
+export type ProvidersType = "GOOGLE" | "GITHUB";
 import type { Relation } from "typeorm";
 import { User } from "./User";
 
@@ -17,12 +21,12 @@ export class Account extends BaseEntity {
   @ManyToOne(() => User, (user) => user.user_id)
   user: Relation<User>;
 
-  @Field()
+  @Field(() => String)
   @Column({
     type: "enum",
-    enum: Object.values(PROVIDERS),
+    enum: PROVIDERS,
   })
-  provider: string;
+  provider: ProvidersType;
 
   @Field()
   @PrimaryColumn()

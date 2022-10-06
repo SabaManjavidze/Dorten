@@ -10,15 +10,14 @@ import {
   MeDocument,
   Post,
   useLikePostMutation,
+  useMeQuery,
 } from "../../graphql/generated";
 import IconButton from "./IconBtn";
 import { useApolloClient } from "@apollo/client";
 
 export default function LCS({ post }: { post: Post }) {
-  const client = useApolloClient();
-  const { data: userData, loading: userLoading } = client.readQuery({
-    query: MeDocument,
-  });
+  const { loading: userLoading, data: userData } = useMeQuery();
+  console.log({ userData });
   let likeValue = 0;
   const [likePost, { loading }] = useLikePostMutation({
     update(cache) {

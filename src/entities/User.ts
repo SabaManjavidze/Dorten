@@ -34,15 +34,15 @@ export class User extends BaseEntity {
   @Column({ unique: true })
   email: string;
 
-  @Column()
+  @Column({ nullable: true })
   password: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
   picture: string;
 
-  @Field(() => Int)
-  @Column()
+  @Field(() => Int, { nullable: true })
+  @Column({ nullable: true })
   age: number;
 
   @Field(() => [Post], { nullable: true })
@@ -69,10 +69,14 @@ export class User extends BaseEntity {
 
   @BeforeInsert()
   addUserId() {
-    this.user_id = v4();
+    if (!this.user_id) {
+      this.user_id = v4();
+    }
   }
   @BeforeInsert()
   async hashPassword() {
-    this.password = await argon2.hash(this.password, { hashLength: 16 });
+    if (this.password) {
+      this.password = await argon2.hash(this.password, { hashLength: 16 });
+    }
   }
 }

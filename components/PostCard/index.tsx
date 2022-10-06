@@ -1,17 +1,13 @@
 import Image from "next/image";
 import React, { useState } from "react";
-import { MeDocument, Post } from "../../graphql/generated";
+import { Post, useMeQuery } from "../../graphql/generated";
 import { NOT_FOUND_IMG } from "../../lib/variables";
 import { FaEdit as EditIcon } from "react-icons/fa";
 import { AiFillCloseCircle as ExitIcon } from "react-icons/ai";
 import LCS from "./LCS";
-import { useApolloClient } from "@apollo/client";
 
 export default function PostCard({ post }: { post: Post }) {
-  const client = useApolloClient();
-  const { data } = client.readQuery({
-    query: MeDocument,
-  });
+  const { loading: userLoading, data: userData } = useMeQuery();
   const [editMode, setEditMode] = useState(false);
   return (
     <div
@@ -50,7 +46,8 @@ export default function PostCard({ post }: { post: Post }) {
                 {/* {new Dadte(parseInt(post.created_at)).getMinutes()} */}
               </small>
             </div>
-            {data?.me?.user && data?.me?.user.user_id == post?.creator_id ? (
+            {userData?.me?.user &&
+            userData?.me?.user.user_id == post?.creator_id ? (
               <div>
                 <button
                   className={"text-light-primary"}

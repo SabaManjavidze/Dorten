@@ -1,18 +1,14 @@
-import { useApolloClient } from "@apollo/client";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import {
-  MeDocument,
   useGetUserByUsernameLazyQuery,
+  useMeQuery,
 } from "../graphql/generated";
 
 const ProfilePage: NextPage = () => {
   const router = useRouter();
-  const client = useApolloClient();
-  const { data: userData, loading: userLoading } = client.readQuery({
-    query: MeDocument,
-  });
+  const { data: userData, loading: userLoading } = useMeQuery();
   const [isPublic, setIsPublic] = useState(true);
   const [getUser, { loading, error, data }] = useGetUserByUsernameLazyQuery();
   useEffect(() => {

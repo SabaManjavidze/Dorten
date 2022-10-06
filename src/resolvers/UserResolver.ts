@@ -21,6 +21,8 @@ import { isAuth } from "../middleware/isAuth";
 import dataSource from "../DBConnection";
 import axios from "axios";
 import { GITHUB_OAUTH_TOKEN_URL, GITHUB_USER_URL } from "../../lib/variables";
+import { Account, PROVIDERS } from "../entities/Account";
+import { githubProfileType } from "../utils/types";
 
 @ObjectType()
 class FieldError {
@@ -70,6 +72,7 @@ class UserUpdateInput {
 @Resolver(User)
 export default class UserResolver {
   userRepository = dataSource.getRepository(User);
+  accountRepository = dataSource.getRepository(Account);
   @FieldResolver({ nullable: true })
   async posts(@Root() user: User, @Ctx() { postLoader }: MyContext) {
     const user_posts = await postLoader.load(user.user_id);
@@ -112,23 +115,75 @@ export default class UserResolver {
       if (!code) return false;
       const tokenUrl = `${GITHUB_OAUTH_TOKEN_URL}?code=${code}`;
       console.log({ tokenUrl });
+      // get access_token
       const { data } = await axios.post(tokenUrl, {
         client_id: process.env.NEXT_PUBLIC_GITHUB_ID,
         client_secret: process.env.NEXT_PUBLIC_GITHUB_SECRET,
       });
       if (!data) return false;
       console.log({ data });
+      // parse the response string to get token info
       const params = new URLSearchParams(data);
       const token_type = params.get("token_type");
       const access_token = params.get("access_token");
       const authHeader = `${token_type} ${access_token}`;
       console.log({ authHeader });
-      const user = await axios.get(GITHUB_USER_URL, {
+      // get user's github profile
+      const ghUser = await axios.get(GITHUB_USER_URL, {
         headers: {
           Authorization: authHeader,
         },
       });
-      console.log({ user });
+      if (!ghUser) return false;
+      const githubUser: githubProfileType = ghUser.data;
+      console.log({
+        email: githubUser.email,
+        name: githubUser.name,
+        id: githubUser.id,
+      });
+      const dbUser = await this.userRepository.findOneBy({
+        email: githubUser.email,
+      });
+      console.log({ found_user: dbUser?.username ?? "not found" });
+      if (dbUser) {
+        const githubAcc = dbUser.accounts.find((acc) => {
+          acc.provider == "GITHUB";
+        });
+        if (!githubAcc) {
+          await this.accountRepository
+            .create({
+              account_id: githubUser.id.toString(),
+              provider: "GITHUB",
+              user: dbUser,
+            })
+            .save();
+        }
+        req.session.userId = dbUser.user_id;
+      } else {
+        const userProfile = await this.userRepository
+          .create({ username: githubUser.name, email: githubUser.email })
+          .save();
+        await this.accountRepository
+          .create({
+            account_id: githubUser.id.toString(),
+            provider: "GITHUB",
+            user: userProfile,
+          })
+          .save();
+        //login
+        req.session.userId = userProfile.user_id;
+      }
+      /**
+       check if a user with same email already exists
+       if it does:
+          add profile to Accounts table and link it to the user
+       if it doesn't:
+          add profile to the Accounts table and also add it to the Users table
+          and then link it together.
+
+          later on if the user wants to log in with password and the password is empty in db
+          make them verify email and then allow to set the password (basically a change password system).
+       */
       return true;
     } catch (error) {
       throw new Error(error + "");
@@ -156,6 +211,9 @@ export default class UserResolver {
           ],
         };
       }
+      // if(!result?.password){
+      //   //email verification
+      // }
       const passwordMatch = await argon2.verify(result.password, password);
       if (!passwordMatch) {
         return {

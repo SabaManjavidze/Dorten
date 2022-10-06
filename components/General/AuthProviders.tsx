@@ -6,20 +6,17 @@ import { GITHUB_OAUTH_LOGIN_URL } from "../../lib/variables";
 export default function AuthProviders() {
   const router = useRouter();
   return (
-    <div>
+    <div className="align-center flex">
       <a
-        // target={"_blank"}
-        type="button"
-        className="mx-1 inline-block rounded-full bg-black p-3 text-xs font-medium 
-                  leading-tight shadow-md transition duration-300 ease-in-out 
-                  hover:bg-opacity-10 hover:shadow-lg "
+        className="mx-1 cursor-pointer items-center rounded-full bg-black p-3 shadow-md transition
+        duration-300 ease-in-out hover:bg-gray-800 hover:shadow-lg "
         href={`${GITHUB_OAUTH_LOGIN_URL}?client_id=${process.env.NEXT_PUBLIC_GITHUB_ID}&scope=user`}
       >
         {/* Github Logo */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
+          width="20px"
+          height="20px"
           viewBox="0 0 24 24"
         >
           <path
@@ -29,22 +26,19 @@ export default function AuthProviders() {
         </svg>
       </a>
 
-      <button
-        type="button"
-        data-mdb-ripple="true"
-        data-mdb-ripple-color="light"
-        className="mx-1 inline-block rounded-full bg-blue-900 p-3 text-xs font-medium 
-                  leading-tight shadow-md transition duration-300 ease-in-out 
-                  hover:bg-blue-700 hover:shadow-lg "
+      <a
+        className="mx-1 flex cursor-pointer items-center rounded-full bg-blue-900
+         p-3 shadow-md transition duration-300 
+        ease-in-out hover:bg-blue-700 hover:shadow-lg"
       >
         {/* Google Logo */}
         <Image
           src="https://cdn.cdnlogo.com/logos/g/35/google-icon.svg"
-          width={16}
-          height={16}
+          width={20}
+          height={20}
           alt="google logo"
         />
-      </button>
+      </a>
     </div>
   );
 }

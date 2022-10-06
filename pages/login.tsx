@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 import { loginSchemaType, loginSchema } from "../lib/zod/loginValidation";
 import { FieldError, useLoginMutation } from "../graphql/generated";
 import InvalidText from "../components/InvalidText";
-import Image from "next/image";
 import { ScaleLoader } from "react-spinners";
 import AuthProviders from "../components/General/AuthProviders";
 
