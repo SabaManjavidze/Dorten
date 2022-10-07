@@ -54,10 +54,26 @@ const Login: NextPage = () => {
             </div>
             <form onSubmit={handleSubmit(onSubmit)}>
               {errors ? (
-                <div className="flex items-center py-4 text-red-400">
-                  <div className="h-[5px] w-[5px] rounded bg-red-400"></div>
-                  <p className="ml-5">{errors.message}</p>
-                </div>
+                errors.message.includes("oauth account") ? (
+                  <div className="flex items-center py-4 text-red-400">
+                    <div className="h-[5px] w-[5px] rounded bg-red-400"></div>
+                    <span className="ml-5">
+                      {errors.message}{" "}
+                      <a
+                        href="/auth/set-password"
+                        className="text-light-primary"
+                      >
+                        click here
+                      </a>{" "}
+                      to set the password
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center py-4 text-red-400">
+                    <div className="h-[5px] w-[5px] rounded bg-red-400"></div>
+                    <p className="ml-5">{errors.message}</p>
+                  </div>
+                )
               ) : null}
               <div className="relative pt-7 pb-4">
                 <InvalidText message={formState?.errors["email"]?.message} />

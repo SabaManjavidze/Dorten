@@ -211,9 +211,21 @@ export default class UserResolver {
           ],
         };
       }
-      // if(!result?.password){
-      //   //email verification
-      // }
+      if (!result?.password) {
+        //return error indicating that user is settings the password
+        //then handle it on the client by redirecting
+        // 1. verifying the email
+        // 2. double entering password (default input and re-type input)
+        return {
+          errors: [
+            {
+              field: "password",
+              message: "user is trying to set a password to an oauth account",
+            },
+          ],
+        };
+      }
+
       const passwordMatch = await argon2.verify(result.password, password);
       if (!passwordMatch) {
         return {

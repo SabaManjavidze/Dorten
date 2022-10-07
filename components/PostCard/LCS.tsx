@@ -17,7 +17,6 @@ import { useApolloClient } from "@apollo/client";
 
 export default function LCS({ post }: { post: Post }) {
   const { loading: userLoading, data: userData } = useMeQuery();
-  console.log({ userData });
   let likeValue = 0;
   const [likePost, { loading }] = useLikePostMutation({
     update(cache) {
