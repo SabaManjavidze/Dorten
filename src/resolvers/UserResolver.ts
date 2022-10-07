@@ -23,6 +23,9 @@ import axios from "axios";
 import { GITHUB_OAUTH_TOKEN_URL, GITHUB_USER_URL } from "../../lib/variables";
 import { Account, PROVIDERS } from "../entities/Account";
 import { githubProfileType } from "../utils/types";
+import nodemailer from "nodemailer";
+import SMTPTransport from "nodemailer/lib/smtp-transport";
+import { sendEmail } from "../lib/nodemailer/sendMail";
 
 @ObjectType()
 class FieldError {
@@ -104,6 +107,29 @@ export default class UserResolver {
     } catch (error) {
       return false;
     }
+  }
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async verifyEmail(
+    @Arg("email") email: string,
+    @Ctx() { req }: MyContext
+  ): Promise<boolean> {
+    /**
+    - generate code
+    - send it to user's email
+    - store the code in the session
+     
+     */
+    const verCode = Math.floor(Math.random() * 9000000) + 1000000;
+    await sendEmail({
+      from: "Dorten",
+      to: email,
+      subject: "Dorten Email Verification",
+      text: `verification code is : ${verCode}`,
+      html: `<h1>verification code is :</h1> <p style="font-weight:bold">${verCode}</p>`,
+    });
+    req.session.emailVerificationToken = verCode;
+    return true;
   }
 
   @Mutation(() => Boolean)
