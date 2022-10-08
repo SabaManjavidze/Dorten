@@ -109,7 +109,14 @@ export default class UserResolver {
     }
   }
   @Mutation(() => Boolean)
-  @UseMiddleware(isAuth)
+  async verifyCode(
+    @Arg("code") code: number,
+    @Ctx() { req }: MyContext
+  ): Promise<boolean> {
+    if (req.session.emailVerificationToken != code) return false;
+    return true;
+  }
+  @Mutation(() => Boolean)
   async verifyEmail(
     @Arg("email") email: string,
     @Ctx() { req }: MyContext

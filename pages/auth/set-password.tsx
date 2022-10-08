@@ -7,12 +7,12 @@ const SetPasswordPage: NextPage = () => {
   const router = useRouter();
   useEffect(() => {
     if (!emailVerified) {
-      router.push("/auth/email-verification");
+      router.push("/auth/email-verify");
     }
   }, []);
 
   return (
-    <div className="absolute right-0 left-0 bottom-0 top-0 flex flex-col justify-center">
+    <div className="h-screen">
       <div className="mb-32 p-5 md:px-28 lg:px-52 xl:px-80">
         <label>Password</label>
         <input
