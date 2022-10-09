@@ -23,9 +23,10 @@ import axios from "axios";
 import { GITHUB_OAUTH_TOKEN_URL, GITHUB_USER_URL } from "../../lib/variables";
 import { Account, PROVIDERS } from "../entities/Account";
 import { githubProfileType } from "../utils/types";
-import nodemailer from "nodemailer";
-import SMTPTransport from "nodemailer/lib/smtp-transport";
 import { sendEmail } from "../lib/nodemailer/sendMail";
+import { zodPassword } from "../../lib/zod/zodTypes";
+import { loginSchema } from "../../lib/zod/loginValidation";
+import { registerSchema } from "../../lib/zod/registerValidation";
 
 @ObjectType()
 class FieldError {
@@ -103,10 +104,63 @@ export default class UserResolver {
         return { errors: [{ field: "general", message: "user not found" }] };
       const updates = Object.assign(curr_user, options);
       await this.userRepository.update({ user_id }, { ...updates });
+
       return true;
     } catch (error) {
       return false;
     }
+  }
+  @Mutation(() => UserResponse)
+  async changePassword(
+    @Arg("newPassword") newPassword: string,
+    @Ctx() { req }: MyContext
+  ): Promise<UserResponse> {
+    const validate = zodPassword.safeParse(newPassword);
+    if (!validate.success) {
+      return {
+        errors: [
+          {
+            field: "password",
+            message: validate.error.errors.join(),
+          },
+        ],
+      };
+    }
+    if (!req.session?.emailVerificationToken) {
+      return {
+        errors: [
+          {
+            field: "token",
+            message: "token expired",
+          },
+        ],
+      };
+    }
+
+    const user = await User.findOne({ where: { user_id: req.session.userId } });
+
+    if (!user) {
+      return {
+        errors: [
+          {
+            field: "token",
+            message: "user no longer exists",
+          },
+        ],
+      };
+    }
+
+    await User.update(
+      { user_id: user.user_id },
+      {
+        password: await argon2.hash(newPassword),
+      }
+    );
+
+    // log in user after change password
+    req.session.userId = user.user_id;
+
+    return { user };
   }
   @Mutation(() => Boolean)
   async verifyCode(
@@ -114,6 +168,7 @@ export default class UserResolver {
     @Ctx() { req }: MyContext
   ): Promise<boolean> {
     if (req.session.emailVerificationToken != code) return false;
+    await req.session.destroy();
     return true;
   }
   @Mutation(() => Boolean)
@@ -230,6 +285,17 @@ export default class UserResolver {
     @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
     let user: User | null = null;
+    const validate = loginSchema.safeParse({ email, password });
+    if (!validate.success) {
+      return {
+        errors: [
+          {
+            field: validate.error.cause + "",
+            message: validate.error.errors.join(),
+          },
+        ],
+      };
+    }
     try {
       const result: User | null = await this.userRepository.findOneBy({
         email,
@@ -287,6 +353,17 @@ export default class UserResolver {
     @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
     let user: User | null = null;
+    const validate = registerSchema.safeParse({ ...options });
+    if (!validate.success) {
+      return {
+        errors: [
+          {
+            field: validate.error.cause + "",
+            message: validate.error.errors.join(),
+          },
+        ],
+      };
+    }
     try {
       if (!options.email.includes("@")) {
         return {
