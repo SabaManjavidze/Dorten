@@ -12,8 +12,8 @@ export default function NavBar() {
   ];
   return (
     <nav
-      className="rounded-b-md border-gray-200 bg-skin-navbar px-2 
-    py-2.5 sm:px-4"
+      className="flex h-20 items-center rounded-b-md 
+    border-gray-200 bg-skin-navbar px-2 sm:px-4"
     >
       <div className="container mx-auto flex items-center justify-between">
         <a href="#" className="flex">
@@ -78,7 +78,9 @@ export default function NavBar() {
               </li>
             ))}
           </ul>
-          <ProfileCorner />
+          <div className="w-[270px] pl-16">
+            <ProfileCorner />
+          </div>
         </div>
       </div>
     </nav>

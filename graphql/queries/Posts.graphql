@@ -1,5 +1,5 @@
-query GetPosts($post_id: String!) {
-  getPost(post_id: $post_id) {
+query GetPosts {
+  getPost {
     post_id
     title
     description

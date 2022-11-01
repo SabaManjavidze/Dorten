@@ -1,43 +1,52 @@
-import { NextPage } from "next";
+import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import {
-  useGetUserByUsernameLazyQuery,
+  GetPostsDocument,
+  GetUserByUsernameDocument,
+  useGetUserByUsernameQuery,
   useMeQuery,
 } from "../graphql/generated";
+import { addApolloState, initializeApollo } from "../lib/apollo/ApolloClient";
 
-const ProfilePage: NextPage = () => {
+const ProfilePage = () => {
   const router = useRouter();
   const { data: userData, loading: userLoading } = useMeQuery();
   const [isPublic, setIsPublic] = useState(true);
-  const [getUser, { loading, error, data }] = useGetUserByUsernameLazyQuery();
-  useEffect(() => {
-    if (router.query.userName) {
-      getUser({
-        variables: { username: router.query.userName.toString() },
-      });
-    }
-  }, [router]);
+  const {
+    loading,
+    error,
+    data: publicUser,
+  } = useGetUserByUsernameQuery({
+    variables: { username: router?.query?.userName + "" },
+  });
 
-  useEffect(() => {
-    if (
-      !loading &&
-      data?.getUserByUsername &&
-      !userLoading &&
-      userData?.me?.user
-    )
-      setIsPublic(
-        userData?.me?.user.user_id !== data.getUserByUsername.user_id
-      );
-    // show email and editable fields
-    // else it is someone else's profile so show public info
-  }, [loading, data, userLoading]);
-
-  if (loading) return <h3>loading...</h3>;
   return (
     <div className="max-w-7xl px-6 md:px-7 lg:px-8">
-      <h3>{data?.getUserByUsername?.email}</h3>
+      <h3>
+        {loading ? null : publicUser?.getUserByUsername?.email}
+        {/* {!userLoading
+          ? publicUser?.getUserByUsername?.user_id ==
+            userData?.me?.user?.user_id
+            ? publicUser?.getUserByUsername?.email
+            : router.query.userName
+          : null} */}
+      </h3>
     </div>
   );
 };
 export default ProfilePage;
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const apolloClient = initializeApollo();
+
+  await apolloClient.query({
+    query: GetUserByUsernameDocument,
+    variables: {
+      username: context.query?.userName + "",
+    },
+  });
+
+  return addApolloState(apolloClient, {
+    props: {},
+  });
+}

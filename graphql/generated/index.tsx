@@ -29,6 +29,7 @@ export type FieldError = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  changePassword: UserResponse;
   createPost: Post;
   githubLogin: Scalars['Boolean'];
   likePost: Scalars['Boolean'];
@@ -40,6 +41,11 @@ export type Mutation = {
   updateUser: Scalars['Boolean'];
   verifyCode: Scalars['Boolean'];
   verifyEmail: Scalars['Boolean'];
+};
+
+
+export type MutationChangePasswordArgs = {
+  newPassword: Scalars['String'];
 };
 
 
@@ -233,9 +239,7 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, user?: { __typename?: 'User', user_id: string, username: string, picture?: string | null } | null } | null };
 
-export type GetPostsQueryVariables = Exact<{
-  post_id: Scalars['String'];
-}>;
+export type GetPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetPostsQuery = { __typename?: 'Query', getPost: Array<{ __typename?: 'Post', post_id: string, title: string, description?: string | null, picture?: string | null, created_at: string, creator_id: string, points: number, likeStatus?: number | null, creator: { __typename?: 'User', user_id: string, username: string, picture?: string | null } }> };
@@ -571,8 +575,8 @@ export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const GetPostsDocument = gql`
-    query GetPosts($post_id: String!) {
-  getPost(post_id: $post_id) {
+    query GetPosts {
+  getPost {
     post_id
     title
     description
@@ -602,11 +606,10 @@ export const GetPostsDocument = gql`
  * @example
  * const { data, loading, error } = useGetPostsQuery({
  *   variables: {
- *      post_id: // value for 'post_id'
  *   },
  * });
  */
-export function useGetPostsQuery(baseOptions: Apollo.QueryHookOptions<GetPostsQuery, GetPostsQueryVariables>) {
+export function useGetPostsQuery(baseOptions?: Apollo.QueryHookOptions<GetPostsQuery, GetPostsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetPostsQuery, GetPostsQueryVariables>(GetPostsDocument, options);
       }

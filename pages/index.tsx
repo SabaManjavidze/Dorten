@@ -1,7 +1,8 @@
-import type { NextPage } from "next";
-import { useState } from "react";
+import type { GetServerSidePropsContext, NextPage } from "next";
 import PostForm from "../components/HomePage/PostForm";
 import PostList from "../components/HomePage/PostList";
+import { GetPostsDocument } from "../graphql/generated";
+import { addApolloState, initializeApollo } from "../lib/apollo/ApolloClient";
 
 const Home: NextPage = () => {
   return (
@@ -22,3 +23,13 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const apolloClient = initializeApollo(null, context.req.cookies);
+  await apolloClient.query({
+    query: GetPostsDocument,
+  });
+
+  return addApolloState(apolloClient, {
+    props: {},
+  });
+}

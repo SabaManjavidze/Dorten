@@ -1,13 +1,19 @@
+import { ApolloError } from "@apollo/client";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { Post, useGetPostsQuery } from "../../graphql/generated";
+import { GetPostsQuery, Post, useGetPostsQuery } from "../../graphql/generated";
 import PostCard from "../PostCard";
+
+// type PostListPropTypes={
+//   postsData?:GetPostsQuery,
+// postsError?:ApolloError,
+// }
 
 export default function PostList() {
   const {
     loading: postsLoading,
     data: postsData,
     error: postsError,
-  } = useGetPostsQuery({ variables: { post_id: "" } });
+  } = useGetPostsQuery();
   const [listRef] = useAutoAnimate<HTMLUListElement>();
 
   return (

@@ -13,9 +13,9 @@ import {
 import { Post } from "./Post";
 import { Like } from "./Like";
 export const GENDERS = {
-  MALE: "MALE",
-  FEMALE: "FEMALE",
-  NONE: "NONE",
+  MALE: "Male",
+  FEMALE: "Female",
+  NONE: "None",
 };
 import type { Relation } from "typeorm";
 import { Account } from "./Account";

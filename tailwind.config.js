@@ -12,6 +12,15 @@ module.exports = {
   ],
   theme: {
     extend: {
+      animation: {
+        wiggle: "wiggle 0.4s ease-in-out",
+      },
+      keyframes: {
+        wiggle: {
+          "0%, 100%": { transform: "rotate(-9deg)" },
+          "50%": { transform: "rotate(9deg)" },
+        },
+      },
       colors: {
         primary: withOpacity("--color-palette-primary"),
         "light-primary": withOpacity("--color-palette-light-primary"),

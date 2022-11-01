@@ -29,7 +29,7 @@ const Register: NextPage = () => {
   const onSubmit = async (data: registerSchemaType) => {
     if (!data) return;
     const user = await register({
-      variables: { options: { ...data, gender: data.gender.toUpperCase() } },
+      variables: { options: { ...data, gender: data.gender } },
     });
     if (
       user?.data?.register?.errors?.length &&

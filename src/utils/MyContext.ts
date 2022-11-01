@@ -9,7 +9,7 @@ export type MyContext = {
   req: IncomingMessage & {
     session: Session<SessionRecord> & {
       userId: string;
-      emailVerificationToken: number;
+      emailVerificationToken: number | null;
     };
   };
   res: ServerResponse;

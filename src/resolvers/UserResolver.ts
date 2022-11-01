@@ -111,6 +111,7 @@ export default class UserResolver {
     }
   }
   @Mutation(() => UserResponse)
+  @UseMiddleware(isAuth)
   async changePassword(
     @Arg("newPassword") newPassword: string,
     @Ctx() { req }: MyContext
@@ -163,15 +164,17 @@ export default class UserResolver {
     return { user };
   }
   @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
   async verifyCode(
     @Arg("code") code: number,
     @Ctx() { req }: MyContext
   ): Promise<boolean> {
     if (req.session.emailVerificationToken != code) return false;
-    await req.session.destroy();
+    req.session.emailVerificationToken = null;
     return true;
   }
   @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
   async verifyEmail(
     @Arg("email") email: string,
     @Ctx() { req }: MyContext
@@ -232,9 +235,9 @@ export default class UserResolver {
       const dbUser = await this.userRepository.findOneBy({
         email: githubUser.email,
       });
-      console.log({ found_user: dbUser?.username ?? "not found" });
+      console.log({ found_user: dbUser ?? "not found" });
       if (dbUser) {
-        const githubAcc = dbUser.accounts.find((acc) => {
+        const githubAcc = dbUser.accounts?.find((acc) => {
           acc.provider == "GITHUB";
         });
         if (!githubAcc) {
@@ -354,27 +357,18 @@ export default class UserResolver {
   ): Promise<UserResponse> {
     let user: User | null = null;
     const validate = registerSchema.safeParse({ ...options });
+
     if (!validate.success) {
       return {
         errors: [
           {
             field: validate.error.cause + "",
-            message: validate.error.errors.join(),
+            message: validate.error.errors[0].message,
           },
         ],
       };
     }
     try {
-      if (!options.email.includes("@")) {
-        return {
-          errors: [
-            {
-              field: "email",
-              message: "email is not valid",
-            },
-          ],
-        };
-      }
       const result = this.userRepository.create({
         ...options,
       });
@@ -391,7 +385,7 @@ export default class UserResolver {
           ],
         };
       }
-      console.log(err.message);
+      console.log({ error: err.message });
     }
     if (!user)
       return {
