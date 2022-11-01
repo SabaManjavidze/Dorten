@@ -9,6 +9,7 @@ import { FieldError, useLoginMutation } from "../graphql/generated";
 import InvalidText from "../components/InvalidText";
 import { ScaleLoader } from "react-spinners";
 import AuthProviders from "../components/General/AuthProviders";
+import Link from "next/link";
 
 const Login: NextPage = () => {
   const router = useRouter();
@@ -58,13 +59,10 @@ const Login: NextPage = () => {
                   <div className="flex items-center py-4 text-red-400">
                     <div className="h-[5px] w-[5px] rounded bg-red-400"></div>
                     <span className="ml-5">
-                      {errors.message}{" "}
-                      <a
-                        href="/auth/set-password"
-                        className="text-light-primary"
-                      >
-                        click here
-                      </a>{" "}
+                      {errors.message}
+                      <Link href="/auth/set-password">
+                        <a className="text-light-primary">click here</a>
+                      </Link>
                       to set the password
                     </span>
                   </div>
