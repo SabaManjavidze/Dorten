@@ -20,7 +20,11 @@ import * as argon2 from "argon2";
 import { isAuth } from "../middleware/isAuth";
 import dataSource from "../DBConnection";
 import axios from "axios";
-import { GITHUB_OAUTH_TOKEN_URL, GITHUB_USER_URL } from "../../lib/variables";
+import {
+  GITHUB_OAUTH_TOKEN_URL,
+  GITHUB_USER_URL,
+  OAUTH_SET_PASS_ERR_MSG,
+} from "../../lib/variables";
 import { Account, PROVIDERS } from "../entities/Account";
 import { githubProfileType } from "../utils/types";
 import { sendEmail } from "../lib/nodemailer/sendMail";
@@ -34,6 +38,14 @@ class FieldError {
   field: string;
   @Field()
   message: string;
+}
+@ObjectType()
+class ChangePassResponse {
+  @Field(() => [FieldError], { nullable: true })
+  errors?: FieldError[];
+
+  @Field()
+  success: boolean;
 }
 
 @ObjectType()
@@ -110,15 +122,16 @@ export default class UserResolver {
       return false;
     }
   }
-  @Mutation(() => UserResponse)
+  @Mutation(() => ChangePassResponse)
   @UseMiddleware(isAuth)
   async changePassword(
     @Arg("newPassword") newPassword: string,
     @Ctx() { req }: MyContext
-  ): Promise<UserResponse> {
+  ): Promise<ChangePassResponse> {
     const validate = zodPassword.safeParse(newPassword);
     if (!validate.success) {
       return {
+        success: false,
         errors: [
           {
             field: "password",
@@ -127,25 +140,16 @@ export default class UserResolver {
         ],
       };
     }
-    if (!req.session?.emailVerificationToken) {
+    const user = await this.userRepository.findOne({
+      where: { user_id: req.session.userId },
+    });
+    if (!user?.email_verified) {
       return {
+        success: false,
         errors: [
           {
-            field: "token",
-            message: "token expired",
-          },
-        ],
-      };
-    }
-
-    const user = await User.findOne({ where: { user_id: req.session.userId } });
-
-    if (!user) {
-      return {
-        errors: [
-          {
-            field: "token",
-            message: "user no longer exists",
+            field: "general",
+            message: "Email not verified",
           },
         ],
       };
@@ -159,18 +163,22 @@ export default class UserResolver {
     );
 
     // log in user after change password
-    req.session.userId = user.user_id;
+    // req.session.userId = user.user_id;
 
-    return { user };
+    return { success: true };
   }
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async verifyCode(
-    @Arg("code") code: number,
+    @Arg("code") code: string,
     @Ctx() { req }: MyContext
   ): Promise<boolean> {
-    if (req.session.emailVerificationToken != code) return false;
+    if (req.session.emailVerificationToken != parseInt(code)) return false;
     req.session.emailVerificationToken = null;
+    this.userRepository.update(
+      { user_id: req.session.userId },
+      { email_verified: true }
+    );
     return true;
   }
   @Mutation(() => Boolean)
@@ -322,7 +330,7 @@ export default class UserResolver {
           errors: [
             {
               field: "password",
-              message: "user is trying to set a password to an oauth account",
+              message: OAUTH_SET_PASS_ERR_MSG,
             },
           ],
         };

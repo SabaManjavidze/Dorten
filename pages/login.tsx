@@ -10,10 +10,15 @@ import InvalidText from "../components/InvalidText";
 import { ScaleLoader } from "react-spinners";
 import AuthProviders from "../components/General/AuthProviders";
 import Link from "next/link";
+import {
+  AiFillEyeInvisible as ClosedEye,
+  AiFillEye as OpenedEye,
+} from "react-icons/ai";
 
 const Login: NextPage = () => {
   const router = useRouter();
   const [errors, setErrors] = useState<FieldError>();
+  const [showPassowrd, setShowPassowrd] = useState(false);
   const [login, { loading }] = useLoginMutation();
 
   const {
@@ -35,11 +40,10 @@ const Login: NextPage = () => {
       setErrors(user.data.login.errors[0]);
     }
     if (user?.data?.login?.user) {
-      // setUser(user.data.login.user);
       router.push("/");
     }
   };
-
+  const handleShowPassword = () => setShowPassowrd(!showPassowrd);
   return (
     <section className="h-screen">
       <div className="h-full px-6">
@@ -58,13 +62,7 @@ const Login: NextPage = () => {
                 errors.message.includes("oauth account") ? (
                   <div className="flex items-center py-4 text-red-400">
                     <div className="h-[5px] w-[5px] rounded bg-red-400"></div>
-                    <span className="ml-5">
-                      {errors.message}
-                      <Link href="/auth/set-password">
-                        <a className="text-light-primary">click here</a>
-                      </Link>
-                      to set the password
-                    </span>
+                    <span className="ml-5">{errors.message}</span>
                   </div>
                 ) : (
                   <div className="flex items-center py-4 text-red-400">
@@ -78,19 +76,28 @@ const Login: NextPage = () => {
                 <input
                   className="text-input text-lg"
                   placeholder="Email address"
-                  // type="email"
+                  type="email"
                   {...loginForm("email")}
                 />
               </div>
 
               <div className="relative pt-7 pb-4">
                 <InvalidText message={formState?.errors["password"]?.message} />
-                <input
-                  className="text-input text-lg"
-                  placeholder="Password"
-                  type="password"
-                  {...loginForm("password")}
-                />
+                <div className="flex">
+                  <input
+                    className="text-input text-lg"
+                    placeholder="Password"
+                    type={showPassowrd ? "text" : "password"}
+                    {...loginForm("password")}
+                  />
+                  <button onClick={handleShowPassword} type="button">
+                    {showPassowrd ? (
+                      <OpenedEye size={30} />
+                    ) : (
+                      <ClosedEye size={30} />
+                    )}
+                  </button>
+                </div>
               </div>
 
               <div className="text-center lg:text-left">

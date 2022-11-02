@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { BsFillImageFill as ImgIcon } from "react-icons/bs";
 import { AiOutlineLink as LinkIcon } from "react-icons/ai";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import {
   FieldError,
   GetPostsDocument,
@@ -35,9 +35,9 @@ export default function PostForm() {
     },
   });
 
-  const handleCreatePostSubmit = async (e: any) => {
+  const handleCreatePostSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
+    const formData = new FormData(e.currentTarget);
     const title = formData.get("title")?.toString();
     if (!title) {
       setErros([{ field: "title", message: "title cannot be emtpy" }]);

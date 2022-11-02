@@ -16,7 +16,7 @@ export default function ProfileCorner() {
   const [showMenu, setShowMenu] = useState(false);
   const router = useRouter();
   const [logOut] = useLogoutMutation();
-  // const apolloClient = useApolloClient();
+  const apolloClient = useApolloClient();
   const profileOptions = [
     { title: "Profile", path: data?.me?.user?.username },
     { title: "Settings", path: "settings" },
@@ -99,7 +99,7 @@ export default function ProfileCorner() {
                     onClick={async () => {
                       router.push("/login");
                       await logOut();
-                      // await apolloClient.resetStore();
+                      await apolloClient.resetStore();
                     }}
                     className="w-full cursor-pointer bg-skin-secondary px-10
                 py-4 text-sm duration-150 ease-in-out hover:bg-skin-main"
