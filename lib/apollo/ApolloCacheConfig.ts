@@ -4,10 +4,9 @@ import {
   InMemoryCacheConfig,
   NormalizedCacheObject,
 } from "@apollo/client";
-import { concatPagination } from "@apollo/client/utilities";
+import { relayStylePagination } from "@apollo/client/utilities";
 import { User } from "../../graphql/generated";
 
-// export const ApolloClientConfig: ApolloClientOptions<NormalizedCacheObject> = {
 export const ApolloCacheConfig: InMemoryCacheConfig = {
   typePolicies: {
     Post: {
@@ -24,7 +23,7 @@ export const ApolloCacheConfig: InMemoryCacheConfig = {
     },
     Query: {
       fields: {
-        getPost: concatPagination(),
+        posts: relayStylePagination(),
       },
     },
   },

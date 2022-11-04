@@ -5,6 +5,7 @@ import { NOT_FOUND_IMG } from "../../lib/variables";
 import { FaEdit as EditIcon } from "react-icons/fa";
 import { AiFillCloseCircle as ExitIcon } from "react-icons/ai";
 import LCS from "./LCS";
+import Link from "next/link";
 
 export default function PostCard({ post }: { post: Post }) {
   const { loading: userLoading, data: userData } = useMeQuery();
@@ -18,13 +19,17 @@ export default function PostCard({ post }: { post: Post }) {
         <div className="justiy-center flex w-full flex-col items-center">
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center">
-              <Image
-                className="rounded-full object-cover shadow"
-                src={post?.creator?.picture || NOT_FOUND_IMG}
-                alt="avatar"
-                width="40px"
-                height="40px"
-              />
+              <Link href={`/${post.creator.username}`} className="pointer">
+                <a href={`/${post.creator.username}`}>
+                  <Image
+                    className="rounded-full object-cover shadow"
+                    src={post?.creator?.picture || NOT_FOUND_IMG}
+                    alt="avatar"
+                    width="40px"
+                    height="40px"
+                  />
+                </a>
+              </Link>
               <div className="ml-4 text-gray-200">
                 {editMode ? (
                   <input

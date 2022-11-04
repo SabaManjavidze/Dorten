@@ -1,0 +1,21 @@
+query GetMyProfile {
+  me {
+    errors {
+      ...ErrorFragment
+    }
+    user {
+      ...UserFragment
+      email_verified
+      email
+      age
+      posts {
+        post_id
+        title
+        description
+        picture
+        points
+        created_at
+      }
+    }
+  }
+}

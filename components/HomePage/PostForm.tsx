@@ -1,7 +1,14 @@
 import Image from "next/image";
 import { BsFillImageFill as ImgIcon } from "react-icons/bs";
 import { AiOutlineLink as LinkIcon } from "react-icons/ai";
-import { ChangeEvent, FormEvent, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  Dispatch,
+  DragEvent,
+  FormEvent,
+  useRef,
+  useState,
+} from "react";
 import {
   FieldError,
   GetPostsDocument,
@@ -13,9 +20,15 @@ import {
 import { toBase64 } from "../../lib/convBase64";
 import { ScaleLoader } from "react-spinners";
 
-export default function PostForm() {
+type PostFormPropType = {
+  dragging: boolean;
+  setDragging: Dispatch<boolean>;
+};
+
+export default function PostForm({ dragging ,setDragging}: PostFormPropType) {
   const [errors, setErros] = useState<FieldError[] | null>(null);
   const [postPicture, setPostPicture] = useState<any>();
+  const [dropping, setDropping] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [createPost, { loading }] = useCreatePostMutation({
     update(cache, { data }) {
@@ -54,6 +67,16 @@ export default function PostForm() {
     await createPost({ variables: { options: data } });
   };
 
+  const handleImageDrop = async (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+    const converted = await toBase64(file);
+    setPostPicture({ file: converted + "", name: file.name });
+setDragging(false)
+setDropping(false)
+  };
   const handleImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     if (!event?.target?.files || !event.target.files[0]) {
       return;
@@ -63,7 +86,7 @@ export default function PostForm() {
     setPostPicture({ file: converted + "", name: file.name });
   };
   return (
-    <section className="mb-10 mt-5 flex w-full justify-center px-4">
+    <section className="mb-10 mt-5 flex w-full justify-center ">
       <div className="flex w-full flex-col items-center justify-center xl:max-w-4xl">
         <h2 className="w-full text-left text-lg text-gray-200">
           Create a post
@@ -97,28 +120,45 @@ export default function PostForm() {
             </div>
           ) : null}
           <div className="flex h-10 w-full items-center justify-between">
-            <div className="flex h-full items-center justify-start">
-              <button
-                className="post-btn-blue group mx-2 h-full px-3"
-                type="button"
-                onClick={() => {
-                  if (!inputRef?.current) return;
-                  inputRef.current.click();
+            {/* file drop buttons */}
+            {!dragging ? (
+              <div className="flex h-full items-center justify-start border-blue-500 duration-200 ease-in-out">
+                <button
+                  className="post-btn-blue group mx-2 h-full px-3"
+                  type="button"
+                  onClick={() => {
+                    if (!inputRef?.current) return;
+                    inputRef.current.click();
+                  }}
+                >
+                  <ImgIcon className="duration-200 ease-in-out group-hover:fill-white" />
+                </button>
+                <input
+                  type="file"
+                  ref={inputRef}
+                  className="hidden"
+                  accept="image/png,image/gif,image/jpeg,image/webp,video/mp4,video/quicktime"
+                  onChange={handleImageUpload}
+                />
+                <button type="button" className="post-btn-blue h-full px-3">
+                  <LinkIcon size="20px" />
+                </button>
+              </div>
+            ) : (
+              <div
+                onDrop={handleImageDrop}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDropping(true);
                 }}
+                onDragExit={(e) => setDropping(false)}
+                className={`post-btn-blue px-10 py-5 ${
+                  dropping ? "bg-blue-500/30" : null
+                }`}
               >
-                <ImgIcon className="duration-200 ease-in-out group-hover:fill-white" />
-              </button>
-              <input
-                type="file"
-                ref={inputRef}
-                className="hidden"
-                accept="image/png,image/gif,image/jpeg,image/webp,video/mp4,video/quicktime"
-                onChange={handleImageUpload}
-              />
-              <button type="button" className="post-btn-blue h-full px-3">
-                <LinkIcon size="20px" />
-              </button>
-            </div>
+                <h3>Drop Your File Here!</h3>
+              </div>
+            )}
             <div className="h-full">
               <button className="post-btn-pink h-full px-16" type="submit">
                 <div className="flex w-1 justify-center">
