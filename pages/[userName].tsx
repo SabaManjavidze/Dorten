@@ -43,6 +43,7 @@ const ProfilePage = ({
                 src={publicProfile?.picture || NOT_FOUND_IMG}
                 layout="fill"
                 className="rounded-full"
+		alt="Users profile picture"
               />
             </div>
           </div>
