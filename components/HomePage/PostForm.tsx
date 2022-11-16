@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { BsFillImageFill as ImgIcon } from "react-icons/bs";
 import { AiOutlineLink as LinkIcon } from "react-icons/ai";
+import { AiOutlineClose as ExitIcon } from "react-icons/ai";
 import {
   ChangeEvent,
   Dispatch,
@@ -25,7 +26,7 @@ type PostFormPropType = {
   setDragging: Dispatch<boolean>;
 };
 
-export default function PostForm({ dragging ,setDragging}: PostFormPropType) {
+export default function PostForm({ dragging, setDragging }: PostFormPropType) {
   const [errors, setErros] = useState<FieldError[] | null>(null);
   const [postPicture, setPostPicture] = useState<any>();
   const [dropping, setDropping] = useState(false);
@@ -47,7 +48,9 @@ export default function PostForm({ dragging ,setDragging}: PostFormPropType) {
       });
     },
   });
-
+  const handleRemoveImage = () => {
+    setPostPicture(null);
+  };
   const handleCreatePostSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -74,8 +77,8 @@ export default function PostForm({ dragging ,setDragging}: PostFormPropType) {
     if (!file) return;
     const converted = await toBase64(file);
     setPostPicture({ file: converted + "", name: file.name });
-setDragging(false)
-setDropping(false)
+    setDragging(false);
+    setDropping(false);
   };
   const handleImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     if (!event?.target?.files || !event.target.files[0]) {
@@ -92,7 +95,7 @@ setDropping(false)
           Create a post
         </h2>
         <form className="w-4/5" onSubmit={handleCreatePostSubmit}>
-          <div className="h-15 my-5">
+          <div className="my-5 ">
             {errors && errors.length > 0 && errors[0].field == "title" ? (
               <h3 className="text-red-500 ">{errors[0].message}</h3>
             ) : null}
@@ -110,21 +113,28 @@ setDropping(false)
           </div>
           {postPicture ? (
             <div className="flex w-full flex-col justify-center pb-5">
-              <h3 className="tracking-wider">{postPicture.name}</h3>
-              <Image
-                src={postPicture.file}
-                width="100%"
-                height="330px"
-                alt="profile picture"
-              />
+              <div className="flex w-full justify-between p-4">
+                <h3 className="tracking-wider">{postPicture.name}</h3>
+                <button type="button" onClick={handleRemoveImage}>
+                  <ExitIcon className="text-xl text-skin-button-accent" />
+                </button>
+              </div>
+              <div className="relative h-[500px]">
+                <Image
+                  src={postPicture.file}
+                  layout="fill"
+                  className="object-contain"
+                  alt="profile picture"
+                />
+              </div>
             </div>
           ) : null}
-          <div className="flex h-10 w-full items-center justify-between">
+          <div className="mt-4 flex h-10 w-full items-center justify-between">
             {/* file drop buttons */}
             {!dragging ? (
               <div className="flex h-full items-center justify-start border-blue-500 duration-200 ease-in-out">
                 <button
-                  className="post-btn-blue group mx-2 h-full px-3"
+                  className="post-btn-blue group mr-2 h-full px-3"
                   type="button"
                   onClick={() => {
                     if (!inputRef?.current) return;
