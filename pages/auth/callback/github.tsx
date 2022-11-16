@@ -1,6 +1,7 @@
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { ClipLoader } from "react-spinners";
 import {
   useGithubLoginMutation,
   useMeLazyQuery,
@@ -37,9 +38,15 @@ const Callback: NextPage = () => {
     handleCallback();
   }, [router]);
 
-  if (meLoading) return <h3>Loading...</h3>;
-  if (meError) return <h3>There was an error</h3>;
-
-  return <div>hello this is callback</div>;
+  return (
+    <div className="flex h-screen w-full items-center justify-center">
+      <ClipLoader
+        className="border-primary border-b-transparent"
+        speedMultiplier={0.5}
+        size={70}
+        color={""}
+      />
+    </div>
+  );
 };
 export default Callback;

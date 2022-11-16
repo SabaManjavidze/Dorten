@@ -213,20 +213,17 @@ export default class UserResolver {
     try {
       if (!code) return false;
       const tokenUrl = `${GITHUB_OAUTH_TOKEN_URL}?code=${code}`;
-      console.log({ tokenUrl });
       // get access_token
       const { data } = await axios.post(tokenUrl, {
         client_id: process.env.NEXT_PUBLIC_GITHUB_ID,
         client_secret: process.env.NEXT_PUBLIC_GITHUB_SECRET,
       });
       if (!data) return false;
-      console.log({ data });
       // parse the response string to get token info
       const params = new URLSearchParams(data);
       const token_type = params.get("token_type");
       const access_token = params.get("access_token");
       const authHeader = `${token_type} ${access_token}`;
-      console.log({ authHeader });
       // get user's github profile
       const ghUser = await axios.get(GITHUB_USER_URL, {
         headers: {
@@ -235,15 +232,9 @@ export default class UserResolver {
       });
       if (!ghUser) return false;
       const githubUser: githubProfileType = ghUser.data;
-      console.log({
-        email: githubUser.email,
-        name: githubUser.name,
-        id: githubUser.id,
-      });
       const dbUser = await this.userRepository.findOneBy({
         email: githubUser.email,
       });
-      console.log({ found_user: dbUser ?? "not found" });
       if (dbUser) {
         const githubAcc = dbUser.accounts?.find((acc) => {
           acc.provider == "GITHUB";

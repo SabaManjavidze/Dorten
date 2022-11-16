@@ -54,6 +54,7 @@ export default function LCS({ post }: { post: Post }) {
     },
   });
   const likePostHandler = async (value: -1 | 1) => {
+    if (!userData?.me?.user) return;
     likeValue = value;
     if (value == post.likeStatus) return;
     await likePost({
@@ -73,7 +74,7 @@ export default function LCS({ post }: { post: Post }) {
           hoverColor="green"
           disabled={isMyPost || loading}
           fill={
-            post.likeStatus
+            post?.likeStatus
               ? post.likeStatus > 0
                 ? "text-skin-like"
                 : undefined

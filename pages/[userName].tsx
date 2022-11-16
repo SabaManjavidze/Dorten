@@ -43,7 +43,7 @@ const ProfilePage = ({
                 src={publicProfile?.picture || NOT_FOUND_IMG}
                 layout="fill"
                 className="rounded-full"
-		alt="Users profile picture"
+                alt="Users profile picture"
               />
             </div>
           </div>
@@ -80,7 +80,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   });
   const data = meData as MeQuery;
   const isMyProfile = data.me?.user?.username == context.query.userName;
-  console.log({ meData: meData.me.user });
+  // console.log({ meData: meData.me.user });
 
   const { data: userData } = await apolloClient.query({
     query: isMyProfile ? GetMyProfileDocument : GetUserByUsernameDocument,
@@ -88,7 +88,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       username: context.query?.userName + "",
     },
   });
-  console.log("THE ACTUAL PROFILE: ", { userData });
+  // console.log("THE ACTUAL PROFILE: ", { userData });
   let myProfile: GetMyProfileQuery["me"] = null;
   let publicProfile: GetUserByUsernameQuery["getUserByUsername"];
   if (isMyProfile) {

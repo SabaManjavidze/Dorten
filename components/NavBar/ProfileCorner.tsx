@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { useState, useEffect, useRef } from "react";
 import {
   MeDocument,
+  MeQuery,
   useLogoutMutation,
   useMeQuery,
 } from "../../graphql/generated";
@@ -15,12 +16,26 @@ export default function ProfileCorner() {
   const { loading, data, error } = useMeQuery();
   const [showMenu, setShowMenu] = useState(false);
   const router = useRouter();
-  const [logOut] = useLogoutMutation();
+  const [logOut] = useLogoutMutation({
+    update(cache) {
+      cache.writeQuery({
+        query: MeDocument,
+        data: {
+          me: null,
+        } as MeQuery,
+      });
+    },
+  });
   const apolloClient = useApolloClient();
   const profileOptions = [
     { title: "Profile", path: data?.me?.user?.username },
     { title: "Settings", path: "settings" },
   ];
+  const handleLogOut = async () => {
+    router.push("/login");
+    await logOut();
+    await apolloClient.clearStore();
+  };
   const divRef = useRef<HTMLDivElement>(null);
   const SHOW_MENU_TIME = 100;
   useEffect(() => {
@@ -96,11 +111,7 @@ export default function ProfileCorner() {
                 ))}
                 <li key={"logout"}>
                   <button
-                    onClick={async () => {
-                      router.push("/login");
-                      await logOut();
-                      await apolloClient.resetStore();
-                    }}
+                    onClick={handleLogOut}
                     className="w-full cursor-pointer bg-skin-secondary px-10
                 py-4 text-sm duration-150 ease-in-out hover:bg-skin-main"
                   >
