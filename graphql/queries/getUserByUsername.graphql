@@ -1,7 +1,6 @@
 query GetUserByUsername($username: String!) {
   getUserByUsername(username: $username) {
     user_id
-    email
     age
     picture
     gender
@@ -10,6 +9,8 @@ query GetUserByUsername($username: String!) {
       title
       description
       picture
+      points
+      created_at
     }
   }
 }

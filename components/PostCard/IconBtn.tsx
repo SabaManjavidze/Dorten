@@ -26,7 +26,8 @@ export default function IconBtn({
       onClick={onClick}
       className={`flex cursor-pointer items-center text-sm
     ${disabled ? "text-disable" : fill} duration-300 ease-in-out ${
-        !disabled && `hover:-rotate-12 hover:text-${hoverColor}-500`
+        !disabled &&
+        `hover:rotate-12 last-of-type:hover:-rotate-12 hover:text-${hoverColor}-500`
       }`}
       disabled={disabled}
     >

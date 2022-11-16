@@ -7,14 +7,16 @@ import { AiOutlineComment as CommentIcon } from "react-icons/ai";
 import {
   GetPostsDocument,
   GetPostsQuery,
+  MeDocument,
   Post,
   useLikePostMutation,
   useMeQuery,
 } from "../../graphql/generated";
 import IconButton from "./IconBtn";
+import { useApolloClient } from "@apollo/client";
 
 export default function LCS({ post }: { post: Post }) {
-  const { data: userData, loading: userLoading } = useMeQuery();
+  const { loading: userLoading, data: userData } = useMeQuery();
   let likeValue = 0;
   const [likePost, { loading }] = useLikePostMutation({
     update(cache) {
@@ -52,6 +54,7 @@ export default function LCS({ post }: { post: Post }) {
     },
   });
   const likePostHandler = async (value: -1 | 1) => {
+    if (!userData?.me?.user) return;
     likeValue = value;
     if (value == post.likeStatus) return;
     await likePost({
@@ -71,7 +74,7 @@ export default function LCS({ post }: { post: Post }) {
           hoverColor="green"
           disabled={isMyPost || loading}
           fill={
-            post.likeStatus
+            post?.likeStatus
               ? post.likeStatus > 0
                 ? "text-skin-like"
                 : undefined

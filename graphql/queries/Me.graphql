@@ -1,5 +1,11 @@
 query Me {
   me {
-    ...UserResponseFragment
+    errors {
+      ...ErrorFragment
+    }
+    user {
+      ...UserFragment
+      email_verified
+    }
   }
 }

@@ -1,0 +1,3 @@
+mutation VerifyCode($code: String!) {
+  verifyCode(code: $code)
+}

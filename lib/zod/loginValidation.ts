@@ -1,7 +1,8 @@
 import { z } from "zod";
+import { zodEmail, zodPassword } from "./zodTypes";
 
 export const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8).max(20),
+  email: zodEmail,
+  password: zodPassword,
 });
 export type loginSchemaType = z.infer<typeof loginSchema>;

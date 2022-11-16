@@ -19,6 +19,18 @@ import type { MyContext } from "../utils/MyContext";
 import * as argon2 from "argon2";
 import { isAuth } from "../middleware/isAuth";
 import dataSource from "../DBConnection";
+import axios from "axios";
+import {
+  GITHUB_OAUTH_TOKEN_URL,
+  GITHUB_USER_URL,
+  OAUTH_SET_PASS_ERR_MSG,
+} from "../../lib/variables";
+import { Account, PROVIDERS } from "../entities/Account";
+import { githubProfileType } from "../utils/types";
+import { sendEmail } from "../lib/nodemailer/sendMail";
+import { zodPassword } from "../../lib/zod/zodTypes";
+import { loginSchema } from "../../lib/zod/loginValidation";
+import { registerSchema } from "../../lib/zod/registerValidation";
 
 @ObjectType()
 class FieldError {
@@ -26,6 +38,14 @@ class FieldError {
   field: string;
   @Field()
   message: string;
+}
+@ObjectType()
+class ChangePassResponse {
+  @Field(() => [FieldError], { nullable: true })
+  errors?: FieldError[];
+
+  @Field()
+  success: boolean;
 }
 
 @ObjectType()
@@ -68,6 +88,7 @@ class UserUpdateInput {
 @Resolver(User)
 export default class UserResolver {
   userRepository = dataSource.getRepository(User);
+  accountRepository = dataSource.getRepository(Account);
   @FieldResolver({ nullable: true })
   async posts(@Root() user: User, @Ctx() { postLoader }: MyContext) {
     const user_posts = await postLoader.load(user.user_id);
@@ -95,11 +116,170 @@ export default class UserResolver {
         return { errors: [{ field: "general", message: "user not found" }] };
       const updates = Object.assign(curr_user, options);
       await this.userRepository.update({ user_id }, { ...updates });
+
       return true;
     } catch (error) {
       return false;
     }
   }
+  @Mutation(() => ChangePassResponse)
+  @UseMiddleware(isAuth)
+  async changePassword(
+    @Arg("newPassword") newPassword: string,
+    @Ctx() { req }: MyContext
+  ): Promise<ChangePassResponse> {
+    const validate = zodPassword.safeParse(newPassword);
+    if (!validate.success) {
+      return {
+        success: false,
+        errors: [
+          {
+            field: "password",
+            message: validate.error.errors.join(),
+          },
+        ],
+      };
+    }
+    const user = await this.userRepository.findOne({
+      where: { user_id: req.session.userId },
+    });
+    if (!user?.email_verified) {
+      return {
+        success: false,
+        errors: [
+          {
+            field: "general",
+            message: "Email not verified",
+          },
+        ],
+      };
+    }
+
+    await User.update(
+      { user_id: user.user_id },
+      {
+        password: await argon2.hash(newPassword),
+      }
+    );
+
+    // log in user after change password
+    // req.session.userId = user.user_id;
+
+    return { success: true };
+  }
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async verifyCode(
+    @Arg("code") code: string,
+    @Ctx() { req }: MyContext
+  ): Promise<boolean> {
+    if (req.session.emailVerificationToken != parseInt(code)) return false;
+    req.session.emailVerificationToken = null;
+    this.userRepository.update(
+      { user_id: req.session.userId },
+      { email_verified: true }
+    );
+    return true;
+  }
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async verifyEmail(
+    @Arg("email") email: string,
+    @Ctx() { req }: MyContext
+  ): Promise<boolean> {
+    /**
+    - generate code
+    - send it to user's email
+    - store the code in the session
+     
+     */
+    const verCode = Math.floor(Math.random() * 9000000) + 1000000;
+    await sendEmail({
+      from: "Dorten",
+      to: email,
+      subject: "Dorten Email Verification",
+      text: `verification code is : ${verCode}`,
+      html: `<h1>verification code is :</h1> <p style="font-weight:bold">${verCode}</p>`,
+    });
+    req.session.emailVerificationToken = verCode;
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  async githubLogin(
+    @Arg("code") code: string,
+    @Ctx() { req }: MyContext
+  ): Promise<boolean> {
+    try {
+      if (!code) return false;
+      const tokenUrl = `${GITHUB_OAUTH_TOKEN_URL}?code=${code}`;
+      // get access_token
+      const { data } = await axios.post(tokenUrl, {
+        client_id: process.env.NEXT_PUBLIC_GITHUB_ID,
+        client_secret: process.env.NEXT_PUBLIC_GITHUB_SECRET,
+      });
+      if (!data) return false;
+      // parse the response string to get token info
+      const params = new URLSearchParams(data);
+      const token_type = params.get("token_type");
+      const access_token = params.get("access_token");
+      const authHeader = `${token_type} ${access_token}`;
+      // get user's github profile
+      const ghUser = await axios.get(GITHUB_USER_URL, {
+        headers: {
+          Authorization: authHeader,
+        },
+      });
+      if (!ghUser) return false;
+      const githubUser: githubProfileType = ghUser.data;
+      const dbUser = await this.userRepository.findOneBy({
+        email: githubUser.email,
+      });
+      if (dbUser) {
+        const githubAcc = dbUser.accounts?.find((acc) => {
+          acc.provider == "GITHUB";
+        });
+        if (!githubAcc) {
+          await this.accountRepository
+            .create({
+              account_id: githubUser.id.toString(),
+              provider: "GITHUB",
+              user: dbUser,
+            })
+            .save();
+        }
+        req.session.userId = dbUser.user_id;
+      } else {
+        const userProfile = await this.userRepository
+          .create({ username: githubUser.name, email: githubUser.email })
+          .save();
+        await this.accountRepository
+          .create({
+            account_id: githubUser.id.toString(),
+            provider: "GITHUB",
+            user: userProfile,
+          })
+          .save();
+        //login
+        req.session.userId = userProfile.user_id;
+      }
+      /**
+       check if a user with same email already exists
+       if it does:
+          add profile to Accounts table and link it to the user
+       if it doesn't:
+          add profile to the Accounts table and also add it to the Users table
+          and then link it together.
+
+          later on if the user wants to log in with password and the password is empty in db
+          make them verify email and then allow to set the password (basically a change password system).
+       */
+      return true;
+    } catch (error) {
+      throw new Error(error + "");
+    }
+  }
+
   @Mutation(() => UserResponse)
   async login(
     @Arg("email") email: string,
@@ -107,6 +287,17 @@ export default class UserResolver {
     @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
     let user: User | null = null;
+    const validate = loginSchema.safeParse({ email, password });
+    if (!validate.success) {
+      return {
+        errors: [
+          {
+            field: validate.error.cause + "",
+            message: validate.error.errors.join(),
+          },
+        ],
+      };
+    }
     try {
       const result: User | null = await this.userRepository.findOneBy({
         email,
@@ -121,6 +312,21 @@ export default class UserResolver {
           ],
         };
       }
+      if (!result?.password) {
+        //return error indicating that user is settings the password
+        //then handle it on the client by redirecting
+        // 1. verifying the email
+        // 2. double entering password (default input and re-type input)
+        return {
+          errors: [
+            {
+              field: "password",
+              message: OAUTH_SET_PASS_ERR_MSG,
+            },
+          ],
+        };
+      }
+
       const passwordMatch = await argon2.verify(result.password, password);
       if (!passwordMatch) {
         return {
@@ -149,17 +355,19 @@ export default class UserResolver {
     @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
     let user: User | null = null;
+    const validate = registerSchema.safeParse({ ...options });
+
+    if (!validate.success) {
+      return {
+        errors: [
+          {
+            field: validate.error.cause + "",
+            message: validate.error.errors[0].message,
+          },
+        ],
+      };
+    }
     try {
-      if (!options.email.includes("@")) {
-        return {
-          errors: [
-            {
-              field: "email",
-              message: "email is not valid",
-            },
-          ],
-        };
-      }
       const result = this.userRepository.create({
         ...options,
       });
@@ -176,7 +384,7 @@ export default class UserResolver {
           ],
         };
       }
-      console.log(err.message);
+      console.log({ error: err.message });
     }
     if (!user)
       return {

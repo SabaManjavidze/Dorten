@@ -41,6 +41,7 @@ export default class PostResolver {
   }
   @FieldResolver(() => Int, { nullable: true })
   async likeStatus(@Root() post: Post, @Ctx() { likeLoader, req }: MyContext) {
+    if (!req.session?.userId) return null;
     const like = await likeLoader.load({
       postId: post.post_id,
       userId: req.session.userId,
@@ -49,7 +50,6 @@ export default class PostResolver {
   }
 
   @Query(() => [Post])
-  @UseMiddleware(isAuth)
   async getPost(@Arg("post_id", { nullable: true }) post_id: string) {
     if (post_id) {
       const post = await this.postRepository.find({

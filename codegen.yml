@@ -7,7 +7,6 @@ generates:
     config:
       reactApolloVersion: 3
       withHooks: true
-      withMutationOptionsType: true
     plugins:
       - "typescript"
       - "typescript-operations"

@@ -7,7 +7,7 @@ export default function PostList() {
     loading: postsLoading,
     data: postsData,
     error: postsError,
-  } = useGetPostsQuery({ variables: { post_id: "" } });
+  } = useGetPostsQuery();
   const [listRef] = useAutoAnimate<HTMLUListElement>();
 
   return (
