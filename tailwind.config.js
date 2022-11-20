@@ -42,6 +42,7 @@ module.exports = {
       backgroundColor: {
         skin: {
           main: withOpacity("--color-background-main"),
+          "loading-bar": withOpacity("--color-palette-primary"),
           "post-card": withOpacity("--color-background-secondary"),
           "comment-card": withOpacity("--color-background-secondary"),
           "input-field": withOpacity("--color-background-secondary"),

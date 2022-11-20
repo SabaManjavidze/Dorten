@@ -7,7 +7,6 @@ import "../styles/globals.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const client = useApollo(pageProps);
-  pageProps;
   return (
     <ApolloProvider client={client}>
       <ColorModeProvider>

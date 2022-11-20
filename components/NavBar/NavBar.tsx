@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { useState } from "react";
 import ProfileCorner from "./ProfileCorner";
 
@@ -66,15 +67,17 @@ export default function NavBar() {
           <ul className="mt-4 flex sm:flex-col md:mt-0 md:flex-row md:space-x-8 md:text-sm md:font-medium">
             {navLinks.map((item) => (
               <li key={item.path}>
-                <a
-                  href={item.path}
-                  className="block rounded py-2 
+                <Link href={item.path}>
+                  <a
+                    href={item.path}
+                    className="block rounded py-2 
                 pr-4 pl-3 text-base text-gray-400 duration-300 
                 ease-in-out hover:text-gray-200 md:bg-transparent md:p-0"
-                  aria-current="page"
-                >
-                  {item.title}
-                </a>
+                    aria-current="page"
+                  >
+                    {item.title}
+                  </a>
+                </Link>
               </li>
             ))}
           </ul>
