@@ -1,22 +1,20 @@
 import DataLoader from "dataloader";
 import { In } from "typeorm";
 import { Post } from "../../entities/Post";
+import { User } from "../../entities/User";
 
 export const createPostLoader = () =>
-  new DataLoader<string, Post[]>(async (userIds) => {
+  new DataLoader<string, Post>(async (postIds) => {
     const posts = await Post.find({
       where: {
-        creator_id: In(userIds as string[]),
+        post_id: In(postIds as string[]),
       },
     });
-    const userIdToPost: Record<string, Post[]> = {};
-    posts.forEach((item) => {
-      if (item.creator_id in userIdToPost) {
-        userIdToPost[item.creator_id].push(item);
-      } else {
-        userIdToPost[item.creator_id] = [item];
-      }
+    const postIdToPost: Record<string, Post> = {};
+    posts.forEach((p) => {
+      postIdToPost[p.post_id] = p;
     });
-    const sortedPosts = userIds.map((userId) => userIdToPost[userId]);
-    return sortedPosts;
+
+    const sortedUsers = postIds.map((postId) => postIdToPost[postId]);
+    return sortedUsers;
   });

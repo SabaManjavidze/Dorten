@@ -1,9 +1,12 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { Session, SessionRecord } from "next-session/lib/types";
-import { NextRequest, NextResponse } from "next/server";
-import { createLikeLoader } from "./loaders/createLikeLoader";
-import { createPostLoader } from "./loaders/createPostLoader";
-import { createUserLoader } from "./loaders/createUserLoader";
+import {
+  createLikeLoader,
+  createPostCommentLoader,
+  createPostLoader,
+  createUserLoader,
+  createUserPostsLoader,
+} from "./loaders";
 
 export type MyContext = {
   req: IncomingMessage & {
@@ -14,6 +17,8 @@ export type MyContext = {
   };
   res: ServerResponse;
   userLoader: ReturnType<typeof createUserLoader>;
-  postLoader: ReturnType<typeof createPostLoader>;
+  userPostsLoader: ReturnType<typeof createUserPostsLoader>;
+  postCommentLoader: ReturnType<typeof createPostCommentLoader>;
+  postsLoader: ReturnType<typeof createPostLoader>;
   likeLoader: ReturnType<typeof createLikeLoader>;
 };

@@ -14,6 +14,7 @@ import type { Relation } from "typeorm";
 import { v4 } from "uuid";
 import { Like } from "./Like";
 import { User } from "./User";
+import { Comment } from "./Comment";
 
 @Entity()
 @ObjectType()
@@ -38,6 +39,14 @@ export class Post extends BaseEntity {
   @Column()
   creator_id: string;
 
+  @Field(() => [Comment], { nullable: true })
+  @OneToMany(() => Comment, (comment) => comment.post)
+  comments: Relation<Comment[]>;
+
+  @Field(() => User)
+  @ManyToOne(() => User, (user) => user.posts)
+  creator: Relation<User>;
+
   @Field()
   @Column({ type: "int", default: 0 })
   points: number;
@@ -47,10 +56,6 @@ export class Post extends BaseEntity {
 
   @OneToMany(() => Like, (like) => like.post)
   likes: Like[];
-
-  @Field(() => User)
-  @ManyToOne(() => User, (user) => user.posts)
-  creator: Relation<User>;
 
   @Field(() => String)
   @CreateDateColumn()

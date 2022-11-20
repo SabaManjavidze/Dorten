@@ -9,13 +9,16 @@ import UserResolver from "../../src/resolvers/UserResolver";
 import dotenv from "dotenv";
 import PostResolver from "../../src/resolvers/PostResolver";
 import { createUserLoader } from "../../src/utils/loaders/createUserLoader";
-import { createPostLoader } from "../../src/utils/loaders/createPostLoader";
+import { createUserPostsLoader } from "../../src/utils/loaders/createUserPostsLoader";
 import nextSession from "next-session";
 import { expressSession, promisifyStore } from "next-session/lib/compat";
 import RedisStoreFactory from "connect-redis";
 import Redis from "ioredis";
 import { MyContext } from "../../src/utils/MyContext";
 import { createLikeLoader } from "../../src/utils/loaders/createLikeLoader";
+import CommentResolver from "../../src/resolvers/CommentResolver";
+import { createPostLoader } from "../../src/utils/loaders/createPostLoader";
+import { createPostCommentLoader } from "../../src/utils/loaders/createPostCommentLoader";
 
 dotenv.config();
 
@@ -42,14 +45,16 @@ console.log("Redis created");
 let server: ApolloServer = {} as ApolloServer;
 server = new ApolloServer({
   schema: await buildSchema({
-    resolvers: [UserResolver, PostResolver],
+    resolvers: [UserResolver, PostResolver, CommentResolver],
     validate: false,
   }),
   context: async ({ req, res }: MyContext) => ({
     req: { ...req, session: await getSession(req, res) },
     res,
     userLoader: createUserLoader(),
-    postLoader: createPostLoader(),
+    userPostsLoader: createUserPostsLoader(),
+    postCommentLoader: createPostCommentLoader(),
+    postsLoader: createPostLoader(),
     likeLoader: createLikeLoader(),
   }),
   cache: process.env.NODE_ENV === "production" ? "bounded" : undefined,

@@ -36,7 +36,7 @@ const CodeVerifyPage: NextPage = () => {
             datatype="number"
             name="code"
           />
-          <SubmitButton loading={loading} />
+          <SubmitButton loading={loading}>Submit</SubmitButton>
         </form>
       </div>
     </div>

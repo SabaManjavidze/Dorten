@@ -39,6 +39,12 @@ export default class PostResolver {
   creator(@Root() post: Post, @Ctx() { userLoader }: MyContext) {
     return userLoader.load(post.creator_id);
   }
+
+  @FieldResolver(() => User)
+  comments(@Root() post: Post, @Ctx() { postCommentLoader }: MyContext) {
+    return postCommentLoader.load(post.post_id);
+  }
+
   @FieldResolver(() => Int, { nullable: true })
   async likeStatus(@Root() post: Post, @Ctx() { likeLoader, req }: MyContext) {
     if (!req.session?.userId) return null;

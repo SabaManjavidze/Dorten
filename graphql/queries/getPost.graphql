@@ -1,0 +1,22 @@
+query GetPost($post_id: String!) {
+  getPost(post_id: $post_id) {
+    post_id
+    title
+    description
+    picture
+    created_at
+    creator_id
+    points
+    likeStatus
+    comments {
+      text
+      created_at
+      creator {
+        ...UserFragment
+      }
+    }
+    creator {
+      ...UserFragment
+    }
+  }
+}

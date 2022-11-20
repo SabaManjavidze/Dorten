@@ -27,6 +27,17 @@ export type ChangePassResponse = {
   success: Scalars['Boolean'];
 };
 
+export type Comment = {
+  __typename?: 'Comment';
+  comment_id: Scalars['String'];
+  created_at: Scalars['String'];
+  creator: User;
+  creator_id: Scalars['String'];
+  post: Post;
+  post_id: Scalars['String'];
+  text: Scalars['String'];
+};
+
 export type FieldError = {
   __typename?: 'FieldError';
   field: Scalars['String'];
@@ -35,6 +46,7 @@ export type FieldError = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addComment: Comment;
   changePassword: ChangePassResponse;
   createPost: Post;
   githubLogin: Scalars['Boolean'];
@@ -47,6 +59,12 @@ export type Mutation = {
   updateUser: Scalars['Boolean'];
   verifyCode: Scalars['Boolean'];
   verifyEmail: Scalars['Boolean'];
+};
+
+
+export type MutationAddCommentArgs = {
+  postId: Scalars['String'];
+  text: Scalars['String'];
 };
 
 
@@ -109,6 +127,7 @@ export type MutationVerifyEmailArgs = {
 
 export type Post = {
   __typename?: 'Post';
+  comments?: Maybe<Array<Comment>>;
   created_at: Scalars['String'];
   creator: User;
   creator_id: Scalars['String'];
@@ -147,6 +166,7 @@ export type User = {
   __typename?: 'User';
   accounts?: Maybe<Array<Account>>;
   age?: Maybe<Scalars['Int']>;
+  comments?: Maybe<Array<Comment>>;
   email: Scalars['String'];
   email_verified: Scalars['Boolean'];
   gender?: Maybe<Scalars['String']>;
@@ -262,6 +282,13 @@ export type GetPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetPostsQuery = { __typename?: 'Query', getPost: Array<{ __typename?: 'Post', post_id: string, title: string, description?: string | null, picture?: string | null, created_at: string, creator_id: string, points: number, likeStatus?: number | null, creator: { __typename?: 'User', user_id: string, username: string, picture?: string | null } }> };
+
+export type GetPostQueryVariables = Exact<{
+  post_id: Scalars['String'];
+}>;
+
+
+export type GetPostQuery = { __typename?: 'Query', getPost: Array<{ __typename?: 'Post', post_id: string, title: string, description?: string | null, picture?: string | null, created_at: string, creator_id: string, points: number, likeStatus?: number | null, comments?: Array<{ __typename?: 'Comment', text: string, created_at: string, creator: { __typename?: 'User', user_id: string, username: string, picture?: string | null, gender?: string | null } }> | null, creator: { __typename?: 'User', user_id: string, username: string, picture?: string | null, gender?: string | null } }> };
 
 export type GetUserByUsernameQueryVariables = Exact<{
   username: Scalars['String'];
@@ -734,6 +761,58 @@ export function useGetPostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetPostsQueryHookResult = ReturnType<typeof useGetPostsQuery>;
 export type GetPostsLazyQueryHookResult = ReturnType<typeof useGetPostsLazyQuery>;
 export type GetPostsQueryResult = Apollo.QueryResult<GetPostsQuery, GetPostsQueryVariables>;
+export const GetPostDocument = gql`
+    query GetPost($post_id: String!) {
+  getPost(post_id: $post_id) {
+    post_id
+    title
+    description
+    picture
+    created_at
+    creator_id
+    points
+    likeStatus
+    comments {
+      text
+      created_at
+      creator {
+        ...UserFragment
+      }
+    }
+    creator {
+      ...UserFragment
+    }
+  }
+}
+    ${UserFragmentFragmentDoc}`;
+
+/**
+ * __useGetPostQuery__
+ *
+ * To run a query within a React component, call `useGetPostQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPostQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPostQuery({
+ *   variables: {
+ *      post_id: // value for 'post_id'
+ *   },
+ * });
+ */
+export function useGetPostQuery(baseOptions: Apollo.QueryHookOptions<GetPostQuery, GetPostQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPostQuery, GetPostQueryVariables>(GetPostDocument, options);
+      }
+export function useGetPostLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPostQuery, GetPostQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPostQuery, GetPostQueryVariables>(GetPostDocument, options);
+        }
+export type GetPostQueryHookResult = ReturnType<typeof useGetPostQuery>;
+export type GetPostLazyQueryHookResult = ReturnType<typeof useGetPostLazyQuery>;
+export type GetPostQueryResult = Apollo.QueryResult<GetPostQuery, GetPostQueryVariables>;
 export const GetUserByUsernameDocument = gql`
     query GetUserByUsername($username: String!) {
   getUserByUsername(username: $username) {

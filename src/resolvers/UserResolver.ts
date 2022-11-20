@@ -90,7 +90,10 @@ export default class UserResolver {
   userRepository = dataSource.getRepository(User);
   accountRepository = dataSource.getRepository(Account);
   @FieldResolver({ nullable: true })
-  async posts(@Root() user: User, @Ctx() { postLoader }: MyContext) {
+  async posts(
+    @Root() user: User,
+    @Ctx() { userPostsLoader: postLoader }: MyContext
+  ) {
     const user_posts = await postLoader.load(user.user_id);
     return user_posts;
   }
