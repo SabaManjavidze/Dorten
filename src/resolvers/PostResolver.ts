@@ -45,14 +45,14 @@ export default class PostResolver {
     return postCommentLoader.load(post.post_id);
   }
 
-  @FieldResolver(() => Int, { nullable: true })
+  @FieldResolver(() => Int)
   async likeStatus(@Root() post: Post, @Ctx() { likeLoader, req }: MyContext) {
-    if (!req.session?.userId) return null;
+    if (!req.session?.userId) return 0;
     const like = await likeLoader.load({
       postId: post.post_id,
       userId: req.session.userId,
     });
-    return like ? like.value : null;
+    return like ? like.value : 0;
   }
 
   @Query(() => [Post])
@@ -96,8 +96,18 @@ export default class PostResolver {
     if (post.creator_id == req.session.userId) return false;
 
     // if the user has already liked and is changing the value double up that value
-    if (like) {
-      if (like.value == realValue) return false;
+    if (like && like?.value !== 0) {
+      if (like.value == realValue) {
+        await this.likeRepository.update(
+          { postId: like.postId, userId: req.session.userId },
+          { value: 0 }
+        );
+        await this.postRepository.update(
+          { post_id: postId },
+          { points: post.points - realValue }
+        );
+        return true;
+      }
 
       await this.likeRepository.update(
         { postId: like.postId, userId: req.session.userId },

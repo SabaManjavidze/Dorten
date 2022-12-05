@@ -7,13 +7,11 @@ import { AiOutlineComment as CommentIcon } from "react-icons/ai";
 import {
   GetPostsDocument,
   GetPostsQuery,
-  MeDocument,
   Post,
   useLikePostMutation,
   useMeQuery,
 } from "../../graphql/generated";
 import IconButton from "./IconBtn";
-import { useApolloClient } from "@apollo/client";
 
 export default function LCS({ post }: { post: Post }) {
   const { loading: userLoading, data: userData } = useMeQuery();
@@ -33,7 +31,14 @@ export default function LCS({ post }: { post: Post }) {
         data: {
           getPost: posts.getPost.map((postItem) => {
             if (postItem.post_id === post.post_id) {
-              if (!postItem?.likeStatus) {
+              if (postItem?.likeStatus == likeValue) {
+                return {
+                  ...postItem,
+                  points: postItem.points - likeValue,
+                  likeStatus: 0,
+                };
+              }
+              if (postItem?.likeStatus === 0) {
                 return {
                   ...postItem,
                   points: postItem.points + likeValue,
@@ -56,7 +61,6 @@ export default function LCS({ post }: { post: Post }) {
   const likePostHandler = async (value: -1 | 1) => {
     if (!userData?.me?.user) return;
     likeValue = value;
-    if (value == post.likeStatus) return;
     await likePost({
       variables: {
         postId: post.post_id,
@@ -74,10 +78,8 @@ export default function LCS({ post }: { post: Post }) {
           hoverColor="green"
           disabled={isMyPost || loading}
           fill={
-            post?.likeStatus
-              ? post.likeStatus > 0
-                ? "text-skin-like"
-                : undefined
+            post?.likeStatus && post?.likeStatus > 0
+              ? "text-skin-like"
               : undefined
           }
           Icon={LikeIcon}
