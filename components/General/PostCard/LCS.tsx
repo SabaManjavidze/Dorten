@@ -10,12 +10,17 @@ import {
   Post,
   useLikePostMutation,
   useMeQuery,
-} from "../../graphql/generated";
+} from "../../../graphql/generated";
 import IconButton from "./IconBtn";
+import { useMemo, useState } from "react";
+import CommentForm from "../CommentForm/CommentForm";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
+let likeValue = 0;
 export default function LCS({ post }: { post: Post }) {
   const { loading: userLoading, data: userData } = useMeQuery();
-  let likeValue = 0;
+  const [showCommentForm, setShowCommentForm] = useState(false);
+  const [divRef] = useAutoAnimate<HTMLDivElement>();
   const [likePost, { loading }] = useLikePostMutation({
     update(cache) {
       const posts = cache.readQuery<GetPostsQuery>({
@@ -70,41 +75,55 @@ export default function LCS({ post }: { post: Post }) {
   };
   if (userLoading) return <p>loading...</p>;
   const isMyPost = post.creator.user_id == userData?.me?.user?.user_id;
+  const handleCommentClick = () => {
+    setShowCommentForm(!showCommentForm);
+  };
   return (
-    <div className="mt-4 flex w-4/5 items-center justify-between">
-      <div className="flex items-center justify-between">
+    <div className="flex w-4/5 flex-col">
+      <div className="mt-4 flex items-center justify-between">
+        <div className="flex items-center justify-between">
+          <IconButton
+            onClick={() => likePostHandler(1)}
+            hoverColor="green"
+            disabled={isMyPost || loading}
+            fill={
+              post?.likeStatus && post?.likeStatus > 0
+                ? "text-skin-like"
+                : undefined
+            }
+            Icon={LikeIcon}
+            size="30px"
+          />
+          <h3 className="m-0 p-0 px-2 text-left text-pink-200">
+            {post.points || 0}
+          </h3>
+          <IconButton
+            onClick={() => likePostHandler(-1)}
+            hoverColor="pink"
+            disabled={isMyPost || loading}
+            fill={
+              post.likeStatus
+                ? post.likeStatus > 0
+                  ? undefined
+                  : "text-skin-dislike"
+                : undefined
+            }
+            Icon={DislikeIcon}
+            size="30px"
+          />
+        </div>
         <IconButton
-          onClick={() => likePostHandler(1)}
-          hoverColor="green"
-          disabled={isMyPost || loading}
-          fill={
-            post?.likeStatus && post?.likeStatus > 0
-              ? "text-skin-like"
-              : undefined
-          }
-          Icon={LikeIcon}
+          onClick={handleCommentClick}
+          Icon={CommentIcon}
+          text={post.comments?.length ?? 0}
           size="30px"
         />
-        <h3 className="m-0 p-0 px-2 text-left text-pink-200">
-          {post.points || 0}
-        </h3>
-        <IconButton
-          onClick={() => likePostHandler(-1)}
-          hoverColor="pink"
-          disabled={isMyPost || loading}
-          fill={
-            post.likeStatus
-              ? post.likeStatus > 0
-                ? undefined
-                : "text-skin-dislike"
-              : undefined
-          }
-          Icon={DislikeIcon}
-          size="30px"
-        />
+        <IconButton Icon={ShareIcon} text={"share"} size="30px" />
       </div>
-      <IconButton Icon={CommentIcon} text={8} size="30px" />
-      <IconButton Icon={ShareIcon} text={"share"} size="30px" />
+
+      <div ref={divRef} className="mt-10">
+        {showCommentForm ? <CommentForm postId={post.post_id} /> : null}
+      </div>
     </div>
   );
 }

@@ -40,7 +40,7 @@ export class Post extends BaseEntity {
   creator_id: string;
 
   @Field(() => [Comment], { nullable: true })
-  @OneToMany(() => Comment, (comment) => comment.post)
+  @OneToMany(() => Comment, (comment) => comment.post, { nullable: true })
   comments: Relation<Comment[]>;
 
   @Field(() => User)

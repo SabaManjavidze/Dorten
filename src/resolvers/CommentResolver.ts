@@ -40,7 +40,7 @@ export default class CommentResolver {
     const comment = await this.commentRepository
       .create({
         creator_id: req.session.userId,
-        comment_id: postId,
+        post_id: postId,
         text: validatedText,
       })
       .save();

@@ -1,6 +1,6 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Post, useGetPostsQuery } from "../../graphql/generated";
-import PostCard from "../PostCard";
+import PostCard from "../General/PostCard";
 
 export default function PostList() {
   const {

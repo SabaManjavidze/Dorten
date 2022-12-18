@@ -8,6 +8,13 @@ query GetPosts {
     creator_id
     points
     likeStatus
+    comments {
+      text
+      created_at
+      creator {
+        ...UserFragment
+      }
+    }
     creator {
       user_id
       username

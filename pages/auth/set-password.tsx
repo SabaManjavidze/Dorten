@@ -8,6 +8,10 @@ import { z } from "zod";
 import SubmitButton from "../../components/General/Buttons/SubmitButton";
 import InvalidText from "../../components/InvalidText";
 import { useChangePasswordMutation, useMeQuery } from "../../graphql/generated";
+import {
+  changePassSchema,
+  changePassSchemaType,
+} from "../../lib/zod/changePassword";
 import { zodPassword } from "../../lib/zod/zodTypes";
 
 const SetPasswordPage: NextPage = () => {
@@ -16,16 +20,6 @@ const SetPasswordPage: NextPage = () => {
     useChangePasswordMutation();
   const router = useRouter();
 
-  const changePassSchema = z
-    .object({
-      pass1: zodPassword,
-      pass2: zodPassword,
-    })
-    .refine((data) => data.pass1 === data.pass2, {
-      message: "Passwords should match",
-      path: ["pass2"],
-    });
-  type changePassSchemaType = z.infer<typeof changePassSchema>;
   const {
     register: changePassForm,
     handleSubmit,

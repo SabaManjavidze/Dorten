@@ -205,6 +205,14 @@ export type UserFragmentFragment = { __typename?: 'User', user_id: string, usern
 
 export type UserResponseFragmentFragment = { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, user?: { __typename?: 'User', user_id: string, username: string, picture?: string | null, gender?: string | null } | null };
 
+export type AddCommentMutationVariables = Exact<{
+  postId: Scalars['String'];
+  text: Scalars['String'];
+}>;
+
+
+export type AddCommentMutation = { __typename?: 'Mutation', addComment: { __typename?: 'Comment', post_id: string, comment_id: string, creator_id: string, created_at: string, creator: { __typename?: 'User', user_id: string, username: string, picture?: string | null, gender?: string | null } } };
+
 export type ChangePasswordMutationVariables = Exact<{
   newPassword: Scalars['String'];
 }>;
@@ -281,7 +289,7 @@ export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'UserResponse'
 export type GetPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetPostsQuery = { __typename?: 'Query', getPost: Array<{ __typename?: 'Post', post_id: string, title: string, description?: string | null, picture?: string | null, created_at: string, creator_id: string, points: number, likeStatus?: number | null, creator: { __typename?: 'User', user_id: string, username: string, picture?: string | null } }> };
+export type GetPostsQuery = { __typename?: 'Query', getPost: Array<{ __typename?: 'Post', post_id: string, title: string, description?: string | null, picture?: string | null, created_at: string, creator_id: string, points: number, likeStatus?: number | null, comments?: Array<{ __typename?: 'Comment', text: string, created_at: string, creator: { __typename?: 'User', user_id: string, username: string, picture?: string | null, gender?: string | null } }> | null, creator: { __typename?: 'User', user_id: string, username: string, picture?: string | null } }> };
 
 export type GetPostQueryVariables = Exact<{
   post_id: Scalars['String'];
@@ -322,6 +330,46 @@ export const UserResponseFragmentFragmentDoc = gql`
 }
     ${ErrorFragmentFragmentDoc}
 ${UserFragmentFragmentDoc}`;
+export const AddCommentDocument = gql`
+    mutation addComment($postId: String!, $text: String!) {
+  addComment(postId: $postId, text: $text) {
+    post_id
+    comment_id
+    creator_id
+    creator {
+      ...UserFragment
+    }
+    created_at
+  }
+}
+    ${UserFragmentFragmentDoc}`;
+export type AddCommentMutationFn = Apollo.MutationFunction<AddCommentMutation, AddCommentMutationVariables>;
+
+/**
+ * __useAddCommentMutation__
+ *
+ * To run a mutation, you first call `useAddCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addCommentMutation, { data, loading, error }] = useAddCommentMutation({
+ *   variables: {
+ *      postId: // value for 'postId'
+ *      text: // value for 'text'
+ *   },
+ * });
+ */
+export function useAddCommentMutation(baseOptions?: Apollo.MutationHookOptions<AddCommentMutation, AddCommentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddCommentMutation, AddCommentMutationVariables>(AddCommentDocument, options);
+      }
+export type AddCommentMutationHookResult = ReturnType<typeof useAddCommentMutation>;
+export type AddCommentMutationResult = Apollo.MutationResult<AddCommentMutation>;
+export type AddCommentMutationOptions = Apollo.BaseMutationOptions<AddCommentMutation, AddCommentMutationVariables>;
 export const ChangePasswordDocument = gql`
     mutation ChangePassword($newPassword: String!) {
   changePassword(newPassword: $newPassword) {
@@ -726,6 +774,13 @@ export const GetPostsDocument = gql`
     creator_id
     points
     likeStatus
+    comments {
+      text
+      created_at
+      creator {
+        ...UserFragment
+      }
+    }
     creator {
       user_id
       username
@@ -733,7 +788,7 @@ export const GetPostsDocument = gql`
     }
   }
 }
-    `;
+    ${UserFragmentFragmentDoc}`;
 
 /**
  * __useGetPostsQuery__

@@ -1,18 +1,13 @@
 import { GetServerSidePropsContext } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
 import {
   GetMyProfileDocument,
   GetMyProfileQuery,
-  GetPostsDocument,
   GetUserByUsernameDocument,
   GetUserByUsernameQuery,
   MeDocument,
   MeQuery,
-  useGetUserByUsernameQuery,
-  useMeQuery,
-  UserFragmentFragment,
 } from "../graphql/generated";
 import { addApolloState, initializeApollo } from "../lib/apollo/ApolloClient";
 import { NOT_FOUND_IMG } from "../lib/variables";

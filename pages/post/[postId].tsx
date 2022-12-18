@@ -2,7 +2,7 @@ import { GetServerSidePropsContext } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React from "react";
-import CommentSection from "../../components/General/Comments/CommentSection";
+import CommentSection from "../../components/General/PostDetails/Comments/CommentSection";
 import {
   Comment,
   GetPostDocument,

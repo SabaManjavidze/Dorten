@@ -19,6 +19,7 @@ import { isAuth } from "../middleware/isAuth";
 import { HttpQueryError } from "apollo-server-core";
 import dataSource from "../DBConnection";
 import { Like } from "../entities/Like";
+import { Comment } from "../entities/Comment";
 
 @InputType()
 class PostInput {
@@ -40,7 +41,7 @@ export default class PostResolver {
     return userLoader.load(post.creator_id);
   }
 
-  @FieldResolver(() => User)
+  @FieldResolver(() => [Comment])
   comments(@Root() post: Post, @Ctx() { postCommentLoader }: MyContext) {
     return postCommentLoader.load(post.post_id);
   }
