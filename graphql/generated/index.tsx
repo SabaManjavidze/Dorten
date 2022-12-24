@@ -211,7 +211,7 @@ export type AddCommentMutationVariables = Exact<{
 }>;
 
 
-export type AddCommentMutation = { __typename?: 'Mutation', addComment: { __typename?: 'Comment', post_id: string, comment_id: string, creator_id: string, created_at: string, creator: { __typename?: 'User', user_id: string, username: string, picture?: string | null, gender?: string | null } } };
+export type AddCommentMutation = { __typename?: 'Mutation', addComment: { __typename?: 'Comment', post_id: string, comment_id: string, text: string, created_at: string, creator: { __typename?: 'User', user_id: string, username: string, picture?: string | null, gender?: string | null } } };
 
 export type ChangePasswordMutationVariables = Exact<{
   newPassword: Scalars['String'];
@@ -296,7 +296,7 @@ export type GetPostQueryVariables = Exact<{
 }>;
 
 
-export type GetPostQuery = { __typename?: 'Query', getPost: Array<{ __typename?: 'Post', post_id: string, title: string, description?: string | null, picture?: string | null, created_at: string, creator_id: string, points: number, likeStatus?: number | null, comments?: Array<{ __typename?: 'Comment', text: string, created_at: string, creator: { __typename?: 'User', user_id: string, username: string, picture?: string | null, gender?: string | null } }> | null, creator: { __typename?: 'User', user_id: string, username: string, picture?: string | null, gender?: string | null } }> };
+export type GetPostQuery = { __typename?: 'Query', getPost: Array<{ __typename?: 'Post', post_id: string, title: string, description?: string | null, picture?: string | null, created_at: string, creator_id: string, points: number, likeStatus?: number | null, comments?: Array<{ __typename?: 'Comment', comment_id: string, text: string, created_at: string, creator: { __typename?: 'User', user_id: string, username: string, picture?: string | null, gender?: string | null } }> | null, creator: { __typename?: 'User', user_id: string, username: string, picture?: string | null, gender?: string | null } }> };
 
 export type GetUserByUsernameQueryVariables = Exact<{
   username: Scalars['String'];
@@ -335,7 +335,7 @@ export const AddCommentDocument = gql`
   addComment(postId: $postId, text: $text) {
     post_id
     comment_id
-    creator_id
+    text
     creator {
       ...UserFragment
     }
@@ -828,6 +828,7 @@ export const GetPostDocument = gql`
     points
     likeStatus
     comments {
+      comment_id
       text
       created_at
       creator {

@@ -17,7 +17,7 @@ import { updateCache } from "./utils";
 
 let likeValue = 0;
 export default function LCS({ post }: { post: Post }) {
-  const { loading: userLoading, data: userData } = useMeQuery();
+  const { data: userData } = useMeQuery();
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [divRef] = useAutoAnimate<HTMLDivElement>();
   const [likePost, { loading }] = useLikePostMutation({

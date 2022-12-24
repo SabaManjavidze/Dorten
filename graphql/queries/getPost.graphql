@@ -9,6 +9,7 @@ query GetPost($post_id: String!) {
     points
     likeStatus
     comments {
+      comment_id
       text
       created_at
       creator {

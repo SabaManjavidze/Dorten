@@ -2,7 +2,7 @@ mutation addComment($postId: String!, $text: String!) {
   addComment(postId: $postId, text: $text) {
     post_id
     comment_id
-    creator_id
+    text
     creator {
       ...UserFragment
     }

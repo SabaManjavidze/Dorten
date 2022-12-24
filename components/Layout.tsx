@@ -1,4 +1,3 @@
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Router } from "next/router";
 import { useState, useEffect } from "react";
 import { BarLoader } from "react-spinners";
@@ -23,12 +22,10 @@ export default function Layout({ children }: any) {
       setIsLoading(false);
     });
   }, [Router]);
-  const [divRef] = useAutoAnimate<HTMLDivElement>();
   return (
     <div className={colorMode}>
       <div className="relative min-h-screen bg-skin-main text-skin-base">
         <BarLoader
-          ref={divRef}
           loading={isLoading}
           className="!fixed z-50 !bg-skin-secondary"
           id="loading-bar"

@@ -17,19 +17,18 @@ export default function CommentForm({ postId }: CommentFormPropTypes) {
     update(cache, { data }) {
       const posts = cache.readQuery<GetPostQuery>({
         query: GetPostDocument,
-        variables: { post_id: data?.addComment.post_id },
+        variables: { post_id: postId },
       });
       if (!posts) return;
 
       const comments = posts?.getPost[0]?.comments ?? [];
-      posts.getPost[0].comments?.push(data?.addComment as Comment);
+      const newComments = [data?.addComment as Comment, ...comments];
+      const newPost = { ...posts.getPost[0], comments: newComments };
       cache.writeQuery({
         query: GetPostDocument,
-        variables: { post_id: data?.addComment.post_id },
+        variables: { post_id: postId },
         data: {
-          getPost: [
-            { comments: [data?.addComment, ...comments], ...posts.getPost[0] },
-          ],
+          getPost: [newPost],
         },
       });
     },
@@ -44,7 +43,6 @@ export default function CommentForm({ postId }: CommentFormPropTypes) {
       ]);
       return;
     }
-    console.log({ postId, text });
     await createComment({ variables: { postId, text } });
   };
 
