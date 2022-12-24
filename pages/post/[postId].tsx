@@ -38,7 +38,10 @@ function PostDetailsPage() {
         <label htmlFor="comments" className="ml-20 text-2xl">
           Comments
         </label>
-        <CommentSection comments={postData?.getPost[0].comments as Comment[]} />
+        <CommentSection
+          comments={postData?.getPost[0].comments as Comment[]}
+          postId={router.query.postId + ""}
+        />
       </section>
     </div>
   );

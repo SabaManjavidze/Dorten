@@ -5,8 +5,6 @@ import {
 import { FaSlideshare as ShareIcon } from "react-icons/fa";
 import { AiOutlineComment as CommentIcon } from "react-icons/ai";
 import {
-  GetPostsDocument,
-  GetPostsQuery,
   Post,
   useLikePostMutation,
   useMeQuery,
@@ -15,6 +13,7 @@ import IconButton from "./IconBtn";
 import { useMemo, useState } from "react";
 import CommentForm from "../CommentForm/CommentForm";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { updateCache } from "./utils";
 
 let likeValue = 0;
 export default function LCS({ post }: { post: Post }) {
@@ -23,44 +22,7 @@ export default function LCS({ post }: { post: Post }) {
   const [divRef] = useAutoAnimate<HTMLDivElement>();
   const [likePost, { loading }] = useLikePostMutation({
     update(cache) {
-      const posts = cache.readQuery<GetPostsQuery>({
-        query: GetPostsDocument,
-        variables: { post_id: "" },
-      });
-      if (!posts) {
-        return;
-      }
-      cache.writeQuery({
-        query: GetPostsDocument,
-        variables: { post_id: "" },
-        data: {
-          getPost: posts.getPost.map((postItem) => {
-            if (postItem.post_id === post.post_id) {
-              if (postItem?.likeStatus == likeValue) {
-                return {
-                  ...postItem,
-                  points: postItem.points - likeValue,
-                  likeStatus: 0,
-                };
-              }
-              if (postItem?.likeStatus === 0) {
-                return {
-                  ...postItem,
-                  points: postItem.points + likeValue,
-                  likeStatus: likeValue,
-                };
-              } else {
-                return {
-                  ...postItem,
-                  points: postItem.points + likeValue * 2,
-                  likeStatus: likeValue,
-                };
-              }
-            }
-            return postItem;
-          }),
-        },
-      });
+      updateCache(cache, post, likeValue);
     },
   });
   const likePostHandler = async (value: -1 | 1) => {
@@ -73,7 +35,6 @@ export default function LCS({ post }: { post: Post }) {
       },
     });
   };
-  if (userLoading) return <p>loading...</p>;
   const isMyPost = post.creator.user_id == userData?.me?.user?.user_id;
   const handleCommentClick = () => {
     setShowCommentForm(!showCommentForm);
