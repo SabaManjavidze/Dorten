@@ -6,7 +6,6 @@ import { FaEdit as EditIcon } from "react-icons/fa";
 import { AiFillCloseCircle as ExitIcon } from "react-icons/ai";
 import LCS from "./LCS";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 export default function PostCard({ post }: { post: Post }) {
   const { loading: userLoading, data: userData } = useMeQuery();
@@ -66,7 +65,7 @@ export default function PostCard({ post }: { post: Post }) {
             <input
               type="text"
               className="border-background/50 rounded-md border-2 bg-gray-700/40 py-2 pl-3"
-              defaultValue={post?.creator?.username}
+              defaultValue={post.title}
             />
           ) : (
             <Link href={`/post/${post.post_id}`}>

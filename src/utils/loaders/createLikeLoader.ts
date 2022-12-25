@@ -1,7 +1,7 @@
 import DataLoader from "dataloader";
 import { In } from "typeorm";
 import dataSource from "../../DBConnection";
-import { Like } from "../../entities/Like";
+import { Like } from "../../server/entities/Like";
 
 interface LikeKey {
   userId: string;

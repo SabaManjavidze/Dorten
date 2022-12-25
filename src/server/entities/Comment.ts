@@ -12,7 +12,7 @@ import type { Relation } from "typeorm";
 import { v4 } from "uuid";
 import { User } from "./User";
 import { Post } from "./Post";
-import type { MyContext } from "../utils/MyContext";
+import type { MyContext } from "../../utils/MyContext";
 
 @ObjectType()
 @Entity()

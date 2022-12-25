@@ -1,6 +1,6 @@
 import DataLoader from "dataloader";
 import { In } from "typeorm";
-import { Comment } from "../../entities/Comment";
+import { Comment } from "../../server/entities/Comment";
 
 export const createPostCommentLoader = () =>
   new DataLoader<string, Comment[]>(async (postIds) => {

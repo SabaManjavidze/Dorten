@@ -1,7 +1,7 @@
 import DataLoader from "dataloader";
 import { In } from "typeorm";
-import { Post } from "../../entities/Post";
-import { User } from "../../entities/User";
+import { Post } from "../../server/entities/Post";
+import { User } from "../../server/entities/User";
 
 export const createPostLoader = () =>
   new DataLoader<string, Post>(async (postIds) => {
