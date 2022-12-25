@@ -1,7 +1,7 @@
 import { ApolloProvider } from "@apollo/client";
 import type { AppProps } from "next/app";
 import Layout from "../components/Layout";
-import { ColorModeProvider } from "../Hooks/useColorMode";
+import { ColorModeProvider } from "../hooks/useColorMode";
 import { useApollo } from "../lib/apollo/ApolloClient";
 import "../styles/globals.css";
 
