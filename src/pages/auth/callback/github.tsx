@@ -2,26 +2,21 @@ import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { ClipLoader } from "react-spinners";
-import {
-  useGithubLoginMutation,
-  useMeLazyQuery,
-} from "../../../graphql/generated";
+import { trpc } from "../../../utils/trpc";
 
 const Callback: NextPage = () => {
   const router = useRouter();
-  const [githubLogin, { loading }] = useGithubLoginMutation();
-  const [meQuery, { loading: meLoading, error: meError }] = useMeLazyQuery();
+  const { mutateAsync: githubLogin, isLoading: loading } =
+    trpc.user.githubLogin.useMutation();
+  const { isFetching: meLoading, error: meError } = trpc.user.me.useQuery();
   const handleCallback = async () => {
     if (router) {
       const { query } = router;
       if (query.code) {
-        const { errors } = await githubLogin({
-          variables: {
-            code: query.code + "",
-          },
+        const success = await githubLogin({
+          code: query.code + "",
         });
-        if (!errors) {
-          await meQuery();
+        if (success) {
           router.push("/");
         }
       }

@@ -1,3 +1,0 @@
-mutation LikePost($postId: String!, $value: Int!) {
-  likePost(postId: $postId, value: $value)
-}

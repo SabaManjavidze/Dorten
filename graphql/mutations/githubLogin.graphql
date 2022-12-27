@@ -1,3 +1,0 @@
-mutation GithubLogin($code: String!) {
-  githubLogin(code: $code)
-}

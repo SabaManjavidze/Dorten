@@ -1,14 +1,15 @@
 import Image from "next/image";
 import React, { useState } from "react";
-import { Post, useMeQuery } from "../../../graphql/generated";
-import { NOT_FOUND_IMG } from "../../../lib/variables";
 import { FaEdit as EditIcon } from "react-icons/fa";
 import { AiFillCloseCircle as ExitIcon } from "react-icons/ai";
 import LCS from "./LCS";
 import Link from "next/link";
+import { post, user } from "@prisma/client";
+import { trpc } from "../../../utils/trpc";
+import { NOT_FOUND_IMG } from "../../../../lib/variables";
 
-export default function PostCard({ post }: { post: Post }) {
-  const { loading: userLoading, data: userData } = useMeQuery();
+export default function PostCard({ post }: { post: post & { creator: user } }) {
+  const { isFetching: userLoading, data: userData } = trpc.user.me.useQuery();
   const [editMode, setEditMode] = useState(false);
 
   return (
@@ -37,14 +38,13 @@ export default function PostCard({ post }: { post: Post }) {
                 </h2>
               </div>
               <small className="ml-4 text-sm text-gray-500">
-                {new Date(parseInt(post?.created_at)).toLocaleTimeString(
-                  "en-GB",
-                  { hour: "2-digit", minute: "2-digit" }
-                )}
+                {new Date(post?.created_at).toLocaleTimeString("en-GB", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </small>
             </div>
-            {userData?.me?.user &&
-            userData?.me?.user.user_id == post?.creator_id ? (
+            {userData?.user_id == post?.creator_id ? (
               <div>
                 <button
                   className={"text-light-primary"}
@@ -82,7 +82,7 @@ export default function PostCard({ post }: { post: Post }) {
               {post.description}
             </p>
           ) : null}
-          {post.picture ? (
+          {post?.picture ? (
             <div className="relative flex h-96 w-[85%] justify-center bg-skin-main/50 pb-12">
               <Image
                 className="w-full rounded object-contain shadow"
@@ -93,7 +93,7 @@ export default function PostCard({ post }: { post: Post }) {
               />
             </div>
           ) : null}
-          <LCS post={post} />
+          <LCS post={post as any} />
         </div>
       </div>
     </div>

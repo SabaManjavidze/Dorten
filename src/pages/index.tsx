@@ -1,9 +1,8 @@
-import type { GetServerSidePropsContext, NextPage } from "next";
+import type { NextPage } from "next";
 import { useState } from "react";
 import PostForm from "../components/HomePage/PostForm";
 import PostList from "../components/HomePage/PostList";
-import { GetPostsDocument, useMeQuery } from "../graphql/generated";
-import { addApolloState, initializeApollo } from "../lib/apollo/ApolloClient";
+import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
   const [dragging, setDragging] = useState(false);
@@ -13,14 +12,15 @@ const Home: NextPage = () => {
   const handleDragExit = () => {
     setDragging(false);
   };
-  const { data } = useMeQuery();
+  const { isSuccess } = trpc.user.me.useQuery();
+
   return (
     <div
       onDragOver={handleDragOver}
       onDragExit={handleDragExit}
       className="w-full p-5 md:px-28 lg:px-52 xl:px-80"
     >
-      {data?.me?.user ? (
+      {isSuccess ? (
         <PostForm dragging={dragging} setDragging={setDragging} />
       ) : null}
       <section>
@@ -38,13 +38,3 @@ const Home: NextPage = () => {
 };
 
 export default Home;
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const apolloClient = initializeApollo(null, context.req.cookies);
-  await apolloClient.query({
-    query: GetPostsDocument,
-  });
-
-  return addApolloState(apolloClient, {
-    props: {},
-  });
-}

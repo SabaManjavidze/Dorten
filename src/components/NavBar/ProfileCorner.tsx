@@ -1,40 +1,23 @@
-import { useApolloClient } from "@apollo/client";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useEffect, useRef } from "react";
-import {
-  MeDocument,
-  MeQuery,
-  useLogoutMutation,
-  useMeQuery,
-} from "../../graphql/generated";
-import { NOT_FOUND_IMG } from "../../lib/variables";
+import { NOT_FOUND_IMG } from "../../../lib/variables";
+import { trpc } from "../../utils/trpc";
 
 export default function ProfileCorner() {
-  const { loading, data, error } = useMeQuery();
+  const { isFetching: loading, data, error } = trpc.user.me.useQuery();
   const [showMenu, setShowMenu] = useState(false);
   const router = useRouter();
-  const [logOut] = useLogoutMutation({
-    update(cache) {
-      cache.writeQuery({
-        query: MeDocument,
-        data: {
-          me: null,
-        } as MeQuery,
-      });
-    },
-  });
-  const apolloClient = useApolloClient();
+  const { mutateAsync: logOut } = trpc.user.logout.useMutation();
   const profileOptions = [
-    { title: "Profile", path: data?.me?.user?.username },
+    { title: "Profile", path: data?.username },
     { title: "Settings", path: "settings" },
   ];
   const handleLogOut = async () => {
     router.push("/login");
     await logOut();
-    await apolloClient.clearStore();
   };
   const divRef = useRef<HTMLDivElement>(null);
   const SHOW_MENU_TIME = 100;
@@ -70,9 +53,9 @@ export default function ProfileCorner() {
   }
   return (
     <div className="relative flex items-center pl-16">
-      {data?.me?.user ? (
+      {data ? (
         <div className="flex items-center">
-          <h3 className="mr-4">{data?.me?.user.username}</h3>
+          <h3 className="mr-4">{data.username}</h3>
           <button
             className="flex items-center"
             onClick={() => {
@@ -81,7 +64,7 @@ export default function ProfileCorner() {
           >
             <Image
               className="rounded-full object-cover shadow"
-              src={data?.me?.user.picture || NOT_FOUND_IMG}
+              src={data.picture || NOT_FOUND_IMG}
               width="50px"
               height="50px"
               alt="profile picture"

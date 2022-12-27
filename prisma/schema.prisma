@@ -4,14 +4,16 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  relationMode = "foreignKeys"
   url      = env("DATABASE_URL")
 }
 
 model account {
   provider   account_provider_enum
-  account_id String                @id @db.VarChar
+  account_id String                @id @default(cuid()) @db.VarChar
   created_at DateTime              @default(now()) @db.Timestamp(6)
-  user       user?                 @relation(fields: [account_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+  owner_id    String                @db.VarChar
+  user       user                 @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
 }
 
 model comment {
@@ -20,18 +22,18 @@ model comment {
   post_id       String   @db.VarChar
   creator_id    String   @db.VarChar
   created_at    DateTime @default(now()) @db.Timestamp(6)
-  user          user?    @relation(fields: [creator_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
-  post          post?    @relation(fields: [post_id], references: [post_id], onDelete: NoAction, onUpdate: NoAction)
+  creator       user    @relation(fields: [creator_id], references: [user_id])
+  post          post    @relation(fields: [post_id], references: [post_id])
 }
 
 model like {
   value      Int
-  userId     String  @db.VarChar
-  postId     String  @db.VarChar
-  user       user?   @relation(fields: [userId], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
-  post       post?   @relation(fields: [postId], references: [post_id], onDelete: Cascade, onUpdate: NoAction)
+  user_id     String  @db.VarChar @map("userId")
+  post_id     String  @db.VarChar @map("postId")
+  user       user   @relation(fields: [user_id], references: [user_id])
+  post       post   @relation(fields: [post_id], references: [post_id])
 
-  @@id([userId, postId])
+  @@id([user_id, post_id])
 }
 
 model post {
@@ -42,22 +44,22 @@ model post {
   creator_id    String    @db.VarChar
   points        Int       @default(0)
   created_at    DateTime  @default(now()) @db.Timestamp(6)
-  comment       comment[]
+  comments      comment[]
   like          like[]
-  user          user?     @relation(fields: [creator_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+  creator       user     @relation(fields: [creator_id], references: [user_id])
 }
 
 model user {
   user_id        String           @id @default(cuid()) @db.VarChar
   username       String           @unique @db.VarChar
   email          String           @unique @db.VarChar
-  email_verified Boolean          @default(false)
+  email_verified Boolean?          @default(false)
   password       String?          @db.VarChar
   picture        String?          @db.VarChar
   age            Int?
   gender         user_gender_enum @default(None)
   created_at     DateTime         @default(now()) @db.Timestamp(6)
-  account        account[]
+  accounts       account[]
   comment        comment[]
   like           like[]
   post           post[]

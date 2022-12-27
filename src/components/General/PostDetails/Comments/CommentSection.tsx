@@ -1,10 +1,10 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { Comment } from "../../../../graphql/generated";
+import { comment } from "@prisma/client";
 import CommentForm from "../../CommentForm/CommentForm";
 import CommentCard from "./CommentCard";
 
 type CommentSectionPropType = {
-  comments: Comment[];
+  comments: comment[];
   postId: string;
 };
 
@@ -23,7 +23,7 @@ export default function CommentSection({
             key={comment.comment_id}
             className="w-full py-5 first-of-type:border-t-0 xl:w-2/3"
           >
-            <CommentCard comment={comment as Comment} />
+            <CommentCard comment={comment as any} />
           </li>
         ))}
       </ul>

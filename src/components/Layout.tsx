@@ -1,8 +1,8 @@
 import { Router } from "next/router";
 import { useState, useEffect } from "react";
 import { BarLoader } from "react-spinners";
-import { useColorMode } from "../src/Hooks/useColorMode";
-import { theme } from "../tailwind.config";
+import { useColorMode } from "../hooks/useColorMode";
+import { theme } from "../../tailwind.config";
 import { Copyright } from "./Copyright";
 import NavBar from "./NavBar/NavBar";
 

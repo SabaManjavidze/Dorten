@@ -1,29 +1,23 @@
-import { GetServerSidePropsContext } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import {
-  GetMyProfileDocument,
-  GetMyProfileQuery,
-  GetUserByUsernameDocument,
-  GetUserByUsernameQuery,
-  MeDocument,
-  MeQuery,
-} from "../graphql/generated";
-import { addApolloState, initializeApollo } from "../lib/apollo/ApolloClient";
-import { NOT_FOUND_IMG } from "../lib/variables";
+import { useEffect, useMemo } from "react";
 
-type ProfilePagePropType = {
-  publicProfile: GetUserByUsernameQuery["getUserByUsername"];
-  myProfile: GetMyProfileQuery["me"];
-  isMyProfile: boolean;
-};
-const ProfilePage = ({
-  myProfile,
-  publicProfile,
-  isMyProfile,
-}: ProfilePagePropType) => {
+import { NOT_FOUND_IMG } from "../../lib/variables";
+import { trpc } from "../utils/trpc";
+
+const ProfilePage = () => {
   const router = useRouter();
   const userName = router.query.userName;
+  const { mutate, data: publicProfile } =
+    trpc.user.getUserByUsername.useMutation();
+  const { data: myProfile } = trpc.user.me.useQuery();
+  const isMyProfile = useMemo(
+    () => publicProfile?.user_id === myProfile?.user_id,
+    [publicProfile, myProfile]
+  );
+  useEffect(() => {
+    mutate({ username: userName + "" });
+  }, []);
 
   return (
     <div className="flex w-full items-center justify-center">
@@ -46,7 +40,7 @@ const ProfilePage = ({
           <div className="flex flex-col">
             {isMyProfile ? (
               <h3>
-                {myProfile?.user?.email_verified
+                {myProfile?.email_verified
                   ? "Email Verified ✔️"
                   : "Email Not Verified 💔"}
               </h3>
@@ -65,40 +59,3 @@ const ProfilePage = ({
   );
 };
 export default ProfilePage;
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const apolloClient = initializeApollo(null, context.req.cookies);
-  const { data: meData } = await apolloClient.query({
-    query: MeDocument,
-    variables: {
-      username: context.query?.userName + "",
-    },
-  });
-  const data = meData as MeQuery;
-  const isMyProfile = data.me?.user?.username == context.query.userName;
-  // console.log({ meData: meData.me.user });
-
-  const { data: userData } = await apolloClient.query({
-    query: isMyProfile ? GetMyProfileDocument : GetUserByUsernameDocument,
-    variables: {
-      username: context.query?.userName + "",
-    },
-  });
-  // console.log("THE ACTUAL PROFILE: ", { userData });
-  let myProfile: GetMyProfileQuery["me"] = null;
-  let publicProfile: GetUserByUsernameQuery["getUserByUsername"];
-  if (isMyProfile) {
-    myProfile = (userData as GetMyProfileQuery).me;
-    publicProfile = {
-      user_id: myProfile?.user?.user_id + "",
-      age: myProfile?.user?.age,
-      gender: myProfile?.user?.gender,
-      picture: myProfile?.user?.picture,
-      posts: myProfile?.user?.posts,
-    };
-  } else {
-    publicProfile = userData;
-  }
-  return addApolloState(apolloClient, {
-    props: { myProfile, publicProfile, isMyProfile } as ProfilePagePropType,
-  });
-}

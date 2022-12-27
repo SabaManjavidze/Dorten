@@ -10,16 +10,9 @@ import {
   useRef,
   useState,
 } from "react";
-import {
-  FieldError,
-  GetPostsDocument,
-  GetPostsQuery,
-  Post,
-  PostInput,
-  useCreatePostMutation,
-} from "../../graphql/generated/index";
-import { toBase64 } from "../../lib/convBase64";
+import { toBase64 } from "../../../lib/convBase64";
 import { ScaleLoader } from "react-spinners";
+import { trpc } from "../../utils/trpc";
 
 type PostFormPropType = {
   dragging: boolean;
@@ -27,27 +20,12 @@ type PostFormPropType = {
 };
 
 export default function PostForm({ dragging, setDragging }: PostFormPropType) {
-  const [errors, setErros] = useState<FieldError[] | null>(null);
+  const [errors, setErros] = useState<any>(null);
   const [postPicture, setPostPicture] = useState<any>();
   const [dropping, setDropping] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [createPost, { loading }] = useCreatePostMutation({
-    update(cache, { data }) {
-      const posts = cache.readQuery<GetPostsQuery>({
-        query: GetPostsDocument,
-        variables: { post_id: "" },
-      });
-      if (!posts) return;
-
-      cache.writeQuery({
-        query: GetPostsDocument,
-        variables: { post_id: "" },
-        data: {
-          getPost: [data?.createPost, ...posts.getPost],
-        },
-      });
-    },
-  });
+  const { mutateAsync: createPost, isLoading: loading } =
+    trpc.post.createPost.useMutation();
   const handleRemoveImage = () => {
     setPostPicture(null);
   };
@@ -59,15 +37,15 @@ export default function PostForm({ dragging, setDragging }: PostFormPropType) {
       setErros([{ field: "title", message: "title cannot be emtpy" }]);
       return;
     }
-    const data: PostInput = {
+    const data = {
       title,
-      description: formData.get("description")?.toString(),
-      picture: postPicture?.file || null,
+      description: formData.get("description")?.toString() + "",
+      picture: postPicture?.file,
     };
     if (!errors) {
       setErros(null);
     }
-    await createPost({ variables: { options: data } });
+    await createPost({ ...data });
   };
 
   const handleImageDrop = async (e: DragEvent<HTMLDivElement>) => {

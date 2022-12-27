@@ -1,24 +1,25 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { Post, useGetPostsQuery } from "../../graphql/generated";
+import { post } from "@prisma/client";
+import { trpc } from "../../utils/trpc";
 import PostCard from "../General/PostCard";
 
 export default function PostList() {
   const {
-    loading: postsLoading,
+    isFetching: postsLoading,
     data: postsData,
     error: postsError,
-  } = useGetPostsQuery();
+  } = trpc.post.getPosts.useQuery();
   const [listRef] = useAutoAnimate<HTMLUListElement>();
 
   return (
     <div>
       <ul ref={listRef} className="flex flex-col items-center">
-        {postsData?.getPost?.map((post) => (
+        {postsData?.map((childPost) => (
           <li
-            key={post.post_id}
+            key={childPost.post_id}
             className="w-full py-5 first-of-type:border-t-0 xl:w-2/3"
           >
-            <PostCard post={post as Post} />
+            <PostCard post={childPost as any} />
           </li>
         ))}
       </ul>

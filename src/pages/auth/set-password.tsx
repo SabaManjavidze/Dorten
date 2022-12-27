@@ -7,17 +7,20 @@ import { CircleLoader } from "react-spinners";
 import { z } from "zod";
 import SubmitButton from "../../components/General/Buttons/SubmitButton";
 import InvalidText from "../../components/InvalidText";
-import { useChangePasswordMutation, useMeQuery } from "../../graphql/generated";
 import {
   changePassSchema,
   changePassSchemaType,
-} from "../../lib/zod/changePassword";
-import { zodPassword } from "../../lib/zod/zodTypes";
+} from "../../../lib/zod/changePassword";
+import { zodPassword } from "../../../lib/zod/zodTypes";
+import { trpc } from "../../utils/trpc";
 
 const SetPasswordPage: NextPage = () => {
-  const { data: meData, loading: meLoading } = useMeQuery();
-  const [changePassMutation, { data: passData, loading: passLoading }] =
-    useChangePasswordMutation();
+  const { data: meData, isFetching: meLoading } = trpc.user.me.useQuery();
+  const {
+    mutateAsync: changePassMutation,
+    data: passData,
+    isLoading: passLoading,
+  } = trpc.user.changePassword.useMutation();
   const router = useRouter();
 
   const {
@@ -29,7 +32,7 @@ const SetPasswordPage: NextPage = () => {
   });
 
   useEffect(() => {
-    if (!meLoading && !meData?.me?.user?.email_verified) {
+    if (!meLoading && !meData?.email_verified) {
       router.replace("/auth/email-verify");
     }
   }, [meLoading]);
@@ -40,9 +43,8 @@ const SetPasswordPage: NextPage = () => {
       </div>
     );
   const onSubmit = async (data: changePassSchemaType) => {
-    const { data: changePassData, errors: changePassError } =
-      await changePassMutation({ variables: { newPassword: data.pass1 } });
-    if (!changePassError && changePassData?.changePassword.success) {
+    const { success } = await changePassMutation({ newPassword: data.pass1 });
+    if (success) {
       router.push("/");
     }
   };

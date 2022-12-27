@@ -1,9 +1,14 @@
+import { IncomingMessage, ServerResponse } from "http";
+import { Session, SessionRecord } from "next-session/lib/types";
+import * as trpcNext from "@trpc/server/adapters/next";
+import * as trpc from "@trpc/server";
 import "reflect-metadata";
 import dotenv from "dotenv";
 import nextSession from "next-session";
 import { expressSession, promisifyStore } from "next-session/lib/compat";
 import RedisStoreFactory from "connect-redis";
 import Redis from "ioredis";
+import { prisma } from "./prisma";
 
 dotenv.config();
 
@@ -26,12 +31,22 @@ const getSession = nextSession({
     sameSite: "lax",
   },
 });
-console.log("Redis created");
-export const config = {
-  api: {
-    bodyParser: false,
-    externalResolver: true,
-  },
+type reqType = IncomingMessage & {
+  session?: Session<SessionRecord> | undefined;
 };
-export default async function handler(req: any, res: any) {
-}
+export const createContext = async (
+  opts?: trpcNext.CreateNextContextOptions
+) => {
+  return {
+    req: {
+      ...opts?.req,
+      session: await getSession(
+        opts?.req as reqType,
+        opts?.res as ServerResponse
+      ),
+    },
+    res: opts?.res,
+  };
+};
+
+export type Context = trpc.inferAsyncReturnType<typeof createContext>;

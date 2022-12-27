@@ -2,10 +2,11 @@ import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { ScaleLoader } from "react-spinners";
-import { useVerifyEmailMutation } from "../../graphql/generated";
+import { trpc } from "../../utils/trpc";
 
 const EmailVerifyPage: NextPage = () => {
-  const [verifyEmail, { loading }] = useVerifyEmailMutation();
+  const { mutateAsync: verifyEmail, isLoading: loading } =
+    trpc.user.verifyEmail.useMutation();
   const router = useRouter();
   return (
     <div className="flex h-screen flex-col justify-center">
@@ -19,7 +20,7 @@ const EmailVerifyPage: NextPage = () => {
             e.preventDefault();
             const formData = new FormData(e.currentTarget);
             const email = formData.get("email") + "";
-            await verifyEmail({ variables: { email } });
+            await verifyEmail({ email });
             router.push("/auth/code-verify");
           }}
         >

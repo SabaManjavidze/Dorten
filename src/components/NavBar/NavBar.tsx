@@ -81,9 +81,7 @@ export default function NavBar() {
               </li>
             ))}
           </ul>
-          <div className="w-[270px] pl-16">
-            <ProfileCorner />
-          </div>
+          <div className="w-[270px] pl-16">{/* <ProfileCorner /> */}</div>
         </div>
       </div>
     </nav>

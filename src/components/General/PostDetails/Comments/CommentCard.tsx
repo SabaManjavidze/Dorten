@@ -1,16 +1,17 @@
+import { comment, user } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import { AiFillCloseCircle as ExitIcon } from "react-icons/ai";
 import { FaEdit as EditIcon } from "react-icons/fa";
-import { Comment, useMeQuery } from "../../../../graphql/generated";
-import { NOT_FOUND_IMG } from "../../../../lib/variables";
+import { NOT_FOUND_IMG } from "../../../../../lib/variables";
+import { trpc } from "../../../../utils/trpc";
 
 type CommentCardPropType = {
-  comment: Comment;
+  comment: comment & { creator: user };
 };
 function CommentCard({ comment }: CommentCardPropType) {
-  const { loading: userLoading, data: userData } = useMeQuery();
+  const { isFetching: userLoading, data: userData } = trpc.user.me.useQuery();
   const [editMode, setEditMode] = useState(false);
   return (
     <div
@@ -38,14 +39,13 @@ function CommentCard({ comment }: CommentCardPropType) {
                 </h2>
               </div>
               <small className="ml-4 text-sm text-gray-500">
-                {new Date(parseInt(comment?.created_at)).toLocaleTimeString(
-                  "en-GB",
-                  { hour: "2-digit", minute: "2-digit" }
-                )}
+                {comment?.created_at.toLocaleTimeString("en-GB", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </small>
             </div>
-            {userData?.me?.user &&
-            userData?.me?.user.user_id == comment?.creator_id ? (
+            {userData && userData.user_id == comment?.creator_id ? (
               <div>
                 <button
                   className={"text-light-primary"}

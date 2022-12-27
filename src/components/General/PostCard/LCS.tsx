@@ -4,38 +4,33 @@ import {
 } from "react-icons/gi";
 import { FaSlideshare as ShareIcon } from "react-icons/fa";
 import { AiOutlineComment as CommentIcon } from "react-icons/ai";
-import {
-  Post,
-  useLikePostMutation,
-  useMeQuery,
-} from "../../../graphql/generated";
 import IconButton from "./IconBtn";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import CommentForm from "../CommentForm/CommentForm";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { updateCache } from "./utils";
+import { trpc } from "../../../utils/trpc";
+import { comment, like, post, user } from "@prisma/client";
 
 let likeValue = 0;
-export default function LCS({ post }: { post: Post }) {
-  const { data: userData } = useMeQuery();
+export default function LCS({
+  post,
+}: {
+  post: post & { creator: user; comments: comment[]; like: like };
+}) {
+  const { data: userData } = trpc.user.me.useQuery();
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [divRef] = useAutoAnimate<HTMLDivElement>();
-  const [likePost, { loading }] = useLikePostMutation({
-    update(cache) {
-      updateCache(cache, post, likeValue);
-    },
-  });
+  const { mutateAsync: likePost, isLoading: loading } =
+    trpc.post.likePost.useMutation();
   const likePostHandler = async (value: -1 | 1) => {
-    if (!userData?.me?.user) return;
+    if (!userData) return;
     likeValue = value;
     await likePost({
-      variables: {
-        postId: post.post_id,
-        value,
-      },
+      postId: post.post_id,
+      value,
     });
   };
-  const isMyPost = post.creator.user_id == userData?.me?.user?.user_id;
+  const isMyPost = post.creator.user_id == userData?.user_id;
   const handleCommentClick = () => {
     setShowCommentForm(!showCommentForm);
   };
@@ -48,9 +43,7 @@ export default function LCS({ post }: { post: Post }) {
             hoverColor="green"
             disabled={isMyPost || loading}
             fill={
-              post?.likeStatus && post?.likeStatus > 0
-                ? "text-skin-like"
-                : undefined
+              post?.like && post?.like.value > 0 ? "text-skin-like" : undefined
             }
             Icon={LikeIcon}
             size="30px"
@@ -63,8 +56,8 @@ export default function LCS({ post }: { post: Post }) {
             hoverColor="pink"
             disabled={isMyPost || loading}
             fill={
-              post.likeStatus
-                ? post.likeStatus > 0
+              post.like
+                ? post.like.value > 0
                   ? undefined
                   : "text-skin-dislike"
                 : undefined

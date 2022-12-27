@@ -3,20 +3,21 @@ import { useRouter } from "next/router";
 import { FormEvent, FormEventHandler, useState } from "react";
 import { ScaleLoader } from "react-spinners";
 import SubmitButton from "../../components/General/Buttons/SubmitButton";
-import { useVerifyCodeMutation } from "../../graphql/generated";
+import { trpc } from "../../utils/trpc";
 
 const CodeVerifyPage: NextPage = () => {
   const router = useRouter();
-  const [verifyCode, { loading }] = useVerifyCodeMutation();
+  const { mutateAsync: verifyCode, isLoading: loading } =
+    trpc.user.verifyCode.useMutation();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const code = formData.get("code") + "";
-    const { errors, data } = await verifyCode({
-      variables: { code: code },
+    const success = await verifyCode({
+      code,
     });
-    if (!errors && data?.verifyCode) {
+    if (success) {
       router.push("/auth/set-password");
     }
   };

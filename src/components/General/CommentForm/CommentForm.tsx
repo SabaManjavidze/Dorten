@@ -1,38 +1,14 @@
 import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { ScaleLoader } from "react-spinners";
-import {
-  GetPostQuery,
-  useAddCommentMutation,
-  GetPostDocument,
-  Comment,
-  FieldError,
-} from "../../../graphql/generated";
+import { trpc } from "../../../utils/trpc";
 
 type CommentFormPropTypes = {
   postId: string;
 };
 export default function CommentForm({ postId }: CommentFormPropTypes) {
-  const [errors, setErrors] = useState<FieldError[] | null>(null);
-  const [createComment, { loading }] = useAddCommentMutation({
-    update(cache, { data }) {
-      const posts = cache.readQuery<GetPostQuery>({
-        query: GetPostDocument,
-        variables: { post_id: postId },
-      });
-      if (!posts) return;
-
-      const comments = posts?.getPost[0]?.comments ?? [];
-      const newComments = [data?.addComment as Comment, ...comments];
-      const newPost = { ...posts.getPost[0], comments: newComments };
-      cache.writeQuery({
-        query: GetPostDocument,
-        variables: { post_id: postId },
-        data: {
-          getPost: [newPost],
-        },
-      });
-    },
-  });
+  const [errors, setErrors] = useState<any>(null);
+  const { mutateAsync: createComment, isLoading: loading } =
+    trpc.comment.addComment.useMutation();
   const handleCommentSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -43,7 +19,7 @@ export default function CommentForm({ postId }: CommentFormPropTypes) {
       ]);
       return;
     }
-    await createComment({ variables: { postId, text } });
+    await createComment({ post_id: postId, text });
   };
 
   return (

@@ -1,6 +1,0 @@
-fragment UserFragment on User {
-  user_id
-  username
-  picture
-  gender
-}

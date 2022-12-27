@@ -4,8 +4,7 @@ import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { loginSchemaType, loginSchema } from "../lib/zod/loginValidation";
-import { FieldError, useLoginMutation } from "../graphql/generated";
+import { loginSchemaType, loginSchema } from "../../lib/zod/loginValidation";
 import InvalidText from "../components/InvalidText";
 import { ScaleLoader } from "react-spinners";
 import AuthProviders from "../components/General/AuthProviders";
@@ -14,12 +13,14 @@ import {
   AiFillEyeInvisible as ClosedEye,
   AiFillEye as OpenedEye,
 } from "react-icons/ai";
+import { trpc } from "../utils/trpc";
 
 const Login: NextPage = () => {
   const router = useRouter();
-  const [errors, setErrors] = useState<FieldError>();
+  const [errors, setErrors] = useState<any>();
   const [showPassowrd, setShowPassowrd] = useState(false);
-  const [login, { loading }] = useLoginMutation();
+  const { mutateAsync: login, isLoading: loading } =
+    trpc.user.login.useMutation();
 
   const {
     register: loginForm,
@@ -31,15 +32,9 @@ const Login: NextPage = () => {
   const onSubmit = async (data: loginSchemaType) => {
     if (!data) return;
     const user = await login({
-      variables: { ...data },
+      ...data,
     });
-    if (
-      user?.data?.login?.errors?.length &&
-      user.data.login.errors.length > 0
-    ) {
-      setErrors(user.data.login.errors[0]);
-    }
-    if (user?.data?.login?.user) {
+    if (user) {
       router.push("/");
     }
   };

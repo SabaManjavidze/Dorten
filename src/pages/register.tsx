@@ -2,22 +2,23 @@ import React, { useEffect, useState } from "react";
 import { Copyright } from "../components/Copyright";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { FieldError, useRegisterMutation } from "../graphql/generated";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InvalidText from "../components/InvalidText";
 import {
   registerSchema,
   registerSchemaType,
-} from "../lib/zod/registerValidation";
+} from "../../lib/zod/registerValidation";
 import Image from "next/image";
 import { ScaleLoader } from "react-spinners";
 import AuthProviders from "../components/General/AuthProviders";
+import { trpc } from "../utils/trpc";
 
 const Register: NextPage = () => {
   const router = useRouter();
-  const [errors, setErrors] = useState<FieldError>();
-  const [register, { loading }] = useRegisterMutation();
+  const [errors, setErrors] = useState<any>();
+  const { mutateAsync: register, isLoading: loading } =
+    trpc.user.register.useMutation();
 
   const {
     register: registerForm,
@@ -30,17 +31,12 @@ const Register: NextPage = () => {
   const onSubmit = async (data: registerSchemaType) => {
     if (!data) return;
     const user = await register({
-      variables: { options: { ...data, gender: data.gender } },
+      ...data,
     });
-    if (
-      user?.data?.register?.errors?.length &&
-      user.data.register.errors.length > 0
-    ) {
-      setErrors(user.data.register?.errors[0]);
-    }
-    if (user?.data?.register?.user) {
+    if (user) {
       // setUser(user.data.register.user);
-      router.push("/");
+      console.log({ user });
+      // router.push("/");
     }
   };
 
