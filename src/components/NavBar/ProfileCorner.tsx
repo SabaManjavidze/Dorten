@@ -1,4 +1,3 @@
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -10,7 +9,12 @@ export default function ProfileCorner() {
   const { isFetching: loading, data, error } = trpc.user.me.useQuery();
   const [showMenu, setShowMenu] = useState(false);
   const router = useRouter();
-  const { mutateAsync: logOut } = trpc.user.logout.useMutation();
+  const utils = trpc.useContext();
+  const { mutateAsync: logOut } = trpc.user.logout.useMutation({
+    onSuccess() {
+      utils.user.me.invalidate();
+    },
+  });
   const profileOptions = [
     { title: "Profile", path: data?.username },
     { title: "Settings", path: "settings" },

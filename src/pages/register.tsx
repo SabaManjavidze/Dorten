@@ -17,8 +17,13 @@ import { trpc } from "../utils/trpc";
 const Register: NextPage = () => {
   const router = useRouter();
   const [errors, setErrors] = useState<any>();
+  const utils = trpc.useContext();
   const { mutateAsync: register, isLoading: loading } =
-    trpc.user.register.useMutation();
+    trpc.user.register.useMutation({
+      onSuccess() {
+        utils.user.me.invalidate();
+      },
+    });
 
   const {
     register: registerForm,
@@ -34,9 +39,7 @@ const Register: NextPage = () => {
       ...data,
     });
     if (user) {
-      // setUser(user.data.register.user);
-      console.log({ user });
-      // router.push("/");
+      router.push("/");
     }
   };
 

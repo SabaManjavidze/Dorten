@@ -8,19 +8,23 @@ import { loginSchemaType, loginSchema } from "../../lib/zod/loginValidation";
 import InvalidText from "../components/InvalidText";
 import { ScaleLoader } from "react-spinners";
 import AuthProviders from "../components/General/AuthProviders";
-import Link from "next/link";
 import {
   AiFillEyeInvisible as ClosedEye,
   AiFillEye as OpenedEye,
 } from "react-icons/ai";
 import { trpc } from "../utils/trpc";
 
-const Login: NextPage = () => {
+const LoginPage: NextPage = () => {
   const router = useRouter();
   const [errors, setErrors] = useState<any>();
   const [showPassowrd, setShowPassowrd] = useState(false);
+  const utils = trpc.useContext();
   const { mutateAsync: login, isLoading: loading } =
-    trpc.user.login.useMutation();
+    trpc.user.login.useMutation({
+      onSuccess() {
+        utils.user.me.invalidate();
+      },
+    });
 
   const {
     register: loginForm,
@@ -136,4 +140,4 @@ const Login: NextPage = () => {
     </section>
   );
 };
-export default Login;
+export default LoginPage;

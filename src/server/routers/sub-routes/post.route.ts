@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import axios from "axios";
 import { z } from "zod";
-import { procedure, router } from "../index";
+import { isAuthed, procedure, router } from "../index";
 import { prisma } from "../../../utils/prisma";
 
 export const postRouter = router({
@@ -55,9 +55,16 @@ export const postRouter = router({
       });
       return post;
     }),
-  getPosts: procedure.query(async ({ input, ctx: { req } }) => {
+  getPosts: procedure.use(isAuthed).query(async ({ input, ctx: { req } }) => {
     const posts = await prisma.post.findMany({
-      include: { creator: true, like: true, comments: true },
+      include: {
+        creator: true,
+        like: {
+          where: { user_id: req.session.userId },
+          select: { value: true },
+        },
+        comments: true,
+      },
     });
     const sortedPosts = posts
       .sort(
@@ -92,7 +99,7 @@ export const postRouter = router({
       if (post.creator_id == req.session.userId) return false;
 
       // if the user has already liked and is changing the value double up that value
-      if (like && like?.value !== 0) {
+      if (like) {
         if (like.value == realValue) {
           await prisma.like.update({
             where: {
@@ -110,6 +117,7 @@ export const postRouter = router({
           return true;
         }
 
+        const calcValue = like.value === 0 ? realValue : realValue * 2;
         await prisma.like.update({
           where: {
             user_id_post_id: {
@@ -121,15 +129,15 @@ export const postRouter = router({
         });
         await prisma.post.update({
           where: { post_id: postId },
-          data: { points: post.points + realValue * 2 },
+          data: { points: post.points + calcValue },
         });
         return true;
       } else {
         // add this to likes
         await prisma.like.create({
           data: {
-            post_id: postId,
-            user_id: req.session.userId,
+            post: { connect: { post_id: postId } },
+            user: { connect: { user_id: req.session.userId } },
             value: realValue,
           },
         });

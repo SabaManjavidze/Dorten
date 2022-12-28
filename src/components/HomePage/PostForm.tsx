@@ -24,8 +24,13 @@ export default function PostForm({ dragging, setDragging }: PostFormPropType) {
   const [postPicture, setPostPicture] = useState<any>();
   const [dropping, setDropping] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const utils = trpc.useContext();
   const { mutateAsync: createPost, isLoading: loading } =
-    trpc.post.createPost.useMutation();
+    trpc.post.createPost.useMutation({
+      onSuccess() {
+        utils.post.getPosts.invalidate();
+      },
+    });
   const handleRemoveImage = () => {
     setPostPicture(null);
   };
@@ -39,7 +44,7 @@ export default function PostForm({ dragging, setDragging }: PostFormPropType) {
     }
     const data = {
       title,
-      description: formData.get("description")?.toString() + "",
+      description: formData.get("description")?.toString() || undefined,
       picture: postPicture?.file,
     };
     if (!errors) {

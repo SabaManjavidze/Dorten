@@ -15,13 +15,18 @@ let likeValue = 0;
 export default function LCS({
   post,
 }: {
-  post: post & { creator: user; comments: comment[]; like: like };
+  post: post & { creator: user; comments: comment[]; like: like[] };
 }) {
   const { data: userData } = trpc.user.me.useQuery();
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [divRef] = useAutoAnimate<HTMLDivElement>();
+  const utils = trpc.useContext();
   const { mutateAsync: likePost, isLoading: loading } =
-    trpc.post.likePost.useMutation();
+    trpc.post.likePost.useMutation({
+      onSuccess() {
+        utils.post.getPosts.invalidate();
+      },
+    });
   const likePostHandler = async (value: -1 | 1) => {
     if (!userData) return;
     likeValue = value;
@@ -43,7 +48,9 @@ export default function LCS({
             hoverColor="green"
             disabled={isMyPost || loading}
             fill={
-              post?.like && post?.like.value > 0 ? "text-skin-like" : undefined
+              post?.like.length > 0 && post?.like[0].value > 0
+                ? "text-skin-like"
+                : undefined
             }
             Icon={LikeIcon}
             size="30px"
@@ -56,10 +63,8 @@ export default function LCS({
             hoverColor="pink"
             disabled={isMyPost || loading}
             fill={
-              post.like
-                ? post.like.value > 0
-                  ? undefined
-                  : "text-skin-dislike"
+              post.like.length > 0 && post.like[0].value < 0
+                ? "text-skin-dislike"
                 : undefined
             }
             Icon={DislikeIcon}

@@ -7,7 +7,7 @@ import {
 } from "../../../../lib/variables";
 import * as argon2 from "argon2";
 import { zodEmail, zodPassword } from "../../../../lib/zod/zodTypes";
-import { procedure, router } from "../index";
+import { isAuthed, procedure, router } from "../index";
 import { githubProfileType } from "../../../utils/types";
 import { registerSchema } from "../../../../lib/zod/registerValidation";
 import { sendEmail } from "../../nodemailer/sendMail";
@@ -106,10 +106,11 @@ export const userRouter = router({
     .mutation(async ({ input: { email, password }, ctx: { req } }) => {
       let user;
       try {
+        console.log({ email, password });
         const result = await prisma.user.findFirst({
           where: { email },
         });
-        if (!result) {
+        if (result == null) {
           return {
             errors: [
               {
@@ -120,7 +121,7 @@ export const userRouter = router({
           };
         }
         if (!result?.password) {
-          //return error indicating that user is settings the password
+          //return error indicating that user is setting the password
           //then handle it on the client by redirecting
           // 1. verifying the email
           // 2. double entering password (default input and re-type input)
@@ -147,7 +148,7 @@ export const userRouter = router({
         }
         user = result;
       } catch (err: any) {
-        console.log(err.message);
+        console.log({ errorISREAL: err });
       }
       if (!user)
         return { errors: [{ field: "email", message: "email not found" }] };
@@ -159,14 +160,14 @@ export const userRouter = router({
     .input(registerSchema)
     .mutation(async ({ input, ctx: { req } }) => {
       let user;
-      console.log({ input });
       try {
+        const hashedPassword = await argon2.hash(input.password);
         const result = await prisma.user.create({
           data: {
             ...input,
+            password: hashedPassword,
           },
         });
-        console.log({ result });
         user = result;
       } catch (err: any) {
         if (err.code === "23505") {
@@ -189,11 +190,11 @@ export const userRouter = router({
 
       return { user };
     }),
-  logout: procedure.mutation(({ ctx: { req } }) => {
+  logout: procedure.use(isAuthed).mutation(({ ctx: { req } }) => {
     req.session.destroy();
     return true;
   }),
-  me: procedure.query(async ({ ctx: { req } }) => {
+  me: procedure.use(isAuthed).query(async ({ ctx: { req } }) => {
     const user = await prisma.user.findFirst({
       where: { user_id: req.session.userId },
     });
@@ -215,6 +216,7 @@ export const userRouter = router({
       return true;
     }),
   changePassword: procedure
+    .use(isAuthed)
     .input(
       z.object({
         newPassword: zodPassword,
@@ -259,6 +261,7 @@ export const userRouter = router({
       return user || null;
     }),
   updateUser: procedure
+    .use(isAuthed)
     .input(
       z.object({
         username: z.string().optional(),
@@ -278,6 +281,7 @@ export const userRouter = router({
       await prisma.user.update({ where: { user_id }, data: { ...updates } });
     }),
   verifyEmail: procedure
+    .use(isAuthed)
     .input(
       z.object({
         email: zodEmail,

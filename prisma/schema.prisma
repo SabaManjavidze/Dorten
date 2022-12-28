@@ -28,12 +28,12 @@ model comment {
 
 model like {
   value      Int
-  user_id     String  @db.VarChar @map("userId")
-  post_id     String  @db.VarChar @map("postId")
+  user_id     String  @db.VarChar @map("user_id")
+  post_id     String  @db.VarChar @map("post_id")
   user       user   @relation(fields: [user_id], references: [user_id])
   post       post   @relation(fields: [post_id], references: [post_id])
 
-  @@id([user_id, post_id])
+  @@id([user_id, post_id]) 
 }
 
 model post {
