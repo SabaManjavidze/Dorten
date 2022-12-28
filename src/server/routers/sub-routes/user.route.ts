@@ -7,7 +7,8 @@ import {
 } from "../../../../lib/variables";
 import * as argon2 from "argon2";
 import { zodEmail, zodPassword } from "../../../../lib/zod/zodTypes";
-import { isAuthed, procedure, router } from "../index";
+import { procedure, router } from "../index";
+import { isAuthed } from "../../middleware/isAuth";
 import { githubProfileType } from "../../../utils/types";
 import { registerSchema } from "../../../../lib/zod/registerValidation";
 import { sendEmail } from "../../nodemailer/sendMail";

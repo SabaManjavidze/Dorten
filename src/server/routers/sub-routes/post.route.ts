@@ -2,7 +2,8 @@ import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import axios from "axios";
 import { z } from "zod";
-import { isAuthed, procedure, router } from "../index";
+import { procedure, router } from "../index";
+import { isAuthed } from "../../middleware/isAuth";
 import { prisma } from "../../../utils/prisma";
 
 export const postRouter = router({

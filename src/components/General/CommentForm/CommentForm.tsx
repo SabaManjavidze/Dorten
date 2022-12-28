@@ -7,8 +7,13 @@ type CommentFormPropTypes = {
 };
 export default function CommentForm({ postId }: CommentFormPropTypes) {
   const [errors, setErrors] = useState<any>(null);
+  const utils = trpc.useContext();
   const { mutateAsync: createComment, isLoading: loading } =
-    trpc.comment.addComment.useMutation();
+    trpc.comment.addComment.useMutation({
+      onSuccess() {
+        utils.post.getPost.invalidate();
+      },
+    });
   const handleCommentSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);

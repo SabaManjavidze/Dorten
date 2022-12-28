@@ -7,8 +7,13 @@ import { trpc } from "../../utils/trpc";
 
 const CodeVerifyPage: NextPage = () => {
   const router = useRouter();
+  const utils = trpc.useContext();
   const { mutateAsync: verifyCode, isLoading: loading } =
-    trpc.user.verifyCode.useMutation();
+    trpc.user.verifyCode.useMutation({
+      onSuccess() {
+        utils.user.me.invalidate();
+      },
+    });
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,7 +39,7 @@ const CodeVerifyPage: NextPage = () => {
             className="text-input text-lg"
             placeholder="ex: 342323"
             required={true}
-            datatype="number"
+            type="number"
             name="code"
           />
           <SubmitButton loading={loading}>Submit</SubmitButton>
