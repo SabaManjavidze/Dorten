@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
+import React, { FormEvent, useState } from "react";
 import { ScaleLoader } from "react-spinners";
 import { trpc } from "../../../utils/trpc";
 
@@ -11,7 +11,8 @@ export default function CommentForm({ postId }: CommentFormPropTypes) {
   const { mutateAsync: createComment, isLoading: loading } =
     trpc.comment.addComment.useMutation({
       onSuccess() {
-        utils.post.getPost.invalidate();
+        utils.post.getPost.invalidate({ post_id: postId });
+        utils.post.getPosts.invalidate();
       },
     });
   const handleCommentSubmit = async (e: FormEvent<HTMLFormElement>) => {

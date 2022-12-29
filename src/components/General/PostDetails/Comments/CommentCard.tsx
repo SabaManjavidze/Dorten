@@ -39,7 +39,7 @@ function CommentCard({ comment }: CommentCardPropType) {
                 </h2>
               </div>
               <small className="ml-4 text-sm text-gray-500">
-                {comment?.created_at.toLocaleTimeString("en-GB", {
+                {new Date(comment?.created_at).toLocaleTimeString("en-GB", {
                   hour: "2-digit",
                   minute: "2-digit",
                 })}

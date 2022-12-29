@@ -61,22 +61,24 @@ export default function PostCard({ post }: { post: post & { creator: user } }) {
               </div>
             ) : null}
           </div>
-          {editMode ? (
-            <input
-              type="text"
-              className="border-background/50 rounded-md border-2 bg-gray-700/40 py-2 pl-3"
-              defaultValue={post.title}
-            />
-          ) : (
-            <Link href={`/post/${post.post_id}`}>
-              <a
-                href={`/post/${post.post_id}`}
-                className="mt-4 w-full py-3 text-left text-lg text-gray-200"
-              >
-                {post.title}
-              </a>
-            </Link>
-          )}
+          <div className="mt-4 w-full py-3 ">
+            {editMode ? (
+              <input
+                type="text"
+                className="border-background/50 rounded-md border-2 bg-gray-700/40 py-2 pl-3"
+                defaultValue={post.title}
+              />
+            ) : (
+              <Link href={`/post/${post.post_id}`}>
+                <a
+                  href={`/post/${post.post_id}`}
+                  className="text-left text-lg text-gray-200"
+                >
+                  {post.title}
+                </a>
+              </Link>
+            )}
+          </div>
           {post.description ? (
             <p className="mt-3 pb-5 text-sm text-gray-200">
               {post.description}

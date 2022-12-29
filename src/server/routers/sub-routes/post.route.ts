@@ -1,6 +1,4 @@
-import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import axios from "axios";
 import { z } from "zod";
 import { procedure, router } from "../index";
 import { isAuthed } from "../../middleware/isAuth";
@@ -50,7 +48,10 @@ export const postRouter = router({
         include: {
           creator: true,
           like: true,
-          comments: { include: { creator: true } },
+          comments: {
+            include: { creator: true },
+            orderBy: { created_at: "desc" },
+          },
         },
         where: { post_id },
       });
@@ -66,14 +67,9 @@ export const postRouter = router({
         },
         comments: true,
       },
+      orderBy: { created_at: "desc" },
     });
-    const sortedPosts = posts
-      .sort(
-        (a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      )
-      .slice(0, 5);
-    return sortedPosts;
+    return posts;
   }),
   likePost: procedure
     .input(
