@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  relationMode = "foreignKeys"
+  url      = env("DATABASE_URL")
+}
+
+model account {
+  provider   account_provider_enum
+  account_id String                @id @default(cuid()) @db.VarChar
+  created_at DateTime              @default(now()) @db.Timestamp(6)
+  owner_id    String                @db.VarChar
+  user       user                 @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
+}
+
+model comment {
+  comment_id    String   @id @default(cuid()) @db.VarChar
+  text          String   @db.VarChar
+  post_id       String   @db.VarChar
+  creator_id    String   @db.VarChar
+  created_at    DateTime @default(now()) @db.Timestamp(6)
+  creator       user    @relation(fields: [creator_id], references: [user_id])
+  post          post    @relation(fields: [post_id], references: [post_id])
+}
+
+model like {
+  value      Int
+  user_id     String  @db.VarChar @map("user_id")
+  post_id     String  @db.VarChar @map("post_id")
+  user       user   @relation(fields: [user_id], references: [user_id])
+  post       post   @relation(fields: [post_id], references: [post_id])
+
+  @@id([user_id, post_id]) 
+}
+
+model post {
+  post_id       String    @id @default(cuid()) @db.VarChar
+  title         String    @db.VarChar
+  description   String?   @db.VarChar
+  picture       String?   @db.VarChar
+  creator_id    String    @db.VarChar
+  points        Int       @default(0)
+  created_at    DateTime  @default(now()) @db.Timestamp(6)
+  comments      comment[]
+  like          like[]
+  creator       user     @relation(fields: [creator_id], references: [user_id])
+}
+
+model user {
+  user_id        String           @id @default(cuid()) @db.VarChar
+  username       String           @unique @db.VarChar
+  email          String           @unique @db.VarChar
+  email_verified Boolean?          @default(false)
+  password       String?          @db.VarChar
+  picture        String?          @db.VarChar
+  age            Int?
+  gender         user_gender_enum @default(None)
+  created_at     DateTime         @default(now()) @db.Timestamp(6)
+  accounts       account[]
+  comment        comment[]
+  like           like[]
+  post           post[]
+}
+
+enum account_provider_enum {
+  GOOGLE
+  GITHUB
+}
+
+enum user_gender_enum {
+  Male
+  Female
+  None
+}
