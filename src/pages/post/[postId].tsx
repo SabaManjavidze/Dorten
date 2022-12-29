@@ -4,6 +4,7 @@ import React from "react";
 import CommentSection from "../../components/General/PostDetails/Comments/CommentSection";
 import { NOT_FOUND_IMG } from "../../../lib/variables";
 import { trpc } from "../../utils/trpc";
+import Head from "next/head";
 
 function PostDetailsPage() {
   const router = useRouter();
@@ -12,6 +13,16 @@ function PostDetailsPage() {
   });
   return (
     <div className="mt-20">
+      <Head>
+        <title>Social Media Preview</title>
+        <meta property="og:url" content="your url" />
+        <meta property="og:type" content="website" />
+        <meta property="fb:app_id" content="your fb id" />
+        <meta property="og:title" content={postData?.title + ""} />
+        <meta name="twitter:card" content="summary" />
+        <meta property="og:description" content={postData?.description + ""} />
+        <meta property="og:image" content={postData?.picture + ""} />
+      </Head>
       <h1 className="text-center text-2xl">{postData?.title}</h1>
       <div className="relative mt-5 flex h-[500px] w-full justify-center bg-skin-main/50 pb-12">
         <Image
