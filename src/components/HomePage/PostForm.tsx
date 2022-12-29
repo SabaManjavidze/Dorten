@@ -23,6 +23,10 @@ export default function PostForm({ dragging, setDragging }: PostFormPropType) {
   const [errors, setErros] = useState<any>(null);
   const [postPicture, setPostPicture] = useState<any>();
   const [dropping, setDropping] = useState(false);
+  const [inputs, setInputs] = useState<{ title: string; description: string }>({
+    title: "",
+    description: "",
+  });
   const inputRef = useRef<HTMLInputElement>(null);
   const utils = trpc.useContext();
   const { mutateAsync: createPost, isLoading: loading } =
@@ -50,6 +54,8 @@ export default function PostForm({ dragging, setDragging }: PostFormPropType) {
     if (!errors) {
       setErros(null);
     }
+    setPostPicture(undefined);
+    setInputs({ title: "", description: "" });
     await createPost({ ...data });
   };
 
@@ -85,6 +91,10 @@ export default function PostForm({ dragging, setDragging }: PostFormPropType) {
             <input
               type="text"
               placeholder="title"
+              value={inputs.title}
+              onChange={(e) =>
+                setInputs({ ...inputs, title: e.currentTarget.value })
+              }
               name="title"
               className="text-input my-5 text-lg"
             />
@@ -92,6 +102,10 @@ export default function PostForm({ dragging, setDragging }: PostFormPropType) {
               className="max-h-15 text-input text-md"
               placeholder="Write something..."
               name="description"
+              value={inputs.description}
+              onChange={(e) =>
+                setInputs({ ...inputs, description: e.currentTarget.value })
+              }
             />
           </div>
           {postPicture ? (
