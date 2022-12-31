@@ -3,9 +3,13 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import { AiFillCloseCircle as ExitIcon } from "react-icons/ai";
+import { MdOutlineQuickreply as ReplyIcon } from "react-icons/md";
 import { FaEdit as EditIcon } from "react-icons/fa";
 import { NOT_FOUND_IMG } from "../../../../../lib/variables";
 import { trpc } from "../../../../utils/trpc";
+import { theme } from "../../../../../tailwind.config";
+import CommentForm from "../../CommentForm/CommentForm";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 type CommentCardPropType = {
   comment: comment & { creator: user };
@@ -13,6 +17,8 @@ type CommentCardPropType = {
 function CommentCard({ comment }: CommentCardPropType) {
   const { isFetching: userLoading, data: userData } = trpc.user.me.useQuery();
   const [editMode, setEditMode] = useState(false);
+  const [showReplyForm, setShowReplyForm] = useState(false);
+  const [divRef] = useAutoAnimate<HTMLDivElement>();
   return (
     <div
       className="flex w-full rounded-lg
@@ -20,6 +26,7 @@ function CommentCard({ comment }: CommentCardPropType) {
     >
       <div className="flex w-full items-start px-4 py-6">
         <div className="justiy-center flex w-full flex-col items-center">
+          {/* Comment Header */}
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center">
               <Link href={`/${comment.creator.username}`} className="pointer">
@@ -73,6 +80,26 @@ function CommentCard({ comment }: CommentCardPropType) {
               {comment.text}
             </p>
           )}
+          <div className="flex justify-end ">
+            <button
+              type="button"
+              className="flex"
+              onClick={() => {
+                setShowReplyForm(!showReplyForm);
+              }}
+            >
+              <p className="mr-3">Reply </p>
+              <ReplyIcon size="30px" color={theme.extend.colors.primary} />
+            </button>
+          </div>
+          <div ref={divRef} className={"w-full pt-5"}>
+            {showReplyForm ? (
+              <CommentForm
+                postId={comment.post_id}
+                mainCommentId={comment.comment_id}
+              />
+            ) : null}
+          </div>
         </div>
       </div>
     </div>

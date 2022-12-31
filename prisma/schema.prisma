@@ -24,6 +24,9 @@ model comment {
   created_at    DateTime @default(now()) @db.Timestamp(6)
   creator       user    @relation(fields: [creator_id], references: [user_id])
   post          post    @relation(fields: [post_id], references: [post_id])
+  main_comment  comment?  @relation("CommentReply", fields: [main_comment_id], references: [comment_id], onDelete: Cascade)
+  replies       comment[] @relation("CommentReply")
+  main_comment_id  String? @map("parentId")
 }
 
 model like {

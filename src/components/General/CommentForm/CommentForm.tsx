@@ -1,11 +1,16 @@
+import { MutateOptions } from "@tanstack/react-query";
 import React, { FormEvent, useState } from "react";
 import { ScaleLoader } from "react-spinners";
 import { trpc } from "../../../utils/trpc";
 
 type CommentFormPropTypes = {
   postId: string;
+  mainCommentId?: string;
 };
-export default function CommentForm({ postId }: CommentFormPropTypes) {
+export default function CommentForm({
+  postId,
+  mainCommentId,
+}: CommentFormPropTypes) {
   const [errors, setErrors] = useState<any>(null);
   const utils = trpc.useContext();
   const { mutateAsync: createComment, isLoading: loading } =
@@ -25,7 +30,12 @@ export default function CommentForm({ postId }: CommentFormPropTypes) {
       ]);
       return;
     }
-    await createComment({ post_id: postId, text });
+
+    await createComment({
+      post_id: postId,
+      text,
+      main_comment_id: mainCommentId,
+    });
   };
 
   return (

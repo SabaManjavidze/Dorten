@@ -12,7 +12,7 @@ function PostDetailsPage() {
     post_id: router.query.postId + "",
   });
   return (
-    <div className="mt-20">
+    <div className="pb-52 pt-20">
       <Head>
         <title>Social Media Preview</title>
         <meta property="og:url" content="your url" />

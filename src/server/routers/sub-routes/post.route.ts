@@ -49,8 +49,9 @@ export const postRouter = router({
           creator: true,
           like: true,
           comments: {
-            include: { creator: true },
+            include: { creator: true, replies: { include: { creator: true } } },
             orderBy: { created_at: "desc" },
+            where: { main_comment_id: null },
           },
         },
         where: { post_id },
@@ -155,7 +156,7 @@ export const postRouter = router({
       })
     )
     .mutation(async ({ ctx: { req }, input }) => {
-      const post = prisma.post.create({
+      const post = await prisma.post.create({
         data: {
           ...input,
           creator: { connect: { user_id: req.session.userId } },
