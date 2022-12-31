@@ -21,7 +21,7 @@ function CommentCard({ comment }: CommentCardPropType) {
   const [divRef] = useAutoAnimate<HTMLDivElement>();
   return (
     <div
-      className="flex w-full rounded-lg
+      className="flex w-full rounded-lg rounded-bl-none
     bg-skin-comment-card shadow-lg"
     >
       <div className="flex w-full items-start px-4 py-6">
