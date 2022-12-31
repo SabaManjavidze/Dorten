@@ -14,7 +14,7 @@ function PostDetailsPage() {
   return (
     <div className="pb-52 pt-20">
       <Head>
-        <title>Social Media Preview</title>
+        <title>{postData?.title}</title>
         <meta property="og:url" content="your url" />
         <meta property="og:type" content="website" />
         <meta property="fb:app_id" content="your fb id" />

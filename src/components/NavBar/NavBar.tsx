@@ -35,7 +35,6 @@ export default function NavBar() {
           <span className="sr-only">Open main menu</span>
           <svg
             className={`${menuShown ? "hidden" : ""} h-6 w-6`}
-            fill="currentColor"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -47,7 +46,6 @@ export default function NavBar() {
           </svg>
           <svg
             className={`${menuShown ? "" : "hidden"} h-6 w-6`}
-            fill="currentColor"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
           >
