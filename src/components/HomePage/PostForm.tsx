@@ -7,12 +7,16 @@ import {
   Dispatch,
   DragEvent,
   FormEvent,
+  useEffect,
   useRef,
   useState,
 } from "react";
-import { toBase64 } from "../../../lib/convBase64";
-import { ScaleLoader } from "react-spinners";
+import { BarLoader, RingLoader, ScaleLoader, SyncLoader } from "react-spinners";
 import { trpc } from "../../utils/trpc";
+import { toBase64 } from "../../lib/convBase64";
+import { useRouter } from "next/router";
+import { theme } from "../../../tailwind.config";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 type PostFormPropType = {
   dragging: boolean;
@@ -20,8 +24,12 @@ type PostFormPropType = {
 };
 
 export default function PostForm({ dragging, setDragging }: PostFormPropType) {
+  const router = useRouter();
   const [errors, setErros] = useState<any>(null);
-  const [postPicture, setPostPicture] = useState<any>();
+  const [postPicture, setPostPicture] = useState<{
+    src: string;
+    id: string;
+  } | null>();
   const [dropping, setDropping] = useState(false);
   const [inputs, setInputs] = useState<{ title: string; description: string }>({
     title: "",
@@ -29,13 +37,36 @@ export default function PostForm({ dragging, setDragging }: PostFormPropType) {
   });
   const inputRef = useRef<HTMLInputElement>(null);
   const utils = trpc.useContext();
+
+  const { mutateAsync: deleteImage, isLoading: deleteLoading } =
+    trpc.deleteImage.useMutation();
+
+  const { mutateAsync: uploadImage, isLoading: uploadLoading } =
+    trpc.uploadImage.useMutation();
+
   const { mutateAsync: createPost, isLoading: loading } =
     trpc.post.createPost.useMutation({
       onSuccess() {
         utils.post.getPosts.invalidate();
       },
     });
-  const handleRemoveImage = () => {
+
+  useEffect(() => {
+    if (postPicture) {
+      router.events.on("routeChangeStart", handleRemoveImage);
+      window.addEventListener("beforeunload", handleRemoveImage);
+
+      return () => {
+        router.events.off("routeChangeStart", handleRemoveImage);
+        window.removeEventListener("beforeunload", handleRemoveImage);
+      };
+    }
+  }, [postPicture]);
+
+  const handleRemoveImage = async () => {
+    // remove image from cloudinary
+    if (!postPicture) return;
+    await deleteImage({ imageId: postPicture.id });
     setPostPicture(null);
   };
   const handleCreatePostSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -49,12 +80,12 @@ export default function PostForm({ dragging, setDragging }: PostFormPropType) {
     const data = {
       title,
       description: formData.get("description")?.toString() || undefined,
-      picture: postPicture?.file,
+      picture: postPicture?.src + "",
     };
     if (!errors) {
       setErros(null);
     }
-    setPostPicture(undefined);
+    setPostPicture(null);
     setInputs({ title: "", description: "" });
     await createPost({ ...data });
   };
@@ -65,7 +96,9 @@ export default function PostForm({ dragging, setDragging }: PostFormPropType) {
     const file = e.dataTransfer.files[0];
     if (!file) return;
     const converted = await toBase64(file);
-    setPostPicture({ file: converted + "", name: file.name });
+    const result = await uploadImage({ picture: converted + "" });
+    if (!result) return;
+    setPostPicture({ src: result.secure_url, id: result.public_id });
     setDragging(false);
     setDropping(false);
   };
@@ -75,7 +108,11 @@ export default function PostForm({ dragging, setDragging }: PostFormPropType) {
     }
     const file = event.target.files[0];
     const converted = await toBase64(file);
-    setPostPicture({ file: converted + "", name: file.name });
+    const result = await uploadImage({ picture: converted + "" });
+    if (!result) return;
+    setPostPicture({ src: result.secure_url, id: result.public_id });
+    setDragging(false);
+    setDropping(false);
   };
   return (
     <section className="mb-10 mt-5 flex w-full justify-center ">
@@ -108,21 +145,33 @@ export default function PostForm({ dragging, setDragging }: PostFormPropType) {
               }
             />
           </div>
-          {postPicture ? (
+          {uploadLoading || postPicture ? (
             <div className="flex w-full flex-col justify-center pb-5">
               <div className="flex w-full justify-between p-4">
-                <h3 className="tracking-wider">{postPicture.name}</h3>
+                {/* <h3 className="tracking-wider">{postPicture.name}</h3> */}
                 <button type="button" onClick={handleRemoveImage}>
                   <ExitIcon className="text-xl text-skin-button-accent" />
                 </button>
               </div>
-              <div className="relative h-[500px]">
-                <Image
-                  src={postPicture.file}
-                  layout="fill"
-                  className="object-contain"
-                  alt="profile picture"
-                />
+              <div className="relative h-[500px] w-[700px] ">
+                {uploadLoading || deleteLoading ? (
+                  <>
+                    <SyncLoader
+                      color={"pink"}
+                      size={30}
+                      className="absolute top-1/2 left-1/2 z-20 -translate-y-1/2 -translate-x-1/2"
+                    />
+                    <div className="absolute z-10 h-full w-full filter backdrop-blur-sm"></div>
+                  </>
+                ) : null}
+                {postPicture ? (
+                  <Image
+                    src={postPicture.src}
+                    layout="fill"
+                    className="object-contain object-center"
+                    alt="profile picture"
+                  />
+                ) : null}
               </div>
             </div>
           ) : null}

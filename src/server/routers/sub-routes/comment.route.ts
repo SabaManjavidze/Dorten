@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { zodComment } from "../../../../lib/zod/commentValidation";
+import { zodComment } from "../../../lib/zod/commentValidation";
 import { procedure, router } from "../index";
 import { prisma } from "../../../utils/prisma";
 import { Prisma } from "@prisma/client";

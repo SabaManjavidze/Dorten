@@ -2,7 +2,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import React from "react";
 import CommentSection from "../../components/General/PostDetails/Comments/CommentSection";
-import { NOT_FOUND_IMG } from "../../../lib/variables";
+import { NOT_FOUND_IMG } from "../../lib/variables";
 import { trpc } from "../../utils/trpc";
 import Head from "next/head";
 

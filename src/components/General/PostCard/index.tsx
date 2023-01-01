@@ -6,7 +6,7 @@ import LCS from "./LCS";
 import Link from "next/link";
 import { post, user } from "@prisma/client";
 import { trpc } from "../../../utils/trpc";
-import { NOT_FOUND_IMG } from "../../../../lib/variables";
+import { NOT_FOUND_IMG } from "../../../lib/variables";
 
 export default function PostCard({ post }: { post: post & { creator: user } }) {
   const { isFetching: userLoading, data: userData } = trpc.user.me.useQuery();

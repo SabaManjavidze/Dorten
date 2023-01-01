@@ -3,6 +3,7 @@ import { z } from "zod";
 import { procedure, router } from "../index";
 import { isAuthed } from "../../middleware/isAuth";
 import { prisma } from "../../../utils/prisma";
+import { cloudinary } from "../../../utils/cloudinary";
 
 export const postRouter = router({
   updatePost: procedure

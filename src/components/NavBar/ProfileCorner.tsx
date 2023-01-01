@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useEffect, useRef } from "react";
-import { NOT_FOUND_IMG } from "../../../lib/variables";
+import { NOT_FOUND_IMG } from "../../lib/variables";
 import { trpc } from "../../utils/trpc";
 
 export default function ProfileCorner() {
