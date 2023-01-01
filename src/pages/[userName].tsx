@@ -2,7 +2,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useMemo } from "react";
 
-import { NOT_FOUND_IMG } from "../../lib/variables";
+import { NOT_FOUND_IMG } from "../lib/variables";
 import { trpc } from "../utils/trpc";
 
 const ProfilePage = () => {

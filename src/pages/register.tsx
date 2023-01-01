@@ -8,7 +8,7 @@ import InvalidText from "../components/InvalidText";
 import {
   registerSchema,
   registerSchemaType,
-} from "../../lib/zod/registerValidation";
+} from "../lib/zod/registerValidation";
 import Image from "next/image";
 import { ScaleLoader } from "react-spinners";
 import AuthProviders from "../components/General/AuthProviders";

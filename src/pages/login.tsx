@@ -4,7 +4,7 @@ import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { loginSchemaType, loginSchema } from "../../lib/zod/loginValidation";
+import { loginSchemaType, loginSchema } from "../lib/zod/loginValidation";
 import InvalidText from "../components/InvalidText";
 import { ScaleLoader } from "react-spinners";
 import AuthProviders from "../components/General/AuthProviders";

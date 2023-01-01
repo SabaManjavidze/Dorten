@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { AiFillCloseCircle as ExitIcon } from "react-icons/ai";
 import { MdOutlineQuickreply as ReplyIcon } from "react-icons/md";
 import { FaEdit as EditIcon } from "react-icons/fa";
-import { NOT_FOUND_IMG } from "../../../../../lib/variables";
+import { NOT_FOUND_IMG } from "../../../../lib/variables";
 import { trpc } from "../../../../utils/trpc";
 import { theme } from "../../../../../tailwind.config";
 import CommentForm from "../../CommentForm/CommentForm";

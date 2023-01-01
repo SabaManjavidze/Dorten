@@ -10,8 +10,7 @@ import InvalidText from "../../components/InvalidText";
 import {
   changePassSchema,
   changePassSchemaType,
-} from "../../../lib/zod/changePassword";
-import { zodPassword } from "../../../lib/zod/zodTypes";
+} from "../../lib/zod/changePassword";
 import { trpc } from "../../utils/trpc";
 
 const SetPasswordPage: NextPage = () => {

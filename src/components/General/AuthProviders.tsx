@@ -1,10 +1,7 @@
-import Image from "next/image";
-import { useRouter } from "next/router";
 import React from "react";
-import { GITHUB_OAUTH_LOGIN_URL } from "../../../lib/variables";
+import { GITHUB_OAUTH_LOGIN_URL } from "../../lib/variables";
 
 export default function AuthProviders() {
-  // const router = useRouter();
   return (
     <div className="align-center flex">
       <a
