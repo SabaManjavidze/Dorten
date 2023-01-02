@@ -6,6 +6,8 @@ import { postRouter } from "./sub-routes/post.route";
 import { userRouter } from "./sub-routes/user.route";
 import { config } from "dotenv";
 import { v2 as cloudinary } from "cloudinary";
+import { inferReactQueryProcedureOptions } from "@trpc/react-query";
+import { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 config();
 
@@ -35,3 +37,9 @@ export const appRouter = router({
 });
 // export type definition of API
 export type AppRouter = typeof appRouter;
+
+export type ReactQueryOptions = inferReactQueryProcedureOptions<AppRouter>;
+export type RouterInputs = inferRouterInputs<AppRouter>;
+export type RouterOutputs = inferRouterOutputs<AppRouter>;
+
+export type getPostReturnType = RouterOutputs["post"]["getPost"];

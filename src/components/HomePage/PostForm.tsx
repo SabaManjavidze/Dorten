@@ -11,12 +11,10 @@ import {
   useRef,
   useState,
 } from "react";
-import { BarLoader, RingLoader, ScaleLoader, SyncLoader } from "react-spinners";
+import { ScaleLoader, SyncLoader } from "react-spinners";
 import { trpc } from "../../utils/trpc";
 import { toBase64 } from "../../lib/convBase64";
 import { useRouter } from "next/router";
-import { theme } from "../../../tailwind.config";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 type PostFormPropType = {
   dragging: boolean;

@@ -47,12 +47,12 @@ export const postRouter = router({
       const post = await prisma.post.findFirst({
         include: {
           creator: true,
-          // like: true,
-          // comments: {
-          //   include: { creator: true, replies: { include: { creator: true } } },
-          //   orderBy: { created_at: "desc" },
-          //   where: { main_comment_id: null },
-          // },
+          like: true,
+          comments: {
+            include: { creator: true },
+            orderBy: { created_at: "desc" },
+            where: { main_comment_id: null },
+          },
         },
         where: { post_id },
       });

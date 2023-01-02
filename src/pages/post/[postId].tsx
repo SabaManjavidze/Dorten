@@ -12,7 +12,7 @@ function PostDetailsPage() {
     post_id: router.query.postId + "",
   });
   return (
-    <div className="pb-52 pt-20">
+    <div className="pb-[500px] pt-20">
       <Head>
         <title>{postData?.title}</title>
         <meta property="og:url" content="your url" />
@@ -37,10 +37,12 @@ function PostDetailsPage() {
         <label htmlFor="comments" className="ml-20 text-2xl">
           Comments
         </label>
-        {/* <CommentSection
-          comments={postData?.comments as any}
-          postId={router.query.postId + ""}
-        /> */}
+        {postData ? (
+          <CommentSection
+            comments={postData.comments}
+            postId={router.query.postId + ""}
+          />
+        ) : null}
       </section>
     </div>
   );

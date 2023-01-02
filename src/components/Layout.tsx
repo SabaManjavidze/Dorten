@@ -27,10 +27,8 @@ export default function Layout({ children }: any) {
       <div className="relative min-h-screen bg-skin-main text-skin-base">
         <BarLoader
           loading={isLoading}
-          className="!fixed z-50 !bg-skin-secondary"
-          id="loading-bar"
+          className="!fixed z-50 !w-full !bg-skin-secondary"
           color={theme.extend.backgroundColor.skin["loading-bar"](1)}
-          width={"100%"}
         />
         <NavBar />
         {children}
