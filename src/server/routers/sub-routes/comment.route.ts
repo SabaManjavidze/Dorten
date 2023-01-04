@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { zodComment } from "../../../lib/zod/commentValidation";
 import { procedure, router } from "../index";
-import { prisma } from "../../../utils/prisma";
+import { prisma, UserFragment } from "../../../utils/prisma";
 import { Prisma } from "@prisma/client";
 
 export const commentRouter = router({
@@ -14,7 +14,7 @@ export const commentRouter = router({
     .query(async ({ input: { main_comment_id }, ctx: { req } }) => {
       const replies = await prisma.comment.findMany({
         where: { main_comment_id },
-        include: { creator: true },
+        include: { creator: { select: UserFragment } },
       });
       return replies;
     }),

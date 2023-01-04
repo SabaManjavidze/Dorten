@@ -24,6 +24,7 @@ function CommentCardFooter() {
           <ReplyIcon size="30px" className="text-light-primary" />
         </button>
         {/* Show Replies Button */}
+
         <button
           onClick={handleShowReplies}
           className="text-ligh-primary flex items-center"

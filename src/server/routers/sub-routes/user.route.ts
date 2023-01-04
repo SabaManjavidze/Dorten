@@ -12,7 +12,7 @@ import { isAuthed } from "../../middleware/isAuth";
 import { githubProfileType } from "../../../utils/types";
 import { registerSchema } from "../../../lib/zod/registerValidation";
 import { sendEmail } from "../../nodemailer/sendMail";
-import { prisma } from "../../../utils/prisma";
+import { prisma, UserFragment } from "../../../utils/prisma";
 
 export const userRouter = router({
   githubLogin: procedure
@@ -197,6 +197,7 @@ export const userRouter = router({
   me: procedure.use(isAuthed).query(async ({ ctx: { req } }) => {
     const user = await prisma.user.findFirst({
       where: { user_id: req.session.userId },
+      select: UserFragment,
     });
     return user;
   }),

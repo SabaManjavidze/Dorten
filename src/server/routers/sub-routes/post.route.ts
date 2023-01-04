@@ -2,7 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { procedure, router } from "../index";
 import { isAuthed } from "../../middleware/isAuth";
-import { prisma } from "../../../utils/prisma";
+import { prisma, UserFragment } from "../../../utils/prisma";
 
 export const postRouter = router({
   updatePost: procedure
@@ -49,7 +49,7 @@ export const postRouter = router({
           creator: true,
           like: true,
           comments: {
-            include: { creator: true },
+            include: { creator: { select: UserFragment } },
             orderBy: { created_at: "desc" },
             where: { main_comment_id: null },
           },
@@ -61,7 +61,7 @@ export const postRouter = router({
   getPosts: procedure.use(isAuthed).query(async ({ input, ctx: { req } }) => {
     const posts = await prisma.post.findMany({
       include: {
-        creator: true,
+        creator: { select: UserFragment },
         like: {
           where: { user_id: req.session.userId },
           select: { value: true },
