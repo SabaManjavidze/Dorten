@@ -1,9 +1,9 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { comment, user } from "@prisma/client";
 import { useState } from "react";
-import { trpc } from "../../../../utils/trpc";
 import CommentForm from "../../CommentForm/CommentForm";
 import CommentCard from "./CommentCard";
+import CommentSectionProvider from "./useCommentSection";
 
 type CommentSectionPropType = {
   comments: (comment & {
@@ -30,7 +30,9 @@ export default function CommentSection({
             key={comment.comment_id}
             className="w-full py-5 first-of-type:border-t-0"
           >
-            <CommentCard comment={comment} />
+            <CommentSectionProvider comment={comment}>
+              <CommentCard />
+            </CommentSectionProvider>
           </li>
         ))}
       </ul>
