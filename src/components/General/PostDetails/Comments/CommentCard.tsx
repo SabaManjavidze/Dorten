@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { AiFillCloseCircle as ExitIcon } from "react-icons/ai";
+import { BiTrash as TrashIcon } from "react-icons/bi";
 import { FaEdit as EditIcon } from "react-icons/fa";
 import { NOT_FOUND_IMG } from "../../../../lib/variables";
 import { trpc } from "../../../../utils/trpc";
@@ -21,7 +22,26 @@ function CommentCard() {
   const { data: userData } = trpc.user.me.useQuery();
   const [editMode, setEditMode] = useState(false);
   const { comment } = useCommentSection();
+  const utils = trpc.useContext();
+  const { mutateAsync: deleteComment } = trpc.comment.deleteComment.useMutation(
+    {
+      onSuccess() {
+        if (!comment?.main_comment_id) {
+          utils.post.getPost.invalidate({ post_id: comment?.post_id + "" });
+        } else {
+          utils.comment.getReplies.fetch({
+            main_comment_id: comment?.main_comment_id + "",
+          });
+        }
+      },
+    }
+  );
 
+  const handleDeleteComment = async () => {
+    await deleteComment({
+      comment_id: comment?.comment_id + "",
+    });
+  };
   return (
     <div className="flex w-full flex-col">
       <div
@@ -61,6 +81,12 @@ function CommentCard() {
               </div>
               {userData && userData.user_id == comment?.creator_id ? (
                 <div>
+                  <button
+                    className={"mr-6 text-light-primary"}
+                    onClick={handleDeleteComment}
+                  >
+                    <TrashIcon size={"30px"} />
+                  </button>
                   <button
                     className={"text-light-primary"}
                     onClick={() => {

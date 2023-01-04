@@ -10,12 +10,12 @@ import CommentForm from "../CommentForm/CommentForm";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { trpc } from "../../../utils/trpc";
 import { comment, like, post, user } from "@prisma/client";
+import { RouterOutputs } from "../../../server/routers/_app";
 
-let likeValue = 0;
 export default function LCS({
   post,
 }: {
-  post: post & { creator: user; comments: comment[]; like: like[] };
+  post: RouterOutputs["post"]["getPosts"][number];
 }) {
   const { data: userData } = trpc.user.me.useQuery();
   const [showCommentForm, setShowCommentForm] = useState(false);
@@ -29,7 +29,6 @@ export default function LCS({
     });
   const likePostHandler = async (value: -1 | 1) => {
     if (!userData) return;
-    likeValue = value;
     await likePost({
       postId: post.post_id,
       value,
@@ -74,7 +73,7 @@ export default function LCS({
         <IconButton
           onClick={handleCommentClick}
           Icon={CommentIcon}
-          text={post.comments?.length ?? 0}
+          text={post?._count.comments}
           size="30px"
         />
         <IconButton Icon={ShareIcon} text={"share"} size="30px" />

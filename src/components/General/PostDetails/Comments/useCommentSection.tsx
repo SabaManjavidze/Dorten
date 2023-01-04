@@ -6,26 +6,21 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { RouterOutputs } from "../../../../server/routers/_app";
 import { trpc } from "../../../../utils/trpc";
 
 type useCommentSectionPropType = {
   children: JSX.Element;
-  comment: comment & {
-    creator: user;
-  };
+  comment: NonNullable<RouterOutputs["post"]["getPost"]>["comments"][number];
 };
 
 type ContextType = {
   showReplies: boolean;
   setShowReplies: Dispatch<boolean>;
-  comment?: comment & {
-    creator: user;
-  };
-  replies?:
-    | (comment & {
-        creator: user;
-      })[];
+  comment?: NonNullable<RouterOutputs["post"]["getPost"]>["comments"][number];
+  replies?: RouterOutputs["comment"]["getReplies"];
   handleShowReplies: () => void;
+  refetch: () => void;
 };
 
 export const CommentSectionContext = createContext<ContextType>({
@@ -33,6 +28,7 @@ export const CommentSectionContext = createContext<ContextType>({
   setShowReplies: () => {},
   replies: undefined,
   handleShowReplies: () => {},
+  refetch: () => {},
   comment: undefined,
 });
 
@@ -42,17 +38,18 @@ function CommentSectionProvider({
 }: useCommentSectionPropType) {
   const [showReplies, setShowReplies] = useState(false);
 
-  const { data: replies, refetch } = trpc.comment.getReplies.useQuery(
-    {
-      main_comment_id: comment.comment_id,
-    },
-    { enabled: false }
-  );
+  const { data: replies, refetch: refetchReplies } =
+    trpc.comment.getReplies.useQuery(
+      {
+        main_comment_id: comment.comment_id,
+      },
+      { enabled: false }
+    );
 
   const handleShowReplies = async () => {
     setShowReplies(!showReplies);
     if (!showReplies) {
-      await refetch();
+      await refetchReplies();
     }
   };
   return (
@@ -63,6 +60,7 @@ function CommentSectionProvider({
         showReplies,
         setShowReplies,
         comment,
+        refetch: refetchReplies,
       }}
     >
       {children}

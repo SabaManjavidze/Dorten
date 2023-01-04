@@ -6,18 +6,27 @@ import { trpc } from "../../../utils/trpc";
 type CommentFormPropTypes = {
   postId: string;
   mainCommentId?: string;
+  refetch?: () => void;
 };
 export default function CommentForm({
   postId,
   mainCommentId,
+  refetch,
 }: CommentFormPropTypes) {
   const [errors, setErrors] = useState<any>(null);
   const utils = trpc.useContext();
   const { mutateAsync: createComment, isLoading: loading } =
     trpc.comment.addComment.useMutation({
       onSuccess() {
-        utils.post.getPost.invalidate({ post_id: postId });
-        utils.post.getPosts.invalidate();
+        if (mainCommentId) {
+          utils.comment.getReplies.fetch({
+            main_comment_id: mainCommentId,
+          });
+        }
+        if (refetch) refetch();
+        utils.post.getPost.invalidate({
+          post_id: postId,
+        });
       },
     });
   const handleCommentSubmit = async (e: FormEvent<HTMLFormElement>) => {

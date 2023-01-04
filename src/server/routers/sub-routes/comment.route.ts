@@ -14,9 +14,23 @@ export const commentRouter = router({
     .query(async ({ input: { main_comment_id }, ctx: { req } }) => {
       const replies = await prisma.comment.findMany({
         where: { main_comment_id },
-        include: { creator: { select: UserFragment } },
+        include: { creator: { select: UserFragment }, _count: true },
+        orderBy: { created_at: "desc" },
       });
       return replies;
+    }),
+  deleteComment: procedure
+    .input(
+      z.object({
+        comment_id: z.string(),
+      })
+    )
+    .mutation(async ({ input: { comment_id } }) => {
+      const comment = await prisma.comment.delete({
+        where: { comment_id },
+      });
+
+      return comment;
     }),
   addComment: procedure
     .input(

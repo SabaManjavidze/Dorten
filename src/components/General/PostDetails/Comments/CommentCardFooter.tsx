@@ -5,6 +5,7 @@ import {
   IoMdArrowDropdown as DownArrowIcon,
 } from "react-icons/io";
 import { MdOutlineQuickreply as ReplyIcon } from "react-icons/md";
+import { trpc } from "../../../../utils/trpc";
 import CommentForm from "../../CommentForm/CommentForm";
 import { useCommentSection } from "./useCommentSection";
 
@@ -14,7 +15,9 @@ function CommentCardFooter() {
   const handleShowReplyForm = () => {
     setShowReplyForm(!showReplyForm);
   };
-  const { handleShowReplies, showReplies, comment } = useCommentSection();
+  const utils = trpc.useContext();
+  const { handleShowReplies, showReplies, comment, refetch } =
+    useCommentSection();
   return (
     <div className="w-full ">
       <div className="flex justify-around ">
@@ -24,25 +27,32 @@ function CommentCardFooter() {
           <ReplyIcon size="30px" className="text-light-primary" />
         </button>
         {/* Show Replies Button */}
-
-        <button
-          onClick={handleShowReplies}
-          className="text-ligh-primary flex items-center"
-        >
-          <p className="pr-5">{showReplies ? "Hide" : "Show"} Replies</p>
-          {showReplies ? (
-            <DownArrowIcon className="text-primary" size={25} />
-          ) : (
-            <LeftArrowIcon className="text-primary" size={25} />
-          )}
-        </button>
+        {comment && comment._count.replies > 0 ? (
+          <button
+            onClick={handleShowReplies}
+            className="text-ligh-primary flex items-center"
+          >
+            <p className="pr-5">{showReplies ? "Hide" : "Show"} Replies</p>
+            {showReplies ? (
+              <DownArrowIcon className="text-primary" size={25} />
+            ) : (
+              <LeftArrowIcon className="text-primary" size={25} />
+            )}
+          </button>
+        ) : null}
       </div>
       <div ref={divRef} className={"w-full pt-5"}>
         {showReplyForm && comment ? (
           <div>
             <CommentForm
               postId={comment.post_id}
-              mainCommentId={comment?.comment_id}
+              mainCommentId={comment.comment_id}
+              refetch={() => {
+                refetch();
+                utils.comment.getReplies.fetch({
+                  main_comment_id: comment?.main_comment_id + "",
+                });
+              }}
             />
           </div>
         ) : null}

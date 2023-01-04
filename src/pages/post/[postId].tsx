@@ -5,6 +5,7 @@ import CommentSection from "../../components/General/PostDetails/Comments/Commen
 import { NOT_FOUND_IMG } from "../../lib/variables";
 import { trpc } from "../../utils/trpc";
 import Head from "next/head";
+import CommentForm from "../../components/General/CommentForm/CommentForm";
 
 function PostDetailsPage() {
   const router = useRouter();
@@ -37,12 +38,14 @@ function PostDetailsPage() {
         <label htmlFor="comments" className="ml-20 text-2xl">
           Comments
         </label>
-        {postData ? (
+        {postData?.comments ? (
           <CommentSection
             comments={postData.comments}
             postId={router.query.postId + ""}
           />
-        ) : null}
+        ) : (
+          postData && <CommentForm postId={postData?.post_id + ""} />
+        )}
       </section>
     </div>
   );

@@ -47,11 +47,15 @@ export const postRouter = router({
       const post = await prisma.post.findFirst({
         include: {
           creator: true,
-          like: true,
+          like: { select: { value: true } },
           comments: {
-            include: { creator: { select: UserFragment } },
-            orderBy: { created_at: "desc" },
+            include: {
+              creator: { select: UserFragment },
+
+              _count: { select: { replies: true } },
+            },
             where: { main_comment_id: null },
+            orderBy: { created_at: "desc" },
           },
         },
         where: { post_id },
@@ -66,12 +70,14 @@ export const postRouter = router({
           where: { user_id: req.session.userId },
           select: { value: true },
         },
+        _count: { select: { comments: true } },
         comments: {
           where: { main_comment_id: null },
         },
       },
       orderBy: { created_at: "desc" },
     });
+
     return posts;
   }),
   likePost: procedure
