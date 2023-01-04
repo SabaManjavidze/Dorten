@@ -18,12 +18,12 @@ import { useCommentSection } from "./useCommentSection";
 //   };
 // };
 function CommentCard() {
-  const { isFetching: userLoading, data: userData } = trpc.user.me.useQuery();
+  const { data: userData } = trpc.user.me.useQuery();
   const [editMode, setEditMode] = useState(false);
-  const { showReplies, replies, comment } = useCommentSection();
+  const { comment } = useCommentSection();
 
   return (
-    <div className="flex flex-col">
+    <div className="flex w-full flex-col">
       <div
         className="flex w-full rounded-lg rounded-bl-none
     bg-skin-comment-card shadow-lg"
@@ -91,7 +91,6 @@ function CommentCard() {
           </div>
         </div>
       </div>
-      {showReplies && replies ? <RepliesList /> : null}
     </div>
   );
 }

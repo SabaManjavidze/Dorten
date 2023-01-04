@@ -1,5 +1,4 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { comment, user } from "@prisma/client";
 import React, { useState } from "react";
 import {
   IoMdArrowDropleft as LeftArrowIcon,

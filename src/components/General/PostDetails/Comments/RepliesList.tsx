@@ -1,6 +1,6 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { comment, user } from "@prisma/client";
-import React from "react";
+import React, { useEffect } from "react";
 import CommentCard from "./CommentCard";
 import CommentSectionProvider, { useCommentSection } from "./useCommentSection";
 
@@ -9,28 +9,39 @@ import CommentSectionProvider, { useCommentSection } from "./useCommentSection";
 // };
 function RepliesList() {
   const [ulRef] = useAutoAnimate<HTMLUListElement>();
-  const { replies } = useCommentSection();
+  const { replies, showReplies } = useCommentSection();
+  useEffect(() => {
+    console.log({ replies, showReplies });
+  }, [replies, showReplies]);
+
   return (
-    <ul ref={ulRef}>
-      {replies?.map((reply, i) => (
-        <li key={reply.comment_id} className="flex h-64 w-full pl-[1px]">
-          <div className="relative flex w-48 flex-col">
-            {/* Horizontal branch */}
-            <div className="absolute top-1/2 left-1/2 h-0.5 w-1/2 translate-y-1/2 bg-white"></div>
-            {/* Vertical branch */}
-            <div
-              className={`absolute left-1/2 ${
-                replies && i < replies.length - 1 ? "h-full" : "h-[51%]"
-              } w-0.5 bg-white`}
-            ></div>
-          </div>
-          <div className="mt-5 w-full pr-16 first-of-type:border-t-0">
+    <ul ref={ulRef} className="pl-48">
+      {showReplies &&
+        replies?.map((reply, i) => (
+          <li
+            className="min-h-64 flex w-full flex-col pl-[1px]"
+            key={reply.comment_id}
+          >
             <CommentSectionProvider comment={reply}>
-              <CommentCard />
+              <div className="relative flex w-full flex-col ">
+                {/* Vertical branch */}
+                <div
+                  className={`absolute ${
+                    replies && i < replies.length - 1 ? "h-full" : "h-[55%]"
+                  } w-0.5 bg-white`}
+                ></div>
+                <div className="mt-5 flex w-full pr-16 ">
+                  <div className="relative flex w-48">
+                    {/* Horizontal branch */}
+                    <div className="absolute top-1/2 h-0.5 w-full translate-y-1/2 bg-white"></div>
+                  </div>
+                  <CommentCard />
+                </div>
+                <RepliesList />
+              </div>
             </CommentSectionProvider>
-          </div>
-        </li>
-      ))}
+          </li>
+        ))}
     </ul>
   );
 }

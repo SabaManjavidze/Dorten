@@ -107,7 +107,6 @@ export const userRouter = router({
     .mutation(async ({ input: { email, password }, ctx: { req } }) => {
       let user;
       try {
-        console.log({ email, password });
         const result = await prisma.user.findFirst({
           where: { email },
         });

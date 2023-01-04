@@ -23,14 +23,12 @@ export const appRouter = router({
       await cloudinary.uploader.destroy(imageId, {
         invalidate: true,
       });
-      // console.log({result})
     }),
   uploadImage: procedure
     .use(isAuthed)
     .input(z.object({ picture: z.string() }))
     .mutation(async ({ input }) => {
       const result = await cloudinary.uploader.upload(input.picture);
-      console.log({ result });
       if (!result) return;
       return result;
     }),

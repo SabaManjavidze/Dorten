@@ -3,6 +3,7 @@ import { comment, user } from "@prisma/client";
 import { useState } from "react";
 import CommentForm from "../../CommentForm/CommentForm";
 import CommentCard from "./CommentCard";
+import RepliesList from "./RepliesList";
 import CommentSectionProvider from "./useCommentSection";
 
 type CommentSectionPropType = {
@@ -26,14 +27,12 @@ export default function CommentSection({
         className="flex flex-col items-center md:w-2/3 xl:w-full"
       >
         {comments?.map((comment) => (
-          <li
-            key={comment.comment_id}
-            className="w-full py-5 first-of-type:border-t-0"
-          >
-            <CommentSectionProvider comment={comment}>
+          <CommentSectionProvider key={comment.comment_id} comment={comment}>
+            <li className="flex w-full flex-col py-5 first-of-type:border-t-0">
               <CommentCard />
-            </CommentSectionProvider>
-          </li>
+              <RepliesList />
+            </li>
+          </CommentSectionProvider>
         ))}
       </ul>
     </div>

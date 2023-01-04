@@ -16,7 +16,6 @@ export const commentRouter = router({
         where: { main_comment_id },
         include: { creator: true },
       });
-      console.log({ main_comment_id, replies });
       return replies;
     }),
   addComment: procedure
