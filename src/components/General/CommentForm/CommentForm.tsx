@@ -58,8 +58,7 @@ export default function CommentForm({
             {errors && errors.length > 0 && errors[0].field == "title" ? (
               <h3 className="text-red-500 ">{errors[0].message}</h3>
             ) : null}
-            <input
-              type="text"
+            <textarea
               placeholder="type a comment..."
               name="text"
               className="text-input my-5 !bg-skin-main text-lg"

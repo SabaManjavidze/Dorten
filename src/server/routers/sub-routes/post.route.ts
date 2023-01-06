@@ -62,14 +62,16 @@ export const postRouter = router({
       });
       return post;
     }),
-  getPosts: procedure.use(isAuthed).query(async ({ input, ctx: { req } }) => {
+  getPosts: procedure.query(async ({ input, ctx: { req } }) => {
     const posts = await prisma.post.findMany({
       include: {
         creator: { select: UserFragment },
-        like: {
-          where: { user_id: req.session.userId },
-          select: { value: true },
-        },
+        like: req.session.userId
+          ? {
+              where: { user_id: req.session.userId },
+              select: { value: true },
+            }
+          : undefined,
         _count: { select: { comments: true } },
         comments: {
           where: { main_comment_id: null },

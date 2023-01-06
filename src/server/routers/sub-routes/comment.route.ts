@@ -14,7 +14,16 @@ export const commentRouter = router({
     .query(async ({ input: { main_comment_id }, ctx: { req } }) => {
       const replies = await prisma.comment.findMany({
         where: { main_comment_id },
-        include: { creator: { select: UserFragment }, _count: true },
+        include: {
+          main_comment: {
+            select: {
+              comment_id: true,
+              creator: { select: { username: true } },
+            },
+          },
+          creator: { select: UserFragment },
+          _count: true,
+        },
         orderBy: { created_at: "desc" },
       });
       return replies;
