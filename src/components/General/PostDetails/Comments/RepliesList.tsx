@@ -12,7 +12,7 @@ function RepliesList() {
   const { replies, showReplies } = useCommentSection();
 
   return (
-    <ul ref={ulRef} className="pl-48">
+    <ul ref={ulRef} className="pl-10 sm:pl-12 md:pl-12 lg:pl-48">
       {showReplies &&
         replies?.map((reply, i) => (
           <li

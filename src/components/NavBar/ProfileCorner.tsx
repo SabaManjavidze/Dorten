@@ -56,7 +56,7 @@ export default function ProfileCorner() {
     );
   }
   return (
-    <div className="relative flex items-center pl-16">
+    <div className="relative flex items-center">
       {data ? (
         <div className="flex items-center">
           <h3 className="mr-4">{data.username}</h3>

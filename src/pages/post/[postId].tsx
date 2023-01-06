@@ -34,7 +34,7 @@ function PostDetailsPage() {
           layout="fill"
         />
       </div>
-      <section className="mt-14 px-32">
+      <section className="mt-14 sm:px-10 md:px-10 lg:px-32">
         <label htmlFor="comments" className="ml-20 text-2xl">
           Comments
         </label>

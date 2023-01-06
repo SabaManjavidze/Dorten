@@ -38,13 +38,13 @@ const ProfilePage = () => {
           </div>
           {/* Email, EmailVerification, New Password, Stats */}
           <div className="flex flex-col">
-            {isMyProfile ? (
+            {/* {isMyProfile ? (
               <h3>
                 {myProfile?.email_verified
                   ? "Email Verified ✔️"
                   : "Email Not Verified 💔"}
               </h3>
-            ) : null}
+            ) : null} */}
             <h3>Number of posts: 328</h3>
             <h3>Number of likes: 1223</h3>
             <h3>Number of comments: 32</h3>
@@ -54,7 +54,7 @@ const ProfilePage = () => {
         <section className="mt-48">
           <label className="text-2xl">{userName}'s Posts</label>
         </section>
-      </div>{" "}
+      </div>
     </div>
   );
 };

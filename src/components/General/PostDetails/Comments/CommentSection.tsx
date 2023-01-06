@@ -21,10 +21,7 @@ export default function CommentSection({
   return (
     <div className="flex flex-col items-center justify-center">
       <CommentForm postId={postId} />
-      <ul
-        ref={listRef}
-        className="flex flex-col items-center md:w-2/3 xl:w-full"
-      >
+      <ul ref={listRef} className="flex w-4/5 flex-col items-center xl:w-full">
         {comments?.map((comment) => (
           <CommentSectionProvider key={comment.comment_id} comment={comment}>
             <li className="flex w-full flex-col py-5 first-of-type:border-t-0">

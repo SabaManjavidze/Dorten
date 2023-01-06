@@ -197,7 +197,7 @@ export const userRouter = router({
   me: procedure.use(isAuthed).query(async ({ ctx: { req } }) => {
     const user = await prisma.user.findFirst({
       where: { user_id: req.session.userId },
-      select: UserFragment,
+      select: { ...UserFragment, email_verified: true },
     });
     return user;
   }),

@@ -38,8 +38,10 @@ const LoginPage: NextPage = () => {
     const user = await login({
       ...data,
     });
-    if (user) {
+    if (!user?.errors || user.errors.length <= 0) {
       router.push("/");
+    } else {
+      setErrors(user.errors[0]);
     }
   };
   const handleShowPassword = () => setShowPassowrd(!showPassowrd);

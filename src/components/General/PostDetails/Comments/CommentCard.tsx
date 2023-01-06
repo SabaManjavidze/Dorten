@@ -1,23 +1,14 @@
-import { comment, user } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { useState } from "react";
 import { AiFillCloseCircle as ExitIcon } from "react-icons/ai";
 import { BiTrash as TrashIcon } from "react-icons/bi";
 import { FaEdit as EditIcon } from "react-icons/fa";
 import { NOT_FOUND_IMG } from "../../../../lib/variables";
 import { trpc } from "../../../../utils/trpc";
-import CommentForm from "../../CommentForm/CommentForm";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 import CommentCardFooter from "./CommentCardFooter";
-import RepliesList from "./RepliesList";
 import { useCommentSection } from "./useCommentSection";
 
-// type CommentCardPropType = {
-//   comment: comment & {
-//     creator: user;
-//   };
-// };
 function CommentCard() {
   const { data: userData } = trpc.user.me.useQuery();
   const [editMode, setEditMode] = useState(false);
