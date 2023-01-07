@@ -151,7 +151,7 @@ export default function PostForm({ dragging, setDragging }: PostFormPropType) {
                   <ExitIcon className="text-xl text-skin-button-accent" />
                 </button>
               </div>
-              <div className="relative h-[500px] w-[700px] ">
+              <div className="relative h-[500px] w-full">
                 {uploadLoading || deleteLoading ? (
                   <>
                     <SyncLoader

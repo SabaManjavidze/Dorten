@@ -96,10 +96,13 @@ function CommentCard({ scrollTo }: CommentCardPropType) {
               {userData && userData.user_id == comment?.creator_id ? (
                 <div>
                   <button
-                    className={"mr-6 text-light-primary"}
+                    className={"mr-2 text-light-primary sm:mr-6"}
                     onClick={handleDeleteComment}
                   >
-                    <TrashIcon size={"30px"} />
+                    <TrashIcon
+                      size={"30px"}
+                      className="h-6 w-6 sm:h-8 sm:w-8 md:h-8 md:w-8 lg:h-8 lg:w-8"
+                    />
                   </button>
                   <button
                     className={"text-light-primary"}
@@ -108,9 +111,15 @@ function CommentCard({ scrollTo }: CommentCardPropType) {
                     }}
                   >
                     {editMode ? (
-                      <ExitIcon size={"30px"} />
+                      <ExitIcon
+                        size={"30px"}
+                        className="h-6 w-6 sm:h-8 sm:w-8 md:h-8 md:w-8 lg:h-8 lg:w-8"
+                      />
                     ) : (
-                      <EditIcon size="30px" />
+                      <EditIcon
+                        size="30px"
+                        className="h-6 w-6 sm:h-8 sm:w-8 md:h-8 md:w-8 lg:h-8 lg:w-8"
+                      />
                     )}
                   </button>
                 </div>
