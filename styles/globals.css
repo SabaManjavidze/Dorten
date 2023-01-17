@@ -33,11 +33,14 @@ html {
 .filled-btn {
   @apply rounded-md py-2 duration-200 ease-in-out;
 }
+.shadow {
+  box-shadow: 0px 0px 25px -7px;
+}
 .post-btn-pink {
-  @apply outlined-btn border-skin-submit-btn text-skin-submit-btn hover:bg-skin-submit-btn/10;
+  @apply outlined-btn border-skin-submit-btn text-skin-submit-btn shadow hover:bg-skin-submit-btn/10;
 }
 .post-btn-blue {
-  @apply outlined-btn border-skin-attach-btn text-skin-attach-btn hover:bg-skin-attach-btn/20;
+  @apply outlined-btn border-skin-attach-btn text-skin-attach-btn shadow hover:bg-skin-attach-btn/20;
 }
 .text-input {
   @apply block w-full rounded border border-transparent

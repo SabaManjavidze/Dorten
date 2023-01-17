@@ -5,12 +5,12 @@ import {
 import { FaSlideshare as ShareIcon } from "react-icons/fa";
 import { AiOutlineComment as CommentIcon } from "react-icons/ai";
 import IconButton from "./IconBtn";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import CommentForm from "../CommentForm/CommentForm";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { trpc } from "../../../utils/trpc";
-import { comment, like, post, user } from "@prisma/client";
 import { RouterOutputs } from "../../../server/routers/_app";
+import SharePostModal from "./sharePostModal";
 
 export default function LCS({
   post,
@@ -19,14 +19,17 @@ export default function LCS({
 }) {
   const { data: userData } = trpc.user.me.useQuery();
   const [showCommentForm, setShowCommentForm] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [divRef] = useAutoAnimate<HTMLDivElement>();
   const utils = trpc.useContext();
+
   const { mutateAsync: likePost, isLoading: loading } =
     trpc.post.likePost.useMutation({
       onSuccess() {
         utils.post.getPosts.invalidate();
       },
     });
+
   const likePostHandler = async (value: -1 | 1) => {
     if (!userData) return;
     await likePost({
@@ -34,12 +37,29 @@ export default function LCS({
       value,
     });
   };
-  const isMyPost = post.creator.user_id == userData?.user_id;
+
+  const isMyPost = useMemo(
+    () => post.creator.user_id == userData?.user_id,
+    [post, userData]
+  );
+  const postLink = useMemo(
+    () => `${process.env.CURRENT_URL}/post/${post.post_id}`,
+    [post]
+  );
   const handleCommentClick = () => {
     setShowCommentForm(!showCommentForm);
   };
+  const handleShowShareModal = () => {
+    setShowShareModal(!showShareModal);
+  };
+
   return (
     <div className="flex w-4/5 flex-col">
+      <SharePostModal
+        postLink={postLink}
+        showShareModal={showShareModal}
+        setShowShareModal={setShowShareModal}
+      />
       <div className="mt-4 flex items-center justify-between">
         <div className="flex items-center justify-between">
           <IconButton
@@ -76,7 +96,12 @@ export default function LCS({
           text={post?._count.comments}
           size="30px"
         />
-        <IconButton Icon={ShareIcon} text={"share"} size="30px" />
+        <IconButton
+          onClick={handleShowShareModal}
+          Icon={ShareIcon}
+          text={"share"}
+          size="30px"
+        />
       </div>
 
       <div ref={divRef} className="mt-10">

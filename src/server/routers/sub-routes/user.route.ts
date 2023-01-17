@@ -26,8 +26,8 @@ export const userRouter = router({
       const tokenUrl = `${GITHUB_OAUTH_TOKEN_URL}?code=${code}`;
       // get access_token
       const { data } = await axios.post(tokenUrl, {
-        client_id: process.env.NEXT_PUBLIC_GITHUB_ID,
-        client_secret: process.env.NEXT_PUBLIC_GITHUB_SECRET,
+        client_id: process.env.GITHUB_ID,
+        client_secret: process.env.GITHUB_SECRET,
       });
       if (!data) return false;
       // parse the response string to get token info

@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PostForm from "../components/HomePage/PostForm";
 import PostList from "../components/HomePage/PostList";
 import { trpc } from "../utils/trpc";

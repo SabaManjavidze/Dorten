@@ -7,7 +7,7 @@ export default function AuthProviders() {
       <a
         className="mx-1 cursor-pointer items-center rounded-full bg-black p-3 shadow-md transition
         duration-300 ease-in-out hover:bg-gray-800 hover:shadow-lg "
-        href={`${GITHUB_OAUTH_LOGIN_URL}?client_id=${process.env.NEXT_PUBLIC_GITHUB_ID}&scope=user`}
+        href={`${GITHUB_OAUTH_LOGIN_URL}?client_id=${process.env.GITHUB_ID}&scope=user`}
       >
         {/* Github Logo */}
         <svg

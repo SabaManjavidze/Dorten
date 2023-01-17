@@ -14,8 +14,8 @@ export async function sendEmail({ subject, text, html, to }: messageType) {
     port: 465,
     service: "gmail",
     auth: {
-      user: process.env.NEXT_PUBLIC_EMAIL,
-      pass: process.env.NEXT_PUBLIC_EMAIL_PASSWORD,
+      user: process.env.PUBLIC_EMAIL,
+      pass: process.env.EMAIL_PASSWORD,
     },
   });
   let message: messageType = {
