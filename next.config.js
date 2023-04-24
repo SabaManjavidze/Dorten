@@ -6,7 +6,6 @@ const nextConfig = {
   env: {
     CURRENT_URL: process.env.CURRENT_URL,
     DATABASE_URL: process.env.DATABASE_URL,
-    CURRENT_URL: process.env.CURRENT_URL,
     DB_URL: process.env.DB_URL,
     COOKIE_NAME: process.env.COOKIE_NAME,
 

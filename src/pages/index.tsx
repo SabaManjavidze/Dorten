@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import PostForm from "../components/HomePage/PostForm";
 import PostList from "../components/HomePage/PostList";
 import { trpc } from "../utils/trpc";
+import { useRouter } from "next/router";
 
 const Home: NextPage = () => {
   const [dragging, setDragging] = useState(false);
@@ -13,6 +14,13 @@ const Home: NextPage = () => {
     setDragging(false);
   };
   const { isSuccess } = trpc.user.me.useQuery();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isSuccess) {
+      router.push("/register");
+    }
+  }, [isSuccess]);
 
   return (
     <div
